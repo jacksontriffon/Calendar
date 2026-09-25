@@ -1,0 +1,29 @@
+{
+  "today": "2026-09-23",
+  "now": "09:00",
+  "cats": {
+    "Work": 255,
+    "Food": 72,
+    "Health": 132,
+    "Family": 28,
+    "Social": 12,
+    "Routine": 104,
+    "Travel": 104,
+    "Marathon training": 206
+  },
+  "events": [
+    { "id": "e12", "day": "2026-09-22", "cat": "Health", "title": "Gym", "start": 1080, "end": 1140, "done": true },
+    { "id": "e1", "day": "2026-09-23", "cat": "Work", "title": "Standup", "start": 570, "end": 585 },
+    { "id": "e2", "day": "2026-09-23", "cat": "Social", "title": "Lunch with Priya", "start": 750, "end": 810 },
+    { "id": "e3", "day": "2026-09-23", "cat": "Work", "title": "Design review", "start": 960, "end": 1020 },
+    { "id": "e4", "day": "2026-09-24", "cat": "Work", "title": "Standup", "start": 570, "end": 585 },
+    { "id": "e5", "day": "2026-09-24", "cat": "Work", "title": "Design sync", "start": 900, "end": 930 },
+    { "id": "e6", "day": "2026-09-24", "cat": "Health", "title": "Gym", "start": 1080, "end": 1140 },
+    { "id": "e7", "day": "2026-09-25", "cat": "Work", "title": "1:1 with Sam", "start": 600, "end": 660 },
+    { "id": "e8", "day": "2026-09-25", "cat": "Social", "title": "Dinner with Alex", "start": 1170, "end": 1290 },
+    { "id": "e9", "day": "2026-09-26", "cat": "Marathon training", "title": "Long run", "start": 480, "end": 570 },
+    { "id": "e10", "day": "2026-09-29", "cat": "Health", "title": "Dentist", "start": 660, "end": 690 },
+    { "id": "e11", "day": "2026-10-05", "cat": "Travel", "title": "Berlin trip", "start": 0, "end": 1440, "allDay": true, "days": 3 }
+  ],
+  "goals": []
+}

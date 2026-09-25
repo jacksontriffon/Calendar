@@ -1,0 +1,5 @@
+{
+  "minPassRate": 0.9,
+  "minCategoryPassRate": 0.8,
+  "maxCaseDropVsBaseline": 0.34
+}

@@ -1,0 +1,159 @@
+[
+  {
+    "id": "create-basic",
+    "category": "create",
+    "note": "haircut tomorrow at 3pm",
+    "expect": {
+      "creates": [{ "day": "2026-09-24", "start": 900, "end": [915, 990], "allDay": false, "title": "haircut" }]
+    }
+  },
+  {
+    "id": "create-split",
+    "category": "create",
+    "note": "gym at 7am on friday, coffee with Jo at 11:30, then call mum in the evening",
+    "expect": {
+      "creates": [
+        { "day": "2026-09-25", "start": 420, "title": "gym" },
+        { "day": "2026-09-25", "start": 690, "title": "coffee|jo" },
+        { "day": "2026-09-25", "start": [1020, 1260], "title": "mum" }
+      ]
+    }
+  },
+  {
+    "id": "create-weekday-reuse-category",
+    "category": "create",
+    "note": "yoga on tuesday at 6:30pm",
+    "expect": {
+      "creates": [{ "day": "2026-09-29", "start": 1110, "title": "yoga", "cat": "Health" }]
+    }
+  },
+  {
+    "id": "create-overnight",
+    "category": "create",
+    "note": "night shift tonight from 10pm to 6am",
+    "expect": {
+      "creates": [{ "day": "2026-09-23", "start": 1320, "end": 1800, "title": "shift" }]
+    }
+  },
+  {
+    "id": "create-trip",
+    "category": "create",
+    "note": "I'm in Lisbon from Friday to Sunday",
+    "expect": {
+      "creates": [{ "day": "2026-09-25", "allDay": true, "days": 3, "title": "lisbon", "cat": "Travel" }]
+    }
+  },
+  {
+    "id": "create-week",
+    "category": "create",
+    "note": "next week is a focus week",
+    "expect": {
+      "creates": [{ "day": "2026-09-28", "allDay": true, "days": 7, "title": "focus" }]
+    }
+  },
+  {
+    "id": "create-bare-hour",
+    "category": "create",
+    "note": "piano lesson on saturday at 4",
+    "expect": {
+      "creates": [{ "day": "2026-09-26", "start": 960, "title": "piano" }]
+    }
+  },
+  {
+    "id": "update-move-lookalike",
+    "category": "update",
+    "note": "move the design review to friday at 2pm",
+    "expect": {
+      "updates": [{ "id": "e3", "patch": { "day": "2026-09-25", "start": 840 } }]
+    }
+  },
+  {
+    "id": "update-shift-later",
+    "category": "update",
+    "note": "push dinner with Alex back an hour",
+    "expect": {
+      "updates": [{ "id": "e8", "patch": { "start": 1230, "end": 1350 }, "keep": ["day"] }]
+    }
+  },
+  {
+    "id": "update-rename",
+    "category": "update",
+    "note": "rename my 1:1 with Sam to Career chat with Sam",
+    "expect": {
+      "updates": [{ "id": "e7", "patch": { "title": "^career chat" }, "keep": ["day", "start", "end", "cat"] }]
+    }
+  },
+  {
+    "id": "update-recategorise",
+    "category": "update",
+    "note": "the long run on saturday should go under Health",
+    "expect": {
+      "updates": [{ "id": "e9", "patch": { "cat": "Health" }, "keep": ["day", "start", "end"] }]
+    }
+  },
+  {
+    "id": "update-extend",
+    "category": "update",
+    "note": "gym on thursday is going to run until 8pm",
+    "expect": {
+      "updates": [{ "id": "e6", "patch": { "end": 1200 }, "keep": ["day", "start"] }]
+    }
+  },
+  {
+    "id": "update-pick-by-day",
+    "category": "update",
+    "note": "move thursday's standup to 10am",
+    "expect": {
+      "updates": [{ "id": "e4", "patch": { "start": 600, "end": [610, 630] }, "keep": ["day"] }]
+    }
+  },
+  {
+    "id": "delete-basic",
+    "category": "delete",
+    "note": "cancel dinner with Alex",
+    "expect": { "deletes": ["e8"] }
+  },
+  {
+    "id": "delete-pick-by-day",
+    "category": "delete",
+    "note": "I'm not going to the gym tomorrow",
+    "expect": { "deletes": ["e6"] }
+  },
+  {
+    "id": "mixed-crud",
+    "category": "mixed",
+    "note": "cancel lunch with Priya, move today's standup to 10 and add a call with the landlord at 5pm",
+    "expect": {
+      "deletes": ["e2"],
+      "updates": [{ "id": "e1", "patch": { "start": 600 }, "keep": ["day"] }],
+      "creates": [{ "day": "2026-09-23", "start": 1020, "title": "landlord" }]
+    }
+  },
+  {
+    "id": "safe-vague-complaint",
+    "category": "safety",
+    "note": "ugh, this week is way too busy",
+    "expect": { "safe": true }
+  },
+  {
+    "id": "ask-which-event",
+    "category": "ask",
+    "note": "move standup to 11",
+    "expect": { "asks": true }
+  },
+  {
+    "id": "noask-which-event",
+    "category": "ask",
+    "note": "move standup to 11",
+    "noAsk": true,
+    "expect": {
+      "updates": [{ "id": ["e1", "e4"], "patch": { "start": 660 } }]
+    }
+  },
+  {
+    "id": "ask-clash",
+    "category": "ask",
+    "note": "add a call with the bank at 4pm today",
+    "expect": { "asks": true }
+  }
+]

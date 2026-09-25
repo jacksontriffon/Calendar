@@ -19,3 +19,5 @@ Each request runs in two passes:
 ## Editing
 
 The app embeds a copy of these files (`SKILL_FILES` in `AI Calendar Web.dc.html`). After you edit a file here, update the embedded copy and bump `SKILLS_V`.
+
+Then run the evals in `../evals` (see its README). `npm test` fails if the embedded copy no longer matches these files, and `npm run eval` checks the scheduler against the standard.
