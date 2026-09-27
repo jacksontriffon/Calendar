@@ -3,8 +3,9 @@
 Agent Skills used by the calendar's AI.
 
 - `calendar-scheduler`: note → JSON operations (events, goals, questions)
+- `calendar-goal-adjust`: one goal → JSON operations that change its scope or deadline, book a catch-up, or set a stretch
 - `calendar-checkin`: return check-in questions
-- `calendar-verifier`: checks every reply from the two skills above and fixes it if needed
+- `calendar-verifier`: checks every reply from the skills above and fixes it if needed
 
 ## How the app uses them
 
@@ -13,11 +14,9 @@ When you use your own API key or a proxy, the app uploads these skills to your w
 The built-in preview connection doesn't support skills. There, the same files are sent inline in the prompt.
 
 Each request runs in two passes:
-1. The scheduler or check-in skill produces JSON.
+1. The scheduler, goal-adjust or check-in skill produces JSON. Goal-adjust runs when the user sends a note started from the action buttons at the bottom of a goal's sheet.
 2. A code validator checks the JSON's shape, then the verifier skill checks it against the request and returns `{"ok":true}` or a corrected array. The fixed version is applied without telling the user. There is one fix round.
 
 ## Editing
 
 The app embeds a copy of these files (`SKILL_FILES` in `AI Calendar Web.dc.html`). After you edit a file here, update the embedded copy and bump `SKILLS_V`.
-
-Then run the evals in `../evals` (see its README). `npm test` fails if the embedded copy no longer matches these files, and `npm run eval` checks the scheduler against the standard.

@@ -30,6 +30,18 @@ Asking (`asking.md`)
 - Replies that ask contain no create/update/delete, except inside the goal conversation.
 - If the note says not to ask, there are no `ask` operations.
 
+## kind="goal-adjust"
+
+Rules are in `/skills/calendar-goal-adjust/references/adjusting.md`.
+
+- Only the goal in `<goal>` and events in its category are touched.
+- The `goal` op uses that goal's `id` and carries only the fields that change.
+- A new `deadline` is YYYY-MM-DD and after today. New `hours` is not below the hours already done.
+- If the note has no answers yet, the reply is only 1–2 `ask` operations, fitting `mode` (`reduce`: what gives way; `stretch`: what to push), with concrete options that each carry a pace `note`.
+- Once answers are present, the changes match what the user picked.
+- Booked sessions after a new deadline, or beyond a reduced total, are deleted. New sessions are in the goal's category, in free time and waking hours, 30–120 minutes each.
+- At most two `ask` operations, 2–4 options each. None if the note says not to ask.
+
 ## kind="checkin"
 
 - 2 to 4 objects, each with `field` ("goal" or "log") and `q`; `chips` has 0–3 items.

@@ -1,6 +1,6 @@
 ---
 name: calendar-verifier
-description: Checks a candidate JSON reply from the calendar-scheduler or calendar-checkin skill against the user's request and calendar, then approves it or returns a corrected version. Use when asked to verify calendar JSON.
+description: Checks a candidate JSON reply from the calendar-scheduler, calendar-goal-adjust or calendar-checkin skill against the user's request and calendar, then approves it or returns a corrected version. Use when asked to verify calendar JSON.
 ---
 
 # Calendar verifier
@@ -8,13 +8,13 @@ description: Checks a candidate JSON reply from the calendar-scheduler or calend
 Another call produced a JSON reply for a calendar app. Check that it fits what the user asked for and follows the producing skill's rules. Fix it if it doesn't.
 
 The user message contains:
-- `<candidate kind="scheduler">` or `<candidate kind="checkin">`: the JSON to check.
-- `<calendar>` and `<note>` (scheduler), or `<checkin>` (check-in): the same input the producer saw.
+- `<candidate kind="scheduler">`, `<candidate kind="goal-adjust">` or `<candidate kind="checkin">`: the JSON to check.
+- `<calendar>` and `<note>` (scheduler), plus `<goal>` (goal-adjust), or `<checkin>` (check-in): the same input the producer saw.
 - `<code_checks>`: problems an automatic validator already found. Each one must be gone from your output.
 
 ## Steps
 
-1. Read the producing skill's files. They are in `/skills/calendar-scheduler/` or `/skills/calendar-checkin/` (SKILL.md and `references/`), or included above this message.
+1. Read the producing skill's files. They are in `/skills/calendar-scheduler/`, `/skills/calendar-goal-adjust/` or `/skills/calendar-checkin/` (SKILL.md and `references/`), or included above this message.
 2. Work through `references/checklist.md` for that kind.
 3. Decide.
 
