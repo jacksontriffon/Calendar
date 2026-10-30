@@ -164,7 +164,7 @@ describe('rows -> CalendarData', () => {
 
   it('series rows map to core Series', () => {
     const rows = emptyRows();
-    const s: DbSeriesRow = { id: uid(), user_id: U, freq: 'weekly', weekdays: [1, 3], start_day: '2026-10-26', until: null, created_at: '2026-10-30T09:00:00.000Z', updated_at: '2026-10-30T09:00:00.000Z' };
+    const s: DbSeriesRow = { id: uid(), user_id: U, freq: 'weekly', weekdays: [1, 3], start_day: '2026-10-26', until: null, legacy_id: null, created_at: '2026-10-30T09:00:00.000Z', updated_at: '2026-10-30T09:00:00.000Z' };
     rows.series[s.id] = s;
     expect(rowsToSeries(rows, emptyAliases())).toEqual([{ id: s.id, freq: 'weekly', weekdays: [1, 3], startDay: '2026-10-26', until: null }]);
   });
@@ -471,7 +471,7 @@ describe('diffSeries and series ids on events', () => {
   it('ending a series updates until; removing it deletes the row', () => {
     const { rows } = seedRows();
     const sid = uid();
-    const row: DbSeriesRow = { id: sid, user_id: U, freq: 'weekly', weekdays: [2], start_day: '2026-10-27', until: null, created_at: '2026-10-30T09:00:00.000Z', updated_at: '2026-10-30T09:00:00.000Z' };
+    const row: DbSeriesRow = { id: sid, user_id: U, freq: 'weekly', weekdays: [2], start_day: '2026-10-27', until: null, legacy_id: null, created_at: '2026-10-30T09:00:00.000Z', updated_at: '2026-10-30T09:00:00.000Z' };
     rows.series[sid] = row;
     const prev = rowsToSeries(rows, emptyAliases());
     const ended = diffSeries(prev, [{ ...prev[0], until: '2026-11-30' }], ctx(rows));
