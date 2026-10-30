@@ -62,7 +62,7 @@ export interface StatusCounts {
   failed: number;
 }
 
-export function countStatuses(statuses: ReadonlyArray<UiStatus | null>): StatusCounts {
+export function countStatuses(statuses: readonly (UiStatus | null)[]): StatusCounts {
   const c: StatusCounts = { total: statuses.length, synced: 0, pending: 0, queued: 0, failed: 0 };
   statuses.forEach((s) => {
     if (s) c[s] += 1;

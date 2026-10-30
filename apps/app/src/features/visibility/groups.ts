@@ -35,7 +35,7 @@ export interface PickGroup {
 export interface GroupInputs {
   views: readonly AccountView[];
   targets: readonly EventTarget[];
-  device: { calendars: readonly DeviceCalendar[]; statuses: ReadonlyArray<{ key: string; status: DeviceTargetStatusValue }> };
+  device: { calendars: readonly DeviceCalendar[]; statuses: readonly { key: string; status: DeviceTargetStatusValue }[] };
   offline: boolean;
   /** the client's own work on the Google targets of this event */
   op: { state: Exclude<LocalOp, null | undefined>; calendarIds: readonly string[]; error?: string } | null | undefined;
@@ -82,7 +82,7 @@ export function buildGroups(inp: GroupInputs): PickGroup[] {
 }
 
 /** What the event is saved as: its visibility and the calendars its target rows name (never those queued for removal). */
-export function savedChoice(visibility: Visibility, targets: readonly EventTarget[], deviceStatuses: ReadonlyArray<{ key: string }>): PickerState {
+export function savedChoice(visibility: Visibility, targets: readonly EventTarget[], deviceStatuses: readonly { key: string }[]): PickerState {
   const live = targets.filter((t) => !t.remove_requested);
   return initPicker({
     visibility,

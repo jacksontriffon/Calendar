@@ -40,7 +40,7 @@ export function buildAccountViews(accounts: readonly GoogleAccountPublic[], cale
 }
 
 /** A calendar the picker offers: can publish to, on an account that is signed in. */
-export function publishableCalendars(views: readonly AccountView[]): Array<{ account: GoogleAccountPublic; calendars: GoogleCalendar[] }> {
+export function publishableCalendars(views: readonly AccountView[]): { account: GoogleAccountPublic; calendars: GoogleCalendar[] }[] {
   return views
     .filter((v) => !v.needsSignIn)
     .map((v) => ({ account: v.account, calendars: v.calendars.filter((c) => c.can_publish && canWrite(c.access_role)) }))

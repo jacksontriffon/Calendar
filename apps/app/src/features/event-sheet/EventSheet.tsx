@@ -14,6 +14,7 @@ import { removeSomeoneElsesEvent } from '../calendars/actions';
 import { useGoogleEventMeta, useGoogleAccounts } from '../calendars/data';
 import { calendarColor } from '../calendars/view';
 import { initials } from '@/features/auth/initials';
+import { CategoryDefault } from '../visibility/CategoryDefault';
 import { persistChoice } from '../visibility/persist';
 import { VisibilityRow } from '../visibility/VisibilityRow';
 import type { PickerState } from '../visibility/state';
@@ -292,6 +293,7 @@ function EditBody({ ev, view, patch, catOp, onTargets, onDelete, onTimer }: Edit
               );
             })}
           </View>
+          <CategoryDefault name={ev.cat} eventCount={view.events.filter((e) => e.cat === ev.cat).length} />
         </View>
       ) : null}
 
@@ -353,7 +355,6 @@ export function copyToMyCalendar(ev: ProtoEvent): void {
  * quiet Remove that hides it in this app only (hidden_items), with an Undo toast.
  */
 function ReadOnly({ ev, close }: { ev: ProtoEvent; close: () => void }) {
-  const store = getStore();
   const meta = useGoogleEventMeta(ev.id);
   const { calendars } = useGoogleAccounts();
   const cal = meta?.calendarId ? calendars.find((c) => c.id === meta.calendarId) : undefined;
@@ -367,7 +368,6 @@ function ReadOnly({ ev, close }: { ev: ProtoEvent; close: () => void }) {
     void removeSomeoneElsesEvent(ev);
     close();
   };
-  const P = paint(hueFor(store.getState().data.cats, ev.cat ?? ''));
   const first = owner ? initials(owner) : null;
   return (
     <View testID="readonly-sheet">

@@ -41,7 +41,7 @@ type CalendarColor = Pick<GoogleCalendar, 'id' | 'color'>;
 export function deriveOverlay(
   ev: Pick<ProtoEvent, 'source' | 'isMine' | 'visibility' | 'cat'>,
   meta: GoogleEventMeta | null | undefined,
-  calendars: ReadonlyArray<CalendarColor>,
+  calendars: readonly CalendarColor[],
   targets: readonly EventTarget[] | undefined,
   op?: Pick<TargetOp, 'state'> | null,
 ): EventOverlay {

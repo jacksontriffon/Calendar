@@ -19,7 +19,7 @@ export interface HiddenLike {
 
 export const hiddenKey = (source: string, externalKey: string): string => source + ':' + externalKey;
 
-export const hiddenKeySet = (items: ReadonlyArray<HiddenLike>): Set<string> => new Set(items.map((h) => hiddenKey(h.source, h.external_key)));
+export const hiddenKeySet = (items: readonly HiddenLike[]): Set<string> => new Set(items.map((h) => hiddenKey(h.source, h.external_key)));
 
 /** True when this imported event has been removed from the view. Own (app) events are never hidden. */
 export function isHidden(ev: Pick<ProtoEvent, 'id' | 'source'>, meta: Readonly<Record<string, GoogleEventMeta>>, hidden: ReadonlySet<string>): boolean {

@@ -9,7 +9,8 @@ import { FONT_LABELS, asFontKey, fontFamilyFor, type FontKey } from '@/component
 import { UserAvatar } from '@/features/auth';
 import { Icon, type IconName } from '@/components/Icon';
 import { ToastHost } from '@/components/Toast';
-import { showToast } from '@/components/toast';
+import { useGoogleAccounts, useHiddenItems } from '../calendars/data';
+import { useDeviceCalendars } from '../calendars/device';
 import { getStore, useHistory, usePrefs, useSyncStatus } from '@/store';
 import { useNow } from '../calendar/useNow';
 import { runCheckInNow } from '../checkin/CheckInHost';
@@ -32,7 +33,10 @@ export function SettingsScreen() {
   const [ss, setSs] = useState<string | null>(null);
   const font = asFontKey(prefs.font);
 
-  const soon = (what: string) => showToast({ label: what + ' arrives in a later phase' });
+  const google = useGoogleAccounts();
+  const hidden = useHiddenItems();
+  const phone = useDeviceCalendars();
+  const nGoogle = google.views.length;
   const setSun = (which: 'sunrise' | 'sunset', v: string) => {
     const next = sunWithTime(prefs.sun, which, v);
     if (next) getStore().setPrefs({ sun: next });
@@ -71,11 +75,26 @@ export function SettingsScreen() {
 
           <Label>Calendars</Label>
           <Group>
-            {/* TODO(phase 5/6): real routes: settings/calendars, settings/google, settings/phone, settings/hidden. */}
-            <NavRow icon="eye" title="My calendar" sub="Shown" onPress={() => soon('Calendar visibility')} />
-            <NavRow icon="google" title="Google accounts" sub="Not connected" onPress={() => soon('Google accounts')} />
-            <NavRow icon="phone" title="On this phone" sub="Available in the mobile app" onPress={() => soon('Phone calendars')} />
-            <NavRow icon="eye" title="Hidden events" sub="None" onPress={() => soon('Hidden events')} last />
+            <NavRow icon="eye" title="My calendar" sub="Default · new events go here" onPress={() => router.push('/settings/calendars' as never)} />
+            <NavRow
+              icon="google"
+              title="Google accounts"
+              sub={google.views.some((v) => v.needsSignIn) ? 'Needs sign-in' : nGoogle ? nGoogle + (nGoogle === 1 ? ' account' : ' accounts') : 'Not connected'}
+              onPress={() => router.push('/settings/calendars' as never)}
+            />
+            <NavRow
+              icon="phone"
+              title="On this phone"
+              sub={phone.available ? 'Choose which calendars to show' : 'Available in the mobile app'}
+              onPress={() => router.push('/settings/calendars/phone' as never)}
+            />
+            <NavRow
+              icon="eye"
+              title="Hidden events"
+              sub={hidden.length ? String(hidden.length) : 'None'}
+              onPress={() => router.push('/settings/calendars/hidden' as never)}
+              last
+            />
           </Group>
 
           <Label>Region and sun</Label>

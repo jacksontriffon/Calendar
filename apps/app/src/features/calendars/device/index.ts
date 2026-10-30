@@ -26,13 +26,13 @@ export interface DeviceCalendar {
 }
 
 const NONE = { available: false, calendars: [] as DeviceCalendar[] };
-const NO_STATUS: Array<{ key: string; status: DeviceTargetStatusValue }> = [];
+const NO_STATUS: { key: string; status: DeviceTargetStatusValue }[] = [];
 
 export function useDeviceCalendars(): { available: boolean; calendars: DeviceCalendar[] } {
   return NONE;
 }
 
-export function useDeviceTargetStatus(_eventId: string): Array<{ key: string; status: DeviceTargetStatusValue }> {
+export function useDeviceTargetStatus(_eventId: string): { key: string; status: DeviceTargetStatusValue }[] {
   return NO_STATUS;
 }
 

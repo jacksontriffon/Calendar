@@ -13,7 +13,7 @@ import { Glyph, Spinner } from './glyphs';
 import type { PickGroup, PickOption } from './groups';
 import { setConnectReturn } from './connectReturn';
 import { leavesMessage } from './payload';
-import { Checkbox, RetryButton, SectionLabel, StatusTag, VisibilitySegments } from './parts';
+import { Checkbox, RetryButton, StatusTag, VisibilitySegments } from './parts';
 import { retryGoogleTargets } from './persist';
 import { canFinish, initPicker, pickerReducer, selectedCount, type PickerState } from './state';
 import { countStatuses, publicTitle, summaryLine } from './status';
