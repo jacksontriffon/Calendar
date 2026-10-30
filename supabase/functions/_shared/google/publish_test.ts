@@ -301,3 +301,23 @@ Deno.test('publish: two calendars, one failing, do not block each other', async 
   assertEquals([db.target(t.id)!.status, db.target(t2.id)!.status], ['synced', 'failed']);
   assertEquals([r.failed, r.retry], [1, false]); // permanent: recorded, not retried
 });
+
+Deno.test('publish: a target written by legacy-import (external_id + old fingerprint) is patched, never duplicated', async () => {
+  const { db, g, deps, ev, t, userId, cal } = setup();
+  // the old sync's copy already exists on Google, and was imported as an event before the target row existed
+  g.setEvent('primary', { id: 'legacyG1', summary: 'Run', start: { dateTime: '2026-11-03T13:00:00Z' }, end: { dateTime: '2026-11-03T14:00:00Z' } });
+  const { importCalendar } = await import('./import.ts');
+  await importCalendar(deps, cal.id);
+  assertEquals(db.liveImported().map((e) => e.google_event_id), ['legacyG1']);
+  Object.assign(db.target(t.id)!, { external_id: 'legacyG1', fingerprint: 'old-format-fingerprint', status: 'synced' });
+
+  g.calls.length = 0;
+  const r = await publishEvent(deps, userId, ev.id);
+  assertEquals([r.created, r.patched], [0, 1]);
+  assertEquals(methods(g), ['PATCH']);
+  assertEquals(db.target(t.id)!.external_id, 'legacyG1');
+  assertEquals(g.live('primary').map((e) => e.id), ['legacyG1']); // still one copy
+  assertEquals(db.liveImported().length, 0); // the stale echo row is gone
+  await importCalendar(deps, cal.id, { forceFull: true });
+  assertEquals(db.liveImported().length, 0);
+});

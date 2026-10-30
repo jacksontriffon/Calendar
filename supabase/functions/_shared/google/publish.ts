@@ -20,6 +20,10 @@
  * only whole-series changes are (the anchor occurrence's title and time, the weekdays and the end
  * date). Ending or privatising a series removes the Google event.
  *
+ * An existing target with an `external_id` (for example one written by legacy-import, with the old
+ * sync's fingerprint) is always PATCHED, never re-created: the copy is matched by that id, so no
+ * duplicate appears.
+ *
  * Creating is crash-safe: the new Google event id is written to the target BEFORE the create call and
  * sent as the event's id, so a retry after a crash patches the event instead of duplicating it.
  */
@@ -197,6 +201,9 @@ async function publishUnit(deps: SyncDeps, u: Unit, res: PublishResult): Promise
     id = await writeCopy(deps, { token, calendar: cal, anchorTarget: anchor.t, id: master, body });
     if (master && id === master) res.patched++;
     else res.created++;
+    // If an import saw our copy before its target was recorded (legacy-import links events to their
+    // old Google copies after inserting them), drop that stale imported row.
+    await db.softDeleteImported(cal.id, [id]);
   } else {
     res.unchanged++;
   }
