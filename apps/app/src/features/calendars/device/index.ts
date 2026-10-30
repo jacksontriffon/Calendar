@@ -15,7 +15,7 @@ import { addDays, type CatMap, type CalendarData, type ProtoEvent } from '@calen
 
 import { deviceCats, toProtoEvent } from '@/sync/deviceMap';
 import type { DeviceCalendarFlags, DeviceEvent, PermissionState, TargetView } from '@/sync/deviceTypes';
-import { deviceSupported, getDeviceBridge, useDeviceBridgeHost, useDeviceState } from './host';
+import { getDeviceBridge, useDeviceBridgeHost, useDeviceState } from './host';
 
 export { deviceSupported, useDeviceBridgeHost } from './host';
 export { isItemId as isDeviceEventId } from '@/sync/deviceHash';
@@ -91,7 +91,7 @@ const NO_TARGETS: TargetView[] = [];
  * Where `eventId` is published on phone calendars. `queued` also means "done on the phone, not yet
  * reported". `mine: false` rows come from another device of the user: shown, never acted on.
  */
-export function useDeviceTargetStatus(eventId: string): Array<{ key: string; status: TargetView['status']; mine: boolean }> {
+export function useDeviceTargetStatus(eventId: string): { key: string; status: TargetView['status']; mine: boolean }[] {
   const s = useDeviceState();
   return s.targets[eventId] ?? NO_TARGETS;
 }
