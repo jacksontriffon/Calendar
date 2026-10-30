@@ -29,7 +29,9 @@ export function WidgetSync(): null {
   const { signedIn, loading, userId } = useSyncContext();
   const { displayName } = useSession();
   const name = useRef<string | null>(null);
-  name.current = displayName;
+  useEffect(() => {
+    name.current = displayName;
+  }, [displayName]);
 
   useEffect(() => {
     if (!widgetsSupported || loading) return;

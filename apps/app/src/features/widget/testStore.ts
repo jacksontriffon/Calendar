@@ -6,7 +6,7 @@ export { DEFAULT_PREFS };
 export interface MemoryStoreLike {
   getState(): { data: CalendarData; prefs: Prefs };
   commit(next: CalendarData, label: string, kind?: HistoryKind): void;
-  commits: Array<{ label: string; kind: HistoryKind | undefined }>;
+  commits: { label: string; kind: HistoryKind | undefined }[];
 }
 
 export function createMemoryStoreLike(initial: CalendarData): MemoryStoreLike {

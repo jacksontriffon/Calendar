@@ -132,6 +132,8 @@ export interface WidgetModel {
     stale: boolean;
     /** the "+" (false on an empty day: "Add a note" does that job) */
     showPlus: boolean;
+    /** a small neutral dot before "Now …" (not on a stale or free-day line) */
+    dot: boolean;
   };
   level: StaleLevel;
   /** the goal numbers are old (over 24 h, or from before midnight): dim them */
@@ -189,7 +191,7 @@ const signedOutModel = (layout: Layout): WidgetModel => ({
   layout,
   state: 'signedOut',
   url: signinUrl(),
-  header: { title: '', sub: '', stale: false, showPlus: false },
+  header: { title: '', sub: '', stale: false, showPlus: false, dot: false },
   level: 'fresh',
   goalsDim: false,
   strip: null,
@@ -346,7 +348,7 @@ export function buildModel(
     layout,
     state: 'content',
     url: layout === 'small' && isEmpty ? composeUrl() : dayUrl(todayKey),
-    header: { title: dayLabel(today), sub, stale: level !== 'fresh', showPlus: !isEmpty && layout !== 'small' },
+    header: { title: dayLabel(today), sub, stale: level !== 'fresh', showPlus: !isEmpty && layout !== 'small', dot: !isEmpty && level === 'fresh' },
     level,
     goalsDim,
     strip: level === 'old' && layout !== 'small' ? 'Open Calendar to refresh' : null,

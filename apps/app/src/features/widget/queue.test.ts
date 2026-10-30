@@ -78,7 +78,7 @@ describe('snapshot writer', () => {
 
   it('debounces store changes and writes once', () => {
     const storage = createMemoryWidgetStorage();
-    const timers: Array<() => void> = [];
+    const timers: (() => void)[] = [];
     const w = createSnapshotWriter({ storage, now: () => NOW, setTimer: (fn) => timers.push(fn) - 1, clearTimer: (t) => { timers[t as number] = () => undefined; } });
     w.schedule(input);
     w.schedule(input);

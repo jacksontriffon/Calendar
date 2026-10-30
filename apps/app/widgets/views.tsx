@@ -54,6 +54,7 @@ function Header({ m, c, plusSize = 30 }: { m: WidgetModel; c: Ctx; plusSize?: nu
           {m.header.stale ? (
             <SvgWidget svg={cloudOffSvg(c.tokens.amber, 11)} style={{ width: 11, height: 11, marginRight: 5 }} />
           ) : null}
+          {m.header.dot ? <FlexWidget style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: ink(c.p, 1), marginRight: 5 }} /> : null}
           <T c={c} text={m.header.sub} size={11} alpha={c.p.secondary} />
         </FlexWidget>
       </FlexWidget>
