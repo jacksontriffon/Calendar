@@ -50,7 +50,14 @@ Plan for rebuilding the Calendar app as an Expo app for iOS, Android and web, ba
 
 ## 3. Repository layout
 
-The repo becomes an npm-workspaces monorepo. npm is already used by `evals/`.
+The repo becomes a small **pnpm workspace**.
+
+**Why a workspace at all:** three separate consumers need the same scheduling logic. The Expo app applies AI operations and runs the date and goal maths. The `ai-schedule` edge function validates the same operations before returning them. `evals/` grades replies against them. Keeping that logic in one `packages/core` package means one implementation and one set of tests, instead of three copies drifting apart. Without the shared code, the Expo app could simply live at the repo root.
+
+**Tooling:**
+- **pnpm:** a `pnpm-workspace.yaml` covers `apps/*`, `packages/*` and `evals`. `evals/` moves from npm to pnpm; `pnpm import` converts its `package-lock.json`. Expo supports pnpm workspaces; if a native module misbehaves with isolated installs, fall back to `node-linker=hoisted` in `.npmrc`.
+- **Turborepo, only if needed:** start with plain `pnpm -r` / `pnpm --filter` scripts. Add Turbo later only if CI or local typecheck and test runs get slow enough that caching pays off. With two or three packages it likely won't at first.
+- **Edge functions (Deno):** they import `packages/core` through a `deno.json` import map pointing at its TypeScript source, so core must stay free of Node-only APIs. Phase 0 checks that `supabase functions deploy` bundles it. If it doesn't, a prebuild step copies core into `supabase/functions/_shared/core`.
 
 ```
 apps/app/            Expo app (Expo Router, TypeScript)
@@ -184,7 +191,7 @@ Each phase ends with the app runnable on iOS, Android and web, CI green, and the
 
 | # | Phase | Deliverables | Done when |
 |---|---|---|---|
-| 0 | Foundations | Monorepo and workspaces. Expo app scaffold with dev client and EAS project. Supabase CLI local stack. CI (typecheck, lint, unit tests, `evals` tests). `packages/core` extracted from the prototype with unit tests. Updated `CLAUDE.md` / `README.md`. | `npm test` passes; a blank app builds on all three platforms. |
+| 0 | Foundations | pnpm workspace (`evals` moved over; no Turbo yet). Expo app scaffold with dev client and EAS project. Supabase CLI local stack. CI (typecheck, lint, unit tests, `evals` tests). `packages/core` extracted from the prototype with unit tests. Updated `CLAUDE.md` / `README.md`. | `pnpm -r test` passes; a blank app builds on all three platforms; an edge function imports `packages/core` and deploys. |
 | 1 | Schema & RLS | Migrations for §4, RLS policies with tests (pgTAP or a SQL test script), Vault, pgmq, pg_cron, generated TS types, seed data, `legacy-import`. | A user can only see their own rows; a legacy blob imports correctly in tests. |
 | 2 | Auth & entry | Welcome screen with the intro animation, Apple and Google sign-in, session storage, first-run setup, the import screen, Account screen, `account-delete`, deep-link handling. | Sign in, out and delete work on iOS, Android and web. |
 | 3 | Calendar core | Local-first store spike, then all views, the event sheet, categories, goals, the timer, check-ins and History/Undo on Supabase. Offline, conflict and session-expired states. | Feature parity with the prototype minus AI; edits sync across two devices; works offline. |
