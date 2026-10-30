@@ -426,6 +426,27 @@ verify_jwt = true
 import_map = "./functions/deno.json"
 entrypoint = "./functions/legacy-import/index.ts"
 
+# The Google functions check credentials themselves: google-connect's OAuth callback validates its
+# state nonce (its other actions verify the user's JWT in the handler), google-webhook validates the
+# channel token, and google-sync accepts only the service-role key or, for sync_now, a user JWT.
+[functions.google-connect]
+enabled = true
+verify_jwt = false
+import_map = "./functions/deno.json"
+entrypoint = "./functions/google-connect/index.ts"
+
+[functions.google-sync]
+enabled = true
+verify_jwt = false
+import_map = "./functions/deno.json"
+entrypoint = "./functions/google-sync/index.ts"
+
+[functions.google-webhook]
+enabled = true
+verify_jwt = false
+import_map = "./functions/deno.json"
+entrypoint = "./functions/google-webhook/index.ts"
+
 [analytics]
 enabled = true
 port = 54327
