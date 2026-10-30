@@ -116,6 +116,11 @@ function Gate({ fontsReady }: { fontsReady: boolean }) {
         <Stack.Screen name="settings/index" />
         <Stack.Screen name="settings/account" />
         <Stack.Screen name="settings/account-delete" />
+        <Stack.Screen name="settings/calendars/index" />
+        <Stack.Screen name="settings/calendars/hidden" />
+        <Stack.Screen name="settings/calendars/phone" />
+        <Stack.Screen name="settings/calendars/account/[id]" />
+        <Stack.Screen name="settings/calendars/choose/[id]" />
       </Stack.Protected>
 
       {/* Reachable signed in or out: the session is cleared right after navigating here. */}
