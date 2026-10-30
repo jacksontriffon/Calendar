@@ -225,7 +225,9 @@ enum Time {
         let h = m / 60, mm = m % 60
         if h24 { return String(format: "%02d:%02d", h, mm) }
         let h12 = h % 12 == 0 ? 12 : h % 12
-        return "\(h12)\(mm > 0 ? String(format: ":%02d", mm) : "")\(h >= 12 ? "pm" : "am")"
+        let minutePart = mm > 0 ? String(format: ":%02d", mm) : ""
+        let half = h >= 12 ? "pm" : "am"
+        return "\(h12)\(minutePart)\(half)"
     }
 
     /// The now line / "Now 11:48": no am/pm in 12h.
@@ -310,8 +312,12 @@ enum Labels {
         let active = today >= s0 && today < s1
         if !active && today >= s1 { return ("Ended", false) }
         let left = max(0, total - elapsed)
-        if left >= 14 { return ("\(Int((Double(left) / 7).rounded())) weeks left", active) }
-        return ("\(left) \(left == 1 ? "day" : "days") left", active)
+        if left >= 14 {
+            let weeks = Int((Double(left) / 7).rounded())
+            return ("\(weeks) weeks left", active)
+        }
+        let unit = left == 1 ? "day" : "days"
+        return ("\(left) \(unit) left", active)
     }
 
     static func staleLabel(_ age: TimeInterval) -> String {

@@ -74,7 +74,7 @@ function Header({ m, c, plusSize = 30 }: { m: WidgetModel; c: Ctx; plusSize?: nu
 /* ---------- rows ---------- */
 
 function Check({ row, c }: { row: RowModel; c: Ctx }) {
-  if (!row.check) return null;
+  // Rendered only for rows that have a check (the library needs every component to return an element, never null).
   // A 40dp tap target around the 20dp circle. A done row has no action left.
   const circle = row.done ? (
     <FlexWidget style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: ink(c.p, 1), alignItems: 'center', justifyContent: 'center' }}>
@@ -94,22 +94,6 @@ function Check({ row, c }: { row: RowModel; c: Ctx }) {
   );
 }
 
-function Marks({ row, c }: { row: RowModel; c: Ctx }) {
-  return (
-    <>
-      {row.owner ? (
-        <FlexWidget style={{ width: 16, height: 16, borderRadius: 8, backgroundColor: ink(c.p, c.p.button), alignItems: 'center', justifyContent: 'center', marginLeft: 4 }}>
-          <TextWidget text={row.owner} style={{ fontSize: 8, fontWeight: '600', color: ink(c.p, 1) }} />
-        </FlexWidget>
-      ) : null}
-      {row.vis === 'private' && !row.owner ? (
-        <SvgWidget svg={lockSvg(c.p.ink, 11, c.p.secondary)} style={{ width: 11, height: 11, marginLeft: 4 }} />
-      ) : null}
-      {row.vis === 'public' ? <SvgWidget svg={globeSvg(c.p.ink, 11, c.p.tertiary)} style={{ width: 11, height: 11, marginLeft: 4 }} /> : null}
-    </>
-  );
-}
-
 function EventRow({ row, c, h = 25 }: { row: RowModel; c: Ctx; h?: number }) {
   return (
     <FlexWidget style={{ width: 'match_parent', height: h, flexDirection: 'row', alignItems: 'center' }}>
@@ -122,9 +106,17 @@ function EventRow({ row, c, h = 25 }: { row: RowModel; c: Ctx; h?: number }) {
           <T c={c} text={row.time} size={10.5} alpha={row.done ? c.p.secondary * 0.5 : c.p.secondary} />
         </FlexWidget>
         <T c={c} text={row.title} size={13} weight="600" flex={1} alpha={row.done ? 0.5 : 1} />
-        <Marks row={row} c={c} />
+      {row.owner ? (
+        <FlexWidget style={{ width: 16, height: 16, borderRadius: 8, backgroundColor: ink(c.p, c.p.button), alignItems: 'center', justifyContent: 'center', marginLeft: 4 }}>
+          <TextWidget text={row.owner} style={{ fontSize: 8, fontWeight: '600', color: ink(c.p, 1) }} />
+        </FlexWidget>
+      ) : null}
+      {row.vis === 'private' && !row.owner ? (
+        <SvgWidget svg={lockSvg(c.p.ink, 11, c.p.secondary)} style={{ width: 11, height: 11, marginLeft: 4 }} />
+      ) : null}
+      {row.vis === 'public' ? <SvgWidget svg={globeSvg(c.p.ink, 11, c.p.tertiary)} style={{ width: 11, height: 11, marginLeft: 4 }} /> : null}
       </FlexWidget>
-      <Check row={row} c={c} />
+      {row.check ? <Check row={row} c={c} /> : null}
     </FlexWidget>
   );
 }
@@ -162,7 +154,7 @@ function Card({ item, c }: { item: Extract<Item, { kind: 'card' }>; c: Ctx }) {
         <FlexWidget style={{ width: 3, height: 19, borderRadius: 2, backgroundColor: swatch(c, row.hue), marginRight: 6 }} />
         <T c={c} text={row.time} size={10.5} alpha={c.p.secondary} width={48} />
         <T c={c} text={row.title} size={13} weight="600" flex={1} />
-        <Check row={row} c={c} />
+        {row.check ? <Check row={row} c={c} /> : null}
       </FlexWidget>
       <FlexWidget style={{ width: 'match_parent', flexDirection: 'row', alignItems: 'center', paddingRight: 8 }}>
         <Progress value={item.progress} c={c} />
@@ -213,7 +205,6 @@ function Goal({ g, c, size = 26, dim }: { g: GoalModel; c: Ctx; size?: number; d
 }
 
 function GoalsBlock({ goals, c, dim }: { goals: GoalModel[]; c: Ctx; dim: boolean }) {
-  if (!goals.length) return null;
   return (
     <FlexWidget style={{ width: 'match_parent', flexDirection: 'column', marginTop: 6, paddingTop: 5, borderTopWidth: 1, borderColor: ink(c.p, c.p.hairline) }}>
       {goals.map((g) => (
@@ -288,7 +279,7 @@ function Banner({ text, c }: { text: string; c: Ctx }) {
 
 function SmallBody({ m, c }: { m: WidgetModel; c: Ctx }) {
   const s = m.small;
-  if (!s) return null;
+  if (!s) return <FlexWidget style={{ flex: 1 }} />;
   if (s.kind === 'empty') {
     return (
       <FlexWidget style={{ flex: 1, width: 'match_parent', flexDirection: 'column' }}>
@@ -353,7 +344,7 @@ export function WidgetView({ m, p, tokens }: { m: WidgetModel; p: Palette; token
   }
 
   const dim = m.goalsDim;
-  const goals = <GoalsBlock goals={m.goals} c={c} dim={dim} />;
+  const goals = m.goals.length ? <GoalsBlock goals={m.goals} c={c} dim={dim} /> : null;
   const strip = m.strip ? (
     <FlexWidget style={{ marginTop: 4 }}>
       <T c={c} text={m.strip} size={10.5} alpha={c.p.tertiary} />
