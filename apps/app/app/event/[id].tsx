@@ -1,5 +1,7 @@
 import { Stack, useLocalSearchParams } from 'expo-router';
 
+import { DeviceEventSheet } from '@/features/calendars/device/DeviceEventSheet';
+import { isDeviceEventId } from '@/features/calendars/device';
 import { EventSheet } from '@/features/event-sheet/EventSheet';
 
 export default function EventRoute() {
@@ -10,7 +12,8 @@ export default function EventRoute() {
       <Stack.Screen
         options={{ presentation: 'transparentModal', animation: 'none', contentStyle: { backgroundColor: 'transparent' } }}
       />
-      <EventSheet id={String(id)} />
+      {/* phone-calendar events (`dev_…`) are not in the store: their own read-only sheet */}
+      {isDeviceEventId(String(id)) ? <DeviceEventSheet id={String(id)} /> : <EventSheet id={String(id)} />}
     </>
   );
 }

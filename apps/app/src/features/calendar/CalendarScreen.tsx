@@ -14,6 +14,7 @@ import { Icon } from '@/components/Icon';
 import { ToastHost } from '@/components/Toast';
 import { getStore, useCalendarData, usePrefs, useSyncStatus } from '@/store';
 import { stampSeen } from '../checkin/state';
+import { useCalendarWithDevice } from '../calendars/device';
 import { CheckInHost } from '../checkin/CheckInHost';
 import { GoalChips } from '../goals/GoalChips';
 import { GoalsSheet } from '../goals/GoalsSheet';
@@ -134,7 +135,9 @@ export function CalendarScreen() {
   const summary = useMemo(() => goalSummary(data.goals, data.events, nowCtx), [data.goals, data.events, nowCtx]);
 
   const title = mode === 'month' ? monthTitle(focus, now.today) : titleFor(days, now.today);
-  const { items: allDayItems, rows: allDayRows } = useMemo(() => packAllDay(data.events, days), [data.events, days]);
+  /* phone calendars: read-only events next to ours (never in the store, never uploaded) */
+  const view = useCalendarWithDevice(data, focus);
+  const { items: allDayItems, rows: allDayRows } = useMemo(() => packAllDay(view.events, days), [view.events, days]);
   const away = awayFromToday(mode, focus, now.today);
 
   const jumpToDay = useCallback((d: Date) => {
@@ -195,7 +198,7 @@ export function CalendarScreen() {
                 onPrev={() => go(-1)}
                 onNext={() => go(1)}
               />
-              <AllDayBand items={allDayItems} rows={allDayRows} colW={colW} week={week} cats={data.cats} onOpen={openAllDay} />
+              <AllDayBand items={allDayItems} rows={allDayRows} colW={colW} week={week} cats={view.cats} onOpen={openAllDay} />
             </>
           )}
         </CalendarHeader>
@@ -204,8 +207,8 @@ export function CalendarScreen() {
           <View style={{ flex: 1 }}>
             <MonthView
               focus={focus}
-              events={data.events}
-              cats={data.cats}
+              events={view.events}
+              cats={view.cats}
               todayKey={now.todayKey}
               bottomPad={bottomPad}
               onDay={jumpToDay}
@@ -215,8 +218,8 @@ export function CalendarScreen() {
           <CalendarGrid
             days={days}
             week={week}
-            events={data.events}
-            cats={data.cats}
+            events={view.events}
+            cats={view.cats}
             zoom={prefs.zoom}
             sun={{ sunrise: prefs.sun.sunrise, sunset: prefs.sun.sunset }}
             nowMs={now.nowMs}

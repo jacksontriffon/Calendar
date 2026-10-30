@@ -58,7 +58,8 @@ export interface ProtoEvent {
   /* --- fields the Expo app adds on top of the prototype --- */
   seriesId?: string | null;
   visibility?: Visibility;
-  source?: EventSource;
+  /** `'device'`: a read-only phone-calendar event, held in memory by the app and never stored or synced */
+  source?: EventSource | 'device';
   isMine?: boolean;
 }
 
@@ -418,7 +419,7 @@ export const eventToRow = (e: ProtoEvent, o: EventRowOpts): EventRow => ({
   win: e.win || null,
   series_id: o.seriesId !== undefined ? o.seriesId : e.seriesId ?? null,
   visibility: o.visibility ?? e.visibility ?? 'private',
-  source: e.source ?? 'app',
+  source: e.source === 'google' ? 'google' : 'app',
   google_calendar_id: null,
   google_event_id: null,
   etag: null,
