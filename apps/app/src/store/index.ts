@@ -5,9 +5,17 @@
  * edits / applyOps / history helpers work on it directly. Every change goes
  * through `commit` (or `applyResult` / `undo`), which records History/Undo.
  *
- * This file is the contract. The implementation below is in-memory only;
- * the sync layer (src/sync) replaces it with the local-first, Supabase-backed
- * store (phase 3) without changing these exports.
+ * This file is the contract. `createMemoryStore` is the in-memory
+ * implementation (signed-out state, tests); the sync layer (src/sync)
+ * swaps in the local-first, Supabase-backed store with `setStore` once a user
+ * is signed in, without changing these exports.
+ *
+ * Additions on top of the original contract (all additive):
+ *  - `StoreState.series` and `setSeries()`: weekly series rows (events refer
+ *    to them with `ProtoEvent.seriesId`).
+ *  - `getStore()` returns a stable facade that delegates to the current
+ *    implementation, so `useStoreState` keeps working when `setStore` swaps it.
+ *  - `useSyncConflict()` / `useSessionExpired()` (see ./globalState).
  */
 import { useSyncExternalStore } from 'react';
 import {
@@ -21,7 +29,23 @@ import {
   type HistoryEntry,
   type HistoryKind,
   type Prefs,
+  type Series,
 } from '@calendar/core';
+
+export {
+  clearSyncConflicts,
+  dismissSyncConflict,
+  emitSyncConflict,
+  getSessionExpired,
+  getSyncConflicts,
+  setSessionExpired,
+  subscribeSessionExpired,
+  subscribeSyncConflicts,
+  undoSyncConflict,
+  useSessionExpired,
+  useSyncConflict,
+  type SyncConflict,
+} from './globalState';
 
 export type SyncStatus = 'idle' | 'syncing' | 'offline' | 'error';
 
@@ -31,6 +55,8 @@ export interface StoreState {
   /** newest first, device-only (as in the prototype) */
   history: HistoryEntry[];
   sync: SyncStatus;
+  /** weekly series rows; events point at them with `seriesId` */
+  series: Series[];
 }
 
 export interface CalendarStore {
@@ -47,7 +73,17 @@ export interface CalendarStore {
   newId(): string;
 }
 
-const uuid = (): string =>
+/** `CalendarStore` plus the additions the synced store provides. */
+export interface FullCalendarStore extends CalendarStore {
+  /**
+   * Replace the weekly series list. Call it in the same tick as the `commit`
+   * that creates or removes the events of a series; series rows are always
+   * written before the events that refer to them. Not recorded in History.
+   */
+  setSeries(next: Series[]): void;
+}
+
+export const uuid = (): string =>
   typeof globalThis.crypto?.randomUUID === 'function'
     ? globalThis.crypto.randomUUID()
     : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
@@ -55,12 +91,13 @@ const uuid = (): string =>
         return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
       });
 
-export function createMemoryStore(initial?: Partial<StoreState>): CalendarStore {
+export function createMemoryStore(initial?: Partial<StoreState>): FullCalendarStore {
   let state: StoreState = {
     data: { events: [], cats: defaultCats(), goals: [] },
     prefs: DEFAULT_PREFS,
     history: [],
     sync: 'idle',
+    series: [],
     ...initial,
   };
   const listeners = new Set<() => void>();
@@ -93,21 +130,62 @@ export function createMemoryStore(initial?: Partial<StoreState>): CalendarStore 
     setPrefs(patch) {
       set({ prefs: { ...state.prefs, ...patch } });
     },
+    setSeries(next) {
+      set({ series: next });
+    },
     newId: uuid,
   };
 }
 
-let store: CalendarStore = createMemoryStore();
+let current: FullCalendarStore = createMemoryStore();
+const listeners = new Set<() => void>();
+let detach: (() => void) | null = null;
 
-/** Swap the implementation (the sync layer calls this once at startup; tests too). */
+const onCurrentChange = () => listeners.forEach((l) => l());
+const attach = () => {
+  detach?.();
+  detach = listeners.size ? subscribeTo(current) : null;
+};
+const subscribeTo = (s: CalendarStore) => s.subscribe(onCurrentChange);
+
+/**
+ * The store screens talk to. It never changes identity: it forwards to
+ * whichever implementation `setStore` installed last, and re-notifies its
+ * subscribers when that changes, so a swap after first render is safe.
+ */
+const facade: FullCalendarStore = {
+  getState: () => current.getState(),
+  subscribe(listener) {
+    listeners.add(listener);
+    if (listeners.size === 1) attach();
+    return () => {
+      listeners.delete(listener);
+      if (!listeners.size) attach();
+    };
+  },
+  commit: (next, label, kind) => current.commit(next, label, kind),
+  applyResult: (r) => current.applyResult(r),
+  undo: (entryId) => current.undo(entryId),
+  setPrefs: (patch) => current.setPrefs(patch),
+  setSeries: (next) => current.setSeries(next),
+  newId: () => current.newId(),
+};
+
+/** Swap the implementation (the sync layer calls this when the user changes; tests too). */
 export function setStore(next: CalendarStore): void {
-  store = next;
+  current = withSeries(next);
+  attach();
+  onCurrentChange();
 }
 
-export const getStore = (): CalendarStore => store;
+/** A store written against the original contract has no series support; give it a no-op. */
+const withSeries = (s: CalendarStore): FullCalendarStore =>
+  typeof (s as Partial<FullCalendarStore>).setSeries === 'function' ? (s as FullCalendarStore) : Object.assign(s, { setSeries: () => {} });
+
+export const getStore = (): FullCalendarStore => facade;
 
 export function useStoreState<T>(select: (s: StoreState) => T): T {
-  const s = store;
+  const s = facade;
   return useSyncExternalStore(s.subscribe, () => select(s.getState()), () => select(s.getState()));
 }
 
@@ -115,3 +193,4 @@ export const useCalendarData = () => useStoreState((s) => s.data);
 export const usePrefs = () => useStoreState((s) => s.prefs);
 export const useHistory = () => useStoreState((s) => s.history);
 export const useSyncStatus = () => useStoreState((s) => s.sync);
+export const useSeries = () => useStoreState((s) => s.series);
