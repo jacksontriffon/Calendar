@@ -1,0 +1,6207 @@
+{
+ "today": "2026-10-30",
+ "nowMin": 860,
+ "uid": 26,
+ "data": {
+  "events": [
+   {
+    "id": "e1",
+    "day": "2026-10-13",
+    "cat": "Marathon training",
+    "title": "Tempo 6k",
+    "start": 1080,
+    "end": 1125,
+    "done": true
+   },
+   {
+    "id": "e2",
+    "day": "2026-10-14",
+    "cat": "Deep work",
+    "title": "Sync spec",
+    "start": 540,
+    "end": 720,
+    "done": true
+   },
+   {
+    "id": "e3",
+    "day": "2026-10-15",
+    "cat": "Deep work",
+    "title": "Sync spec review",
+    "start": 570,
+    "end": 660,
+    "done": true
+   },
+   {
+    "id": "e4",
+    "day": "2026-10-16",
+    "cat": "Marathon training",
+    "title": "Long run",
+    "start": 480,
+    "end": 570,
+    "done": true
+   },
+   {
+    "id": "e5",
+    "day": "2026-10-18",
+    "cat": "Marathon training",
+    "title": "Easy 6k",
+    "start": 1050,
+    "end": 1095,
+    "done": true
+   },
+   {
+    "id": "e6",
+    "day": "2026-10-20",
+    "cat": "Deep work",
+    "title": "Prototype conflict handling",
+    "start": 540,
+    "end": 750,
+    "done": true
+   },
+   {
+    "id": "e7",
+    "day": "2026-10-21",
+    "cat": "Deep work",
+    "title": "Conflict handling, part two",
+    "start": 540,
+    "end": 690,
+    "done": true
+   },
+   {
+    "id": "e8",
+    "day": "2026-10-22",
+    "cat": "Deep work",
+    "title": "Tests for the merge path",
+    "start": 780,
+    "end": 900,
+    "done": true
+   },
+   {
+    "id": "e9",
+    "day": "2026-10-23",
+    "cat": "Marathon training",
+    "title": "Long run",
+    "start": 480,
+    "end": 590,
+    "done": true
+   },
+   {
+    "id": "e10",
+    "day": "2026-10-24",
+    "cat": "Deep work",
+    "title": "Offline queue",
+    "start": 540,
+    "end": 690,
+    "done": true
+   },
+   {
+    "id": "e11",
+    "day": "2026-10-25",
+    "cat": "Marathon training",
+    "title": "Intervals",
+    "start": 1080,
+    "end": 1135,
+    "done": true
+   },
+   {
+    "id": "e12",
+    "day": "2026-10-27",
+    "cat": "Deep work",
+    "title": "Schema migration",
+    "start": 570,
+    "end": 750,
+    "done": true
+   },
+   {
+    "id": "e13",
+    "day": "2026-10-27",
+    "cat": "Marathon training",
+    "title": "Intervals",
+    "start": 1080,
+    "end": 1140,
+    "done": true
+   },
+   {
+    "id": "e14",
+    "day": "2026-10-27",
+    "cat": "Reading",
+    "title": "Reading",
+    "start": 1275,
+    "end": 1320,
+    "done": true
+   },
+   {
+    "id": "e15",
+    "day": "2026-10-28",
+    "cat": "Deep work",
+    "title": "Migration, part two",
+    "start": 540,
+    "end": 720,
+    "done": true
+   },
+   {
+    "id": "e16",
+    "day": "2026-10-28",
+    "cat": "Reading",
+    "title": "Reading",
+    "start": 1260,
+    "end": 1310,
+    "done": true
+   },
+   {
+    "id": "e17",
+    "day": "2026-10-29",
+    "cat": "Health",
+    "title": "Morning pages",
+    "start": 450,
+    "end": 480
+   },
+   {
+    "id": "e18",
+    "day": "2026-10-29",
+    "cat": "Deep work",
+    "title": "Rewrite the sync layer",
+    "start": 540,
+    "end": 690,
+    "done": true
+   },
+   {
+    "id": "e19",
+    "day": "2026-10-29",
+    "cat": "Social",
+    "title": "Lunch with Dan",
+    "start": 750,
+    "end": 795
+   },
+   {
+    "id": "e20",
+    "day": "2026-10-29",
+    "cat": "Marathon training",
+    "title": "Easy 8k",
+    "start": 1050,
+    "end": 1110,
+    "done": true
+   },
+   {
+    "id": "e21",
+    "day": "2026-10-29",
+    "cat": "Reading",
+    "title": "Reading",
+    "start": 1260,
+    "end": 1305,
+    "done": true
+   },
+   {
+    "id": "e22",
+    "day": "2026-10-30",
+    "cat": "Food",
+    "title": "Coffee + plan the day",
+    "start": 480,
+    "end": 505
+   },
+   {
+    "id": "e23",
+    "day": "2026-10-30",
+    "cat": "Deep work",
+    "title": "Sync layer, part two",
+    "start": 540,
+    "end": 690
+   },
+   {
+    "id": "e24",
+    "day": "2026-10-30",
+    "cat": "Pets",
+    "title": "Dog walk",
+    "start": 1050,
+    "end": 1090
+   },
+   {
+    "id": "e25",
+    "day": "2026-10-31",
+    "cat": "Marathon training",
+    "title": "Long run",
+    "start": 480,
+    "end": 600
+   },
+   {
+    "id": "e26",
+    "day": "2026-10-31",
+    "cat": "Family",
+    "title": "Family brunch",
+    "start": 660,
+    "end": 750
+   }
+  ],
+  "cats": {
+   "Work": 255,
+   "Food": 72,
+   "Health": 132,
+   "Family": 28,
+   "Social": 12,
+   "Routine": 104,
+   "Pets": 166,
+   "Deep work": 240,
+   "Marathon training": 125,
+   "Reading": 290
+  },
+  "goals": [
+   {
+    "id": "g1",
+    "title": "Deep work",
+    "cat": "Deep work",
+    "outcome": "Ship the sync layer rewrite",
+    "hours": 70,
+    "start": "2026-10-10",
+    "deadline": "2026-11-24",
+    "hue": 255,
+    "at": "NOW"
+   },
+   {
+    "id": "g2",
+    "title": "Marathon training",
+    "cat": "Marathon training",
+    "outcome": "Run a sub-4 hour marathon",
+    "hours": 95,
+    "start": "2026-10-06",
+    "deadline": "2027-01-04",
+    "hue": 132,
+    "at": "NOW"
+   },
+   {
+    "id": "g3",
+    "title": "Reading",
+    "cat": "Reading",
+    "outcome": "Finish four books",
+    "hours": 14,
+    "start": "2026-10-26",
+    "deadline": "2026-11-12",
+    "hue": 290,
+    "at": "NOW"
+   }
+  ]
+ },
+ "goals": {
+  "g1": {
+   "span": [
+    "2026-10-10",
+    "2026-11-25"
+   ],
+   "rate": {
+    "total": 46,
+    "target": 70,
+    "perDay": 1.5217391304347827,
+    "perWeek": 10.652173913043478,
+    "unit": "week",
+    "per": 10.652173913043478,
+    "label": "11h a week"
+   },
+   "stats": {
+    "target": 70,
+    "done": 23.5,
+    "booked": 2.5,
+    "count": 10,
+    "total": 46,
+    "elapsed": 20,
+    "daysLeft": 26,
+    "remain": 46.5,
+    "frac": 0.4477657004830918,
+    "s0": "2026-10-10",
+    "s1": "2026-11-25",
+    "active": true,
+    "pct": 0.3357142857142857,
+    "bookedPct": 0.37142857142857144,
+    "expected": 31.343599033816425,
+    "delta": -7.8435990338164245,
+    "perDay": 1.5217391304347827,
+    "perWeek": 10.652173913043478
+   },
+   "pace": "7.8h behind",
+   "due": "24 Nov",
+   "math": "70h by 24 Nov · 1.5h a day, 11h a week",
+   "paceOf": {
+    "word": "−7.8h behind",
+    "num": "−7.8h"
+   },
+   "load": 23526,
+   "block": "<goal mode=\"reduce\">\nid g1 | Deep work | outcome: Ship the sync layer rewrite\ndeadline 2026-11-24 (26 of 46 days left)\ntotal 70h | fixed pace 11h a week\ndone 24h | booked ahead, not yet done 2.5h | still to do 47h\nexpected by now 31h | 7.8h behind\n</goal>"
+  },
+  "g2": {
+   "span": [
+    "2026-10-06",
+    "2027-01-05"
+   ],
+   "rate": {
+    "total": 91,
+    "target": 95,
+    "perDay": 1.043956043956044,
+    "perWeek": 7.307692307692308,
+    "unit": "week",
+    "per": 7.307692307692308,
+    "label": "7.3h a week"
+   },
+   "stats": {
+    "target": 95,
+    "done": 7.75,
+    "booked": 2,
+    "count": 8,
+    "total": 91,
+    "elapsed": 24,
+    "daysLeft": 67,
+    "remain": 87.25,
+    "frac": 0.2702991452991453,
+    "s0": "2026-10-06",
+    "s1": "2027-01-05",
+    "active": true,
+    "pct": 0.08157894736842106,
+    "bookedPct": 0.10263157894736842,
+    "expected": 25.6784188034188,
+    "delta": -17.9284188034188,
+    "perDay": 1.043956043956044,
+    "perWeek": 7.307692307692308
+   },
+   "pace": "18h behind",
+   "due": "4 Jan 2027",
+   "math": "95h by 4 Jan 2027 · 1h a day, 7.3h a week",
+   "paceOf": {
+    "word": "−18h behind",
+    "num": "−18h"
+   },
+   "load": 7759.75,
+   "block": "<goal mode=\"reduce\">\nid g2 | Marathon training | outcome: Run a sub-4 hour marathon\ndeadline 2027-01-04 (67 of 91 days left)\ntotal 95h | fixed pace 7.3h a week\ndone 7.8h | booked ahead, not yet done 2h | still to do 87h\nexpected by now 26h | 18h behind\n</goal>"
+  },
+  "g3": {
+   "span": [
+    "2026-10-26",
+    "2026-11-13"
+   ],
+   "rate": {
+    "total": 18,
+    "target": 14,
+    "perDay": 0.7777777777777778,
+    "perWeek": 5.444444444444445,
+    "unit": "day",
+    "per": 0.7777777777777778,
+    "label": "45m a day"
+   },
+   "stats": {
+    "target": 14,
+    "done": 2.3333333333333335,
+    "booked": 0,
+    "count": 3,
+    "total": 18,
+    "elapsed": 4,
+    "daysLeft": 14,
+    "remain": 11.666666666666666,
+    "frac": 0.25540123456790126,
+    "s0": "2026-10-26",
+    "s1": "2026-11-13",
+    "active": true,
+    "pct": 0.16666666666666669,
+    "bookedPct": 0.16666666666666669,
+    "expected": 3.5756172839506175,
+    "delta": -1.242283950617284,
+    "perDay": 0.7777777777777778,
+    "perWeek": 5.444444444444445
+   },
+   "pace": "1.2h behind",
+   "due": "12 Nov",
+   "math": "14h by 12 Nov · 45m a day, 5.4h a week",
+   "paceOf": {
+    "word": "−1.2h behind",
+    "num": "−1.2h"
+   },
+   "load": 2335.666666666667,
+   "block": "<goal mode=\"reduce\">\nid g3 | Reading | outcome: Finish four books\ndeadline 2026-11-12 (14 of 18 days left)\ntotal 14h | fixed pace 45m a day\ndone 2.3h | booked ahead, not yet done 0h | still to do 12h\nexpected by now 3.6h | 1.2h behind\n</goal>"
+  }
+ },
+ "weeklyLoad": 23.404310665180233,
+ "activeGoals": [
+  "g1",
+  "g2",
+  "g3"
+ ],
+ "freeSlot": {
+  "0:30": 870,
+  "0:120": 870,
+  "0:600": 780,
+  "1:30": 600,
+  "1:120": 750,
+  "1:600": 750,
+  "-1:30": 690,
+  "-1:120": 795,
+  "-1:600": 780
+ },
+ "calBlock": "<calendar>\nToday is Friday, October 30, 2026. The current time is 14:20 (860 minutes past midnight).\nExisting categories: Work, Food, Health, Family, Social, Routine, Pets, Deep work, Marathon training, Reading\nEvents already on the calendar:\n  e9 | 2026-10-23 | 08:00-09:50 | Marathon training | Long run\n  e10 | 2026-10-24 | 09:00-11:30 | Deep work | Offline queue\n  e11 | 2026-10-25 | 18:00-18:55 | Marathon training | Intervals\n  e12 | 2026-10-27 | 09:30-12:30 | Deep work | Schema migration\n  e13 | 2026-10-27 | 18:00-19:00 | Marathon training | Intervals\n  e14 | 2026-10-27 | 21:15-22:00 | Reading | Reading\n  e15 | 2026-10-28 | 09:00-12:00 | Deep work | Migration, part two\n  e16 | 2026-10-28 | 21:00-21:50 | Reading | Reading\n  e17 | 2026-10-29 | 07:30-08:00 | Health | Morning pages\n  e18 | 2026-10-29 | 09:00-11:30 | Deep work | Rewrite the sync layer\n  e19 | 2026-10-29 | 12:30-13:15 | Social | Lunch with Dan\n  e20 | 2026-10-29 | 17:30-18:30 | Marathon training | Easy 8k\n  e21 | 2026-10-29 | 21:00-21:45 | Reading | Reading\n  e22 | 2026-10-30 | 08:00-08:25 | Food | Coffee + plan the day\n  e23 | 2026-10-30 | 09:00-11:30 | Deep work | Sync layer, part two\n  e24 | 2026-10-30 | 17:30-18:10 | Pets | Dog walk\n  e25 | 2026-10-31 | 08:00-10:00 | Marathon training | Long run\n  e26 | 2026-10-31 | 11:00-12:30 | Family | Family brunch\nGoals already set:\n  g1 | Deep work | outcome: Ship the sync layer rewrite | deadline 2026-11-24 (26 days left) | 70h estimate = 11h a week | done 24h, booked (not yet marked done) 2.5h | 7.8h behind | category \"Deep work\"\n  g2 | Marathon training | outcome: Run a sub-4 hour marathon | deadline 2027-01-04 (67 days left) | 95h estimate = 7.3h a week | done 7.8h, booked (not yet marked done) 2h | 18h behind | category \"Marathon training\"\n  g3 | Reading | outcome: Finish four books | deadline 2026-11-12 (14 days left) | 14h estimate = 45m a day | done 2.3h, booked (not yet marked done) 0h | 1.2h behind | category \"Reading\"\n  total pace across active goals: 23h a week\n</calendar>",
+ "ciPrompt": "<checkin>\nToday is Friday, October 30. The time is now 14:20.\nGoals and where they stand:\n  g1 | Deep work | 24 of 70h by 2026-11-24 (needs 11h a week) | 7.8h behind | 26 days left\n  g2 | Marathon training | 7.8 of 95h by 2027-01-04 (needs 7.3h a week) | 18h behind | 67 days left\n  g3 | Reading | 2.3 of 14h by 2026-11-12 (needs 45m a day) | 1.2h behind | 14 days left\n\nAlready on today:\n  08:00-08:25 | Coffee + plan the day (Food)\n  09:00-11:30 | Sync layer, part two (Deep work)\n  17:30-18:10 | Dog walk (Pets)\n\nThe last seven days:\n  2026-10-23 | 08:00 Long run (Marathon training)\n  2026-10-24 | 09:00 Offline queue (Deep work)\n  2026-10-25 | 18:00 Intervals (Marathon training)\n  2026-10-27 | 09:30 Schema migration (Deep work); 18:00 Intervals (Marathon training); 21:15 Reading (Reading)\n  2026-10-28 | 09:00 Migration, part two (Deep work); 21:00 Reading (Reading)\n  2026-10-29 | 07:30 Morning pages (Health); 09:00 Rewrite the sync layer (Deep work); 12:30 Lunch with Dan (Social); 17:30 Easy 8k (Marathon training); 21:00 Reading (Reading)\n\nGoal sessions that ended with no win logged (id | when | title | goal) — one win question each:\n  e20 | 2026-10-29 17:30-18:30 | Easy 8k | goal: Marathon training (Run a sub-4 hour marathon)\n  e21 | 2026-10-29 21:00-21:45 | Reading | goal: Reading (Finish four books)\n  e23 | today 09:00-11:30 | Sync layer, part two | goal: Deep work (Ship the sync layer rewrite)\n\nAlready being confirmed separately (scheduled, now passed, awaiting a yes/no) — never ask about these:\n  08:00 | Coffee + plan the day\n\n</checkin>",
+ "ciLocalQs": [
+  {
+   "field": "goal",
+   "id": "g2",
+   "q": "Marathon training is 18h behind — how much can you put in today?",
+   "chips": [
+    "1h",
+    "2h",
+    "Not today"
+   ]
+  }
+ ],
+ "winCands": [
+  "e20",
+  "e21",
+  "e23"
+ ],
+ "late": {
+  "0": {
+   "stats": [
+    {
+     "id": "g1",
+     "done": 23.5,
+     "delta": -6.934782608695652,
+     "frac": 0.43478260869565216,
+     "expected": 30.434782608695652
+    },
+    {
+     "id": "g2",
+     "done": 7.75,
+     "delta": -17.304945054945055,
+     "frac": 0.26373626373626374,
+     "expected": 25.054945054945055
+    },
+    {
+     "id": "g3",
+     "done": 2.3333333333333335,
+     "delta": -0.7777777777777772,
+     "frac": 0.2222222222222222,
+     "expected": 3.1111111111111107
+    }
+   ],
+   "calBlock": "Today is Friday, October 30, 2026. The current time is 00:00 (0 minutes past midnight)."
+  },
+  "480": {
+   "stats": [
+    {
+     "id": "g1",
+     "done": 23.5,
+     "delta": -7.442028985507243,
+     "frac": 0.44202898550724634,
+     "expected": 30.942028985507243
+    },
+    {
+     "id": "g2",
+     "done": 7.75,
+     "delta": -17.6529304029304,
+     "frac": 0.2673992673992674,
+     "expected": 25.4029304029304
+    },
+    {
+     "id": "g3",
+     "done": 2.3333333333333335,
+     "delta": -1.0370370370370368,
+     "frac": 0.24074074074074073,
+     "expected": 3.3703703703703702
+    }
+   ],
+   "calBlock": "Today is Friday, October 30, 2026. The current time is 08:00 (480 minutes past midnight)."
+  },
+  "1200": {
+   "stats": [
+    {
+     "id": "g1",
+     "done": 23.5,
+     "delta": -8.202898550724633,
+     "frac": 0.45289855072463764,
+     "expected": 31.702898550724633
+    },
+    {
+     "id": "g2",
+     "done": 7.75,
+     "delta": -18.174908424908423,
+     "frac": 0.27289377289377287,
+     "expected": 25.924908424908423
+    },
+    {
+     "id": "g3",
+     "done": 2.3333333333333335,
+     "delta": -1.4259259259259252,
+     "frac": 0.2685185185185185,
+     "expected": 3.7592592592592586
+    }
+   ],
+   "calBlock": "Today is Friday, October 30, 2026. The current time is 20:00 (1200 minutes past midnight)."
+  }
+ },
+ "ops": {
+  "create_basic": {
+   "input": [
+    {
+     "op": "create",
+     "title": "standup",
+     "cat": "Work",
+     "start": 570,
+     "end": 585,
+     "dayOffset": 0
+    }
+   ],
+   "resolved": {
+    "events": [
+     {
+      "id": "e27",
+      "day": "2026-10-30",
+      "cat": "Work",
+      "title": "Standup",
+      "start": 570,
+      "end": 585,
+      "at": "NOW"
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290
+    },
+    "fresh": [],
+    "updates": [],
+    "deletes": [],
+    "goals": []
+   },
+   "uid": 27,
+   "after": {
+    "events": [
+     {
+      "id": "e1",
+      "day": "2026-10-13",
+      "cat": "Marathon training",
+      "title": "Tempo 6k",
+      "start": 1080,
+      "end": 1125,
+      "done": true
+     },
+     {
+      "id": "e2",
+      "day": "2026-10-14",
+      "cat": "Deep work",
+      "title": "Sync spec",
+      "start": 540,
+      "end": 720,
+      "done": true
+     },
+     {
+      "id": "e3",
+      "day": "2026-10-15",
+      "cat": "Deep work",
+      "title": "Sync spec review",
+      "start": 570,
+      "end": 660,
+      "done": true
+     },
+     {
+      "id": "e4",
+      "day": "2026-10-16",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 570,
+      "done": true
+     },
+     {
+      "id": "e5",
+      "day": "2026-10-18",
+      "cat": "Marathon training",
+      "title": "Easy 6k",
+      "start": 1050,
+      "end": 1095,
+      "done": true
+     },
+     {
+      "id": "e6",
+      "day": "2026-10-20",
+      "cat": "Deep work",
+      "title": "Prototype conflict handling",
+      "start": 540,
+      "end": 750,
+      "done": true
+     },
+     {
+      "id": "e7",
+      "day": "2026-10-21",
+      "cat": "Deep work",
+      "title": "Conflict handling, part two",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e8",
+      "day": "2026-10-22",
+      "cat": "Deep work",
+      "title": "Tests for the merge path",
+      "start": 780,
+      "end": 900,
+      "done": true
+     },
+     {
+      "id": "e9",
+      "day": "2026-10-23",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 590,
+      "done": true
+     },
+     {
+      "id": "e10",
+      "day": "2026-10-24",
+      "cat": "Deep work",
+      "title": "Offline queue",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e11",
+      "day": "2026-10-25",
+      "cat": "Marathon training",
+      "title": "Intervals",
+      "start": 1080,
+      "end": 1135,
+      "done": true
+     },
+     {
+      "id": "e12",
+      "day": "2026-10-27",
+      "cat": "Deep work",
+      "title": "Schema migration",
+      "start": 570,
+      "end": 750,
+      "done": true
+     },
+     {
+      "id": "e13",
+      "day": "2026-10-27",
+      "cat": "Marathon training",
+      "title": "Intervals",
+      "start": 1080,
+      "end": 1140,
+      "done": true
+     },
+     {
+      "id": "e14",
+      "day": "2026-10-27",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1275,
+      "end": 1320,
+      "done": true
+     },
+     {
+      "id": "e15",
+      "day": "2026-10-28",
+      "cat": "Deep work",
+      "title": "Migration, part two",
+      "start": 540,
+      "end": 720,
+      "done": true
+     },
+     {
+      "id": "e16",
+      "day": "2026-10-28",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1260,
+      "end": 1310,
+      "done": true
+     },
+     {
+      "id": "e17",
+      "day": "2026-10-29",
+      "cat": "Health",
+      "title": "Morning pages",
+      "start": 450,
+      "end": 480
+     },
+     {
+      "id": "e18",
+      "day": "2026-10-29",
+      "cat": "Deep work",
+      "title": "Rewrite the sync layer",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e19",
+      "day": "2026-10-29",
+      "cat": "Social",
+      "title": "Lunch with Dan",
+      "start": 750,
+      "end": 795
+     },
+     {
+      "id": "e20",
+      "day": "2026-10-29",
+      "cat": "Marathon training",
+      "title": "Easy 8k",
+      "start": 1050,
+      "end": 1110,
+      "done": true
+     },
+     {
+      "id": "e21",
+      "day": "2026-10-29",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1260,
+      "end": 1305,
+      "done": true
+     },
+     {
+      "id": "e22",
+      "day": "2026-10-30",
+      "cat": "Food",
+      "title": "Coffee + plan the day",
+      "start": 480,
+      "end": 505
+     },
+     {
+      "id": "e23",
+      "day": "2026-10-30",
+      "cat": "Deep work",
+      "title": "Sync layer, part two",
+      "start": 540,
+      "end": 690
+     },
+     {
+      "id": "e24",
+      "day": "2026-10-30",
+      "cat": "Pets",
+      "title": "Dog walk",
+      "start": 1050,
+      "end": 1090
+     },
+     {
+      "id": "e25",
+      "day": "2026-10-31",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 600
+     },
+     {
+      "id": "e26",
+      "day": "2026-10-31",
+      "cat": "Family",
+      "title": "Family brunch",
+      "start": 660,
+      "end": 750
+     },
+     {
+      "id": "e27",
+      "day": "2026-10-30",
+      "cat": "Work",
+      "title": "Standup",
+      "start": 570,
+      "end": 585,
+      "at": "NOW"
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290
+    },
+    "goals": [
+     {
+      "id": "g1",
+      "title": "Deep work",
+      "cat": "Deep work",
+      "outcome": "Ship the sync layer rewrite",
+      "hours": 70,
+      "start": "2026-10-10",
+      "deadline": "2026-11-24",
+      "hue": 255,
+      "at": "NOW"
+     },
+     {
+      "id": "g2",
+      "title": "Marathon training",
+      "cat": "Marathon training",
+      "outcome": "Run a sub-4 hour marathon",
+      "hours": 95,
+      "start": "2026-10-06",
+      "deadline": "2027-01-04",
+      "hue": 132,
+      "at": "NOW"
+     },
+     {
+      "id": "g3",
+      "title": "Reading",
+      "cat": "Reading",
+      "outcome": "Finish four books",
+      "hours": 14,
+      "start": "2026-10-26",
+      "deadline": "2026-11-12",
+      "hue": 290,
+      "at": "NOW"
+     }
+    ]
+   },
+   "message": "1 event added",
+   "newIds": [
+    "e27"
+   ],
+   "history": {
+    "label": "Claude · 1 event added",
+    "kind": "claude"
+   },
+   "unchanged": false
+  },
+  "create_overnight": {
+   "input": [
+    {
+     "op": "create",
+     "title": "Sleep",
+     "cat": "Health",
+     "start": 1320,
+     "end": 480,
+     "dayOffset": 0
+    }
+   ],
+   "resolved": {
+    "events": [
+     {
+      "id": "e27",
+      "day": "2026-10-30",
+      "cat": "Health",
+      "title": "Sleep",
+      "start": 1320,
+      "end": 1920,
+      "at": "NOW"
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290
+    },
+    "fresh": [],
+    "updates": [],
+    "deletes": [],
+    "goals": []
+   },
+   "uid": 27,
+   "after": {
+    "events": [
+     {
+      "id": "e1",
+      "day": "2026-10-13",
+      "cat": "Marathon training",
+      "title": "Tempo 6k",
+      "start": 1080,
+      "end": 1125,
+      "done": true
+     },
+     {
+      "id": "e2",
+      "day": "2026-10-14",
+      "cat": "Deep work",
+      "title": "Sync spec",
+      "start": 540,
+      "end": 720,
+      "done": true
+     },
+     {
+      "id": "e3",
+      "day": "2026-10-15",
+      "cat": "Deep work",
+      "title": "Sync spec review",
+      "start": 570,
+      "end": 660,
+      "done": true
+     },
+     {
+      "id": "e4",
+      "day": "2026-10-16",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 570,
+      "done": true
+     },
+     {
+      "id": "e5",
+      "day": "2026-10-18",
+      "cat": "Marathon training",
+      "title": "Easy 6k",
+      "start": 1050,
+      "end": 1095,
+      "done": true
+     },
+     {
+      "id": "e6",
+      "day": "2026-10-20",
+      "cat": "Deep work",
+      "title": "Prototype conflict handling",
+      "start": 540,
+      "end": 750,
+      "done": true
+     },
+     {
+      "id": "e7",
+      "day": "2026-10-21",
+      "cat": "Deep work",
+      "title": "Conflict handling, part two",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e8",
+      "day": "2026-10-22",
+      "cat": "Deep work",
+      "title": "Tests for the merge path",
+      "start": 780,
+      "end": 900,
+      "done": true
+     },
+     {
+      "id": "e9",
+      "day": "2026-10-23",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 590,
+      "done": true
+     },
+     {
+      "id": "e10",
+      "day": "2026-10-24",
+      "cat": "Deep work",
+      "title": "Offline queue",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e11",
+      "day": "2026-10-25",
+      "cat": "Marathon training",
+      "title": "Intervals",
+      "start": 1080,
+      "end": 1135,
+      "done": true
+     },
+     {
+      "id": "e12",
+      "day": "2026-10-27",
+      "cat": "Deep work",
+      "title": "Schema migration",
+      "start": 570,
+      "end": 750,
+      "done": true
+     },
+     {
+      "id": "e13",
+      "day": "2026-10-27",
+      "cat": "Marathon training",
+      "title": "Intervals",
+      "start": 1080,
+      "end": 1140,
+      "done": true
+     },
+     {
+      "id": "e14",
+      "day": "2026-10-27",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1275,
+      "end": 1320,
+      "done": true
+     },
+     {
+      "id": "e15",
+      "day": "2026-10-28",
+      "cat": "Deep work",
+      "title": "Migration, part two",
+      "start": 540,
+      "end": 720,
+      "done": true
+     },
+     {
+      "id": "e16",
+      "day": "2026-10-28",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1260,
+      "end": 1310,
+      "done": true
+     },
+     {
+      "id": "e17",
+      "day": "2026-10-29",
+      "cat": "Health",
+      "title": "Morning pages",
+      "start": 450,
+      "end": 480
+     },
+     {
+      "id": "e18",
+      "day": "2026-10-29",
+      "cat": "Deep work",
+      "title": "Rewrite the sync layer",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e19",
+      "day": "2026-10-29",
+      "cat": "Social",
+      "title": "Lunch with Dan",
+      "start": 750,
+      "end": 795
+     },
+     {
+      "id": "e20",
+      "day": "2026-10-29",
+      "cat": "Marathon training",
+      "title": "Easy 8k",
+      "start": 1050,
+      "end": 1110,
+      "done": true
+     },
+     {
+      "id": "e21",
+      "day": "2026-10-29",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1260,
+      "end": 1305,
+      "done": true
+     },
+     {
+      "id": "e22",
+      "day": "2026-10-30",
+      "cat": "Food",
+      "title": "Coffee + plan the day",
+      "start": 480,
+      "end": 505
+     },
+     {
+      "id": "e23",
+      "day": "2026-10-30",
+      "cat": "Deep work",
+      "title": "Sync layer, part two",
+      "start": 540,
+      "end": 690
+     },
+     {
+      "id": "e24",
+      "day": "2026-10-30",
+      "cat": "Pets",
+      "title": "Dog walk",
+      "start": 1050,
+      "end": 1090
+     },
+     {
+      "id": "e25",
+      "day": "2026-10-31",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 600
+     },
+     {
+      "id": "e26",
+      "day": "2026-10-31",
+      "cat": "Family",
+      "title": "Family brunch",
+      "start": 660,
+      "end": 750
+     },
+     {
+      "id": "e27",
+      "day": "2026-10-30",
+      "cat": "Health",
+      "title": "Sleep",
+      "start": 1320,
+      "end": 1920,
+      "at": "NOW"
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290
+    },
+    "goals": [
+     {
+      "id": "g1",
+      "title": "Deep work",
+      "cat": "Deep work",
+      "outcome": "Ship the sync layer rewrite",
+      "hours": 70,
+      "start": "2026-10-10",
+      "deadline": "2026-11-24",
+      "hue": 255,
+      "at": "NOW"
+     },
+     {
+      "id": "g2",
+      "title": "Marathon training",
+      "cat": "Marathon training",
+      "outcome": "Run a sub-4 hour marathon",
+      "hours": 95,
+      "start": "2026-10-06",
+      "deadline": "2027-01-04",
+      "hue": 132,
+      "at": "NOW"
+     },
+     {
+      "id": "g3",
+      "title": "Reading",
+      "cat": "Reading",
+      "outcome": "Finish four books",
+      "hours": 14,
+      "start": "2026-10-26",
+      "deadline": "2026-11-12",
+      "hue": 290,
+      "at": "NOW"
+     }
+    ]
+   },
+   "message": "1 event added",
+   "newIds": [
+    "e27"
+   ],
+   "history": {
+    "label": "Claude · 1 event added",
+    "kind": "claude"
+   },
+   "unchanged": false
+  },
+  "create_alias_cat": {
+   "input": [
+    {
+     "op": "create",
+     "title": "Lunch with Dan",
+     "cat": "Lunch",
+     "start": 750,
+     "end": 795
+    },
+    {
+     "op": "create",
+     "title": "Brand new thing",
+     "cat": "Origami",
+     "start": 900,
+     "end": 960
+    }
+   ],
+   "resolved": {
+    "events": [
+     {
+      "id": "e27",
+      "day": "2026-10-30",
+      "cat": "Food",
+      "title": "Lunch with Dan",
+      "start": 750,
+      "end": 795,
+      "at": "NOW"
+     },
+     {
+      "id": "e28",
+      "day": "2026-10-30",
+      "cat": "Origami",
+      "title": "Brand new thing",
+      "start": 900,
+      "end": 960,
+      "at": "NOW"
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290,
+     "Origami": 350
+    },
+    "fresh": [
+     "Origami"
+    ],
+    "updates": [],
+    "deletes": [],
+    "goals": []
+   },
+   "uid": 28,
+   "after": {
+    "events": [
+     {
+      "id": "e1",
+      "day": "2026-10-13",
+      "cat": "Marathon training",
+      "title": "Tempo 6k",
+      "start": 1080,
+      "end": 1125,
+      "done": true
+     },
+     {
+      "id": "e2",
+      "day": "2026-10-14",
+      "cat": "Deep work",
+      "title": "Sync spec",
+      "start": 540,
+      "end": 720,
+      "done": true
+     },
+     {
+      "id": "e3",
+      "day": "2026-10-15",
+      "cat": "Deep work",
+      "title": "Sync spec review",
+      "start": 570,
+      "end": 660,
+      "done": true
+     },
+     {
+      "id": "e4",
+      "day": "2026-10-16",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 570,
+      "done": true
+     },
+     {
+      "id": "e5",
+      "day": "2026-10-18",
+      "cat": "Marathon training",
+      "title": "Easy 6k",
+      "start": 1050,
+      "end": 1095,
+      "done": true
+     },
+     {
+      "id": "e6",
+      "day": "2026-10-20",
+      "cat": "Deep work",
+      "title": "Prototype conflict handling",
+      "start": 540,
+      "end": 750,
+      "done": true
+     },
+     {
+      "id": "e7",
+      "day": "2026-10-21",
+      "cat": "Deep work",
+      "title": "Conflict handling, part two",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e8",
+      "day": "2026-10-22",
+      "cat": "Deep work",
+      "title": "Tests for the merge path",
+      "start": 780,
+      "end": 900,
+      "done": true
+     },
+     {
+      "id": "e9",
+      "day": "2026-10-23",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 590,
+      "done": true
+     },
+     {
+      "id": "e10",
+      "day": "2026-10-24",
+      "cat": "Deep work",
+      "title": "Offline queue",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e11",
+      "day": "2026-10-25",
+      "cat": "Marathon training",
+      "title": "Intervals",
+      "start": 1080,
+      "end": 1135,
+      "done": true
+     },
+     {
+      "id": "e12",
+      "day": "2026-10-27",
+      "cat": "Deep work",
+      "title": "Schema migration",
+      "start": 570,
+      "end": 750,
+      "done": true
+     },
+     {
+      "id": "e13",
+      "day": "2026-10-27",
+      "cat": "Marathon training",
+      "title": "Intervals",
+      "start": 1080,
+      "end": 1140,
+      "done": true
+     },
+     {
+      "id": "e14",
+      "day": "2026-10-27",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1275,
+      "end": 1320,
+      "done": true
+     },
+     {
+      "id": "e15",
+      "day": "2026-10-28",
+      "cat": "Deep work",
+      "title": "Migration, part two",
+      "start": 540,
+      "end": 720,
+      "done": true
+     },
+     {
+      "id": "e16",
+      "day": "2026-10-28",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1260,
+      "end": 1310,
+      "done": true
+     },
+     {
+      "id": "e17",
+      "day": "2026-10-29",
+      "cat": "Health",
+      "title": "Morning pages",
+      "start": 450,
+      "end": 480
+     },
+     {
+      "id": "e18",
+      "day": "2026-10-29",
+      "cat": "Deep work",
+      "title": "Rewrite the sync layer",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e19",
+      "day": "2026-10-29",
+      "cat": "Social",
+      "title": "Lunch with Dan",
+      "start": 750,
+      "end": 795
+     },
+     {
+      "id": "e20",
+      "day": "2026-10-29",
+      "cat": "Marathon training",
+      "title": "Easy 8k",
+      "start": 1050,
+      "end": 1110,
+      "done": true
+     },
+     {
+      "id": "e21",
+      "day": "2026-10-29",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1260,
+      "end": 1305,
+      "done": true
+     },
+     {
+      "id": "e22",
+      "day": "2026-10-30",
+      "cat": "Food",
+      "title": "Coffee + plan the day",
+      "start": 480,
+      "end": 505
+     },
+     {
+      "id": "e23",
+      "day": "2026-10-30",
+      "cat": "Deep work",
+      "title": "Sync layer, part two",
+      "start": 540,
+      "end": 690
+     },
+     {
+      "id": "e24",
+      "day": "2026-10-30",
+      "cat": "Pets",
+      "title": "Dog walk",
+      "start": 1050,
+      "end": 1090
+     },
+     {
+      "id": "e25",
+      "day": "2026-10-31",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 600
+     },
+     {
+      "id": "e26",
+      "day": "2026-10-31",
+      "cat": "Family",
+      "title": "Family brunch",
+      "start": 660,
+      "end": 750
+     },
+     {
+      "id": "e27",
+      "day": "2026-10-30",
+      "cat": "Food",
+      "title": "Lunch with Dan",
+      "start": 750,
+      "end": 795,
+      "at": "NOW"
+     },
+     {
+      "id": "e28",
+      "day": "2026-10-30",
+      "cat": "Origami",
+      "title": "Brand new thing",
+      "start": 900,
+      "end": 960,
+      "at": "NOW"
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290,
+     "Origami": 350
+    },
+    "goals": [
+     {
+      "id": "g1",
+      "title": "Deep work",
+      "cat": "Deep work",
+      "outcome": "Ship the sync layer rewrite",
+      "hours": 70,
+      "start": "2026-10-10",
+      "deadline": "2026-11-24",
+      "hue": 255,
+      "at": "NOW"
+     },
+     {
+      "id": "g2",
+      "title": "Marathon training",
+      "cat": "Marathon training",
+      "outcome": "Run a sub-4 hour marathon",
+      "hours": 95,
+      "start": "2026-10-06",
+      "deadline": "2027-01-04",
+      "hue": 132,
+      "at": "NOW"
+     },
+     {
+      "id": "g3",
+      "title": "Reading",
+      "cat": "Reading",
+      "outcome": "Finish four books",
+      "hours": 14,
+      "start": "2026-10-26",
+      "deadline": "2026-11-12",
+      "hue": 290,
+      "at": "NOW"
+     }
+    ]
+   },
+   "message": "2 events added · new: Origami",
+   "newIds": [
+    "e27",
+    "e28"
+   ],
+   "history": {
+    "label": "Claude · 2 events added · new: Origami",
+    "kind": "claude"
+   },
+   "unchanged": false
+  },
+  "create_allday": {
+   "input": [
+    {
+     "op": "create",
+     "title": "Lisbon trip",
+     "cat": "Travel",
+     "allDay": true,
+     "dayOffset": 4,
+     "days": 3
+    },
+    {
+     "op": "create",
+     "title": "Launch week",
+     "cat": "Work",
+     "allDay": true,
+     "span": "week",
+     "weekOffset": 1
+    }
+   ],
+   "resolved": {
+    "events": [
+     {
+      "id": "e27",
+      "day": "2026-11-03",
+      "cat": "Routine",
+      "title": "Lisbon trip",
+      "start": 0,
+      "end": 1440,
+      "allDay": true,
+      "days": 3
+     },
+     {
+      "id": "e28",
+      "day": "2026-11-02",
+      "cat": "Work",
+      "title": "Launch week",
+      "start": 0,
+      "end": 1440,
+      "allDay": true,
+      "days": 7
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290
+    },
+    "fresh": [],
+    "updates": [],
+    "deletes": [],
+    "goals": []
+   },
+   "uid": 28,
+   "after": {
+    "events": [
+     {
+      "id": "e1",
+      "day": "2026-10-13",
+      "cat": "Marathon training",
+      "title": "Tempo 6k",
+      "start": 1080,
+      "end": 1125,
+      "done": true
+     },
+     {
+      "id": "e2",
+      "day": "2026-10-14",
+      "cat": "Deep work",
+      "title": "Sync spec",
+      "start": 540,
+      "end": 720,
+      "done": true
+     },
+     {
+      "id": "e3",
+      "day": "2026-10-15",
+      "cat": "Deep work",
+      "title": "Sync spec review",
+      "start": 570,
+      "end": 660,
+      "done": true
+     },
+     {
+      "id": "e4",
+      "day": "2026-10-16",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 570,
+      "done": true
+     },
+     {
+      "id": "e5",
+      "day": "2026-10-18",
+      "cat": "Marathon training",
+      "title": "Easy 6k",
+      "start": 1050,
+      "end": 1095,
+      "done": true
+     },
+     {
+      "id": "e6",
+      "day": "2026-10-20",
+      "cat": "Deep work",
+      "title": "Prototype conflict handling",
+      "start": 540,
+      "end": 750,
+      "done": true
+     },
+     {
+      "id": "e7",
+      "day": "2026-10-21",
+      "cat": "Deep work",
+      "title": "Conflict handling, part two",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e8",
+      "day": "2026-10-22",
+      "cat": "Deep work",
+      "title": "Tests for the merge path",
+      "start": 780,
+      "end": 900,
+      "done": true
+     },
+     {
+      "id": "e9",
+      "day": "2026-10-23",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 590,
+      "done": true
+     },
+     {
+      "id": "e10",
+      "day": "2026-10-24",
+      "cat": "Deep work",
+      "title": "Offline queue",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e11",
+      "day": "2026-10-25",
+      "cat": "Marathon training",
+      "title": "Intervals",
+      "start": 1080,
+      "end": 1135,
+      "done": true
+     },
+     {
+      "id": "e12",
+      "day": "2026-10-27",
+      "cat": "Deep work",
+      "title": "Schema migration",
+      "start": 570,
+      "end": 750,
+      "done": true
+     },
+     {
+      "id": "e13",
+      "day": "2026-10-27",
+      "cat": "Marathon training",
+      "title": "Intervals",
+      "start": 1080,
+      "end": 1140,
+      "done": true
+     },
+     {
+      "id": "e14",
+      "day": "2026-10-27",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1275,
+      "end": 1320,
+      "done": true
+     },
+     {
+      "id": "e15",
+      "day": "2026-10-28",
+      "cat": "Deep work",
+      "title": "Migration, part two",
+      "start": 540,
+      "end": 720,
+      "done": true
+     },
+     {
+      "id": "e16",
+      "day": "2026-10-28",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1260,
+      "end": 1310,
+      "done": true
+     },
+     {
+      "id": "e17",
+      "day": "2026-10-29",
+      "cat": "Health",
+      "title": "Morning pages",
+      "start": 450,
+      "end": 480
+     },
+     {
+      "id": "e18",
+      "day": "2026-10-29",
+      "cat": "Deep work",
+      "title": "Rewrite the sync layer",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e19",
+      "day": "2026-10-29",
+      "cat": "Social",
+      "title": "Lunch with Dan",
+      "start": 750,
+      "end": 795
+     },
+     {
+      "id": "e20",
+      "day": "2026-10-29",
+      "cat": "Marathon training",
+      "title": "Easy 8k",
+      "start": 1050,
+      "end": 1110,
+      "done": true
+     },
+     {
+      "id": "e21",
+      "day": "2026-10-29",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1260,
+      "end": 1305,
+      "done": true
+     },
+     {
+      "id": "e22",
+      "day": "2026-10-30",
+      "cat": "Food",
+      "title": "Coffee + plan the day",
+      "start": 480,
+      "end": 505
+     },
+     {
+      "id": "e23",
+      "day": "2026-10-30",
+      "cat": "Deep work",
+      "title": "Sync layer, part two",
+      "start": 540,
+      "end": 690
+     },
+     {
+      "id": "e24",
+      "day": "2026-10-30",
+      "cat": "Pets",
+      "title": "Dog walk",
+      "start": 1050,
+      "end": 1090
+     },
+     {
+      "id": "e25",
+      "day": "2026-10-31",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 600
+     },
+     {
+      "id": "e26",
+      "day": "2026-10-31",
+      "cat": "Family",
+      "title": "Family brunch",
+      "start": 660,
+      "end": 750
+     },
+     {
+      "id": "e27",
+      "day": "2026-11-03",
+      "cat": "Routine",
+      "title": "Lisbon trip",
+      "start": 0,
+      "end": 1440,
+      "allDay": true,
+      "days": 3
+     },
+     {
+      "id": "e28",
+      "day": "2026-11-02",
+      "cat": "Work",
+      "title": "Launch week",
+      "start": 0,
+      "end": 1440,
+      "allDay": true,
+      "days": 7
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290
+    },
+    "goals": [
+     {
+      "id": "g1",
+      "title": "Deep work",
+      "cat": "Deep work",
+      "outcome": "Ship the sync layer rewrite",
+      "hours": 70,
+      "start": "2026-10-10",
+      "deadline": "2026-11-24",
+      "hue": 255,
+      "at": "NOW"
+     },
+     {
+      "id": "g2",
+      "title": "Marathon training",
+      "cat": "Marathon training",
+      "outcome": "Run a sub-4 hour marathon",
+      "hours": 95,
+      "start": "2026-10-06",
+      "deadline": "2027-01-04",
+      "hue": 132,
+      "at": "NOW"
+     },
+     {
+      "id": "g3",
+      "title": "Reading",
+      "cat": "Reading",
+      "outcome": "Finish four books",
+      "hours": 14,
+      "start": "2026-10-26",
+      "deadline": "2026-11-12",
+      "hue": 290,
+      "at": "NOW"
+     }
+    ]
+   },
+   "message": "2 events added",
+   "newIds": [
+    "e27",
+    "e28"
+   ],
+   "history": {
+    "label": "Claude · 2 events added",
+    "kind": "claude"
+   },
+   "unchanged": false
+  },
+  "create_win": {
+   "input": [
+    {
+     "op": "create",
+     "title": "Novel",
+     "cat": "Novel",
+     "start": 840,
+     "end": 1020,
+     "dayOffset": -1,
+     "win": "finished chapter 3"
+    }
+   ],
+   "resolved": {
+    "events": [
+     {
+      "id": "e27",
+      "day": "2026-10-29",
+      "cat": "Novel",
+      "title": "Novel",
+      "start": 840,
+      "end": 1020,
+      "at": "NOW",
+      "win": {
+       "text": "Finished chapter 3",
+       "at": "NOW"
+      },
+      "done": true
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290,
+     "Novel": 350
+    },
+    "fresh": [
+     "Novel"
+    ],
+    "updates": [],
+    "deletes": [],
+    "goals": []
+   },
+   "uid": 27,
+   "after": {
+    "events": [
+     {
+      "id": "e1",
+      "day": "2026-10-13",
+      "cat": "Marathon training",
+      "title": "Tempo 6k",
+      "start": 1080,
+      "end": 1125,
+      "done": true
+     },
+     {
+      "id": "e2",
+      "day": "2026-10-14",
+      "cat": "Deep work",
+      "title": "Sync spec",
+      "start": 540,
+      "end": 720,
+      "done": true
+     },
+     {
+      "id": "e3",
+      "day": "2026-10-15",
+      "cat": "Deep work",
+      "title": "Sync spec review",
+      "start": 570,
+      "end": 660,
+      "done": true
+     },
+     {
+      "id": "e4",
+      "day": "2026-10-16",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 570,
+      "done": true
+     },
+     {
+      "id": "e5",
+      "day": "2026-10-18",
+      "cat": "Marathon training",
+      "title": "Easy 6k",
+      "start": 1050,
+      "end": 1095,
+      "done": true
+     },
+     {
+      "id": "e6",
+      "day": "2026-10-20",
+      "cat": "Deep work",
+      "title": "Prototype conflict handling",
+      "start": 540,
+      "end": 750,
+      "done": true
+     },
+     {
+      "id": "e7",
+      "day": "2026-10-21",
+      "cat": "Deep work",
+      "title": "Conflict handling, part two",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e8",
+      "day": "2026-10-22",
+      "cat": "Deep work",
+      "title": "Tests for the merge path",
+      "start": 780,
+      "end": 900,
+      "done": true
+     },
+     {
+      "id": "e9",
+      "day": "2026-10-23",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 590,
+      "done": true
+     },
+     {
+      "id": "e10",
+      "day": "2026-10-24",
+      "cat": "Deep work",
+      "title": "Offline queue",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e11",
+      "day": "2026-10-25",
+      "cat": "Marathon training",
+      "title": "Intervals",
+      "start": 1080,
+      "end": 1135,
+      "done": true
+     },
+     {
+      "id": "e12",
+      "day": "2026-10-27",
+      "cat": "Deep work",
+      "title": "Schema migration",
+      "start": 570,
+      "end": 750,
+      "done": true
+     },
+     {
+      "id": "e13",
+      "day": "2026-10-27",
+      "cat": "Marathon training",
+      "title": "Intervals",
+      "start": 1080,
+      "end": 1140,
+      "done": true
+     },
+     {
+      "id": "e14",
+      "day": "2026-10-27",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1275,
+      "end": 1320,
+      "done": true
+     },
+     {
+      "id": "e15",
+      "day": "2026-10-28",
+      "cat": "Deep work",
+      "title": "Migration, part two",
+      "start": 540,
+      "end": 720,
+      "done": true
+     },
+     {
+      "id": "e16",
+      "day": "2026-10-28",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1260,
+      "end": 1310,
+      "done": true
+     },
+     {
+      "id": "e17",
+      "day": "2026-10-29",
+      "cat": "Health",
+      "title": "Morning pages",
+      "start": 450,
+      "end": 480
+     },
+     {
+      "id": "e18",
+      "day": "2026-10-29",
+      "cat": "Deep work",
+      "title": "Rewrite the sync layer",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e19",
+      "day": "2026-10-29",
+      "cat": "Social",
+      "title": "Lunch with Dan",
+      "start": 750,
+      "end": 795
+     },
+     {
+      "id": "e20",
+      "day": "2026-10-29",
+      "cat": "Marathon training",
+      "title": "Easy 8k",
+      "start": 1050,
+      "end": 1110,
+      "done": true
+     },
+     {
+      "id": "e21",
+      "day": "2026-10-29",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1260,
+      "end": 1305,
+      "done": true
+     },
+     {
+      "id": "e22",
+      "day": "2026-10-30",
+      "cat": "Food",
+      "title": "Coffee + plan the day",
+      "start": 480,
+      "end": 505
+     },
+     {
+      "id": "e23",
+      "day": "2026-10-30",
+      "cat": "Deep work",
+      "title": "Sync layer, part two",
+      "start": 540,
+      "end": 690
+     },
+     {
+      "id": "e24",
+      "day": "2026-10-30",
+      "cat": "Pets",
+      "title": "Dog walk",
+      "start": 1050,
+      "end": 1090
+     },
+     {
+      "id": "e25",
+      "day": "2026-10-31",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 600
+     },
+     {
+      "id": "e26",
+      "day": "2026-10-31",
+      "cat": "Family",
+      "title": "Family brunch",
+      "start": 660,
+      "end": 750
+     },
+     {
+      "id": "e27",
+      "day": "2026-10-29",
+      "cat": "Novel",
+      "title": "Novel",
+      "start": 840,
+      "end": 1020,
+      "at": "NOW",
+      "win": {
+       "text": "Finished chapter 3",
+       "at": "NOW"
+      },
+      "done": true
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290,
+     "Novel": 350
+    },
+    "goals": [
+     {
+      "id": "g1",
+      "title": "Deep work",
+      "cat": "Deep work",
+      "outcome": "Ship the sync layer rewrite",
+      "hours": 70,
+      "start": "2026-10-10",
+      "deadline": "2026-11-24",
+      "hue": 255,
+      "at": "NOW"
+     },
+     {
+      "id": "g2",
+      "title": "Marathon training",
+      "cat": "Marathon training",
+      "outcome": "Run a sub-4 hour marathon",
+      "hours": 95,
+      "start": "2026-10-06",
+      "deadline": "2027-01-04",
+      "hue": 132,
+      "at": "NOW"
+     },
+     {
+      "id": "g3",
+      "title": "Reading",
+      "cat": "Reading",
+      "outcome": "Finish four books",
+      "hours": 14,
+      "start": "2026-10-26",
+      "deadline": "2026-11-12",
+      "hue": 290,
+      "at": "NOW"
+     }
+    ]
+   },
+   "message": "1 event added · new: Novel",
+   "newIds": [
+    "e27"
+   ],
+   "history": {
+    "label": "Claude · 1 event added · new: Novel",
+    "kind": "claude"
+   },
+   "unchanged": false
+  },
+  "create_clamps": {
+   "input": [
+    {
+     "op": "create",
+     "title": "x",
+     "start": 1500,
+     "end": 1501,
+     "dayOffset": 99
+    },
+    {
+     "op": "create",
+     "title": "y",
+     "start": 600,
+     "end": 600
+    },
+    {
+     "op": "create",
+     "title": "z",
+     "start": 600,
+     "end": 30
+    },
+    {
+     "op": "create",
+     "title": "w"
+    }
+   ],
+   "resolved": {
+    "events": [
+     {
+      "id": "e27",
+      "day": "2026-12-29",
+      "cat": "Other",
+      "title": "X",
+      "start": 1425,
+      "end": 1501,
+      "at": "NOW"
+     },
+     {
+      "id": "e28",
+      "day": "2026-10-30",
+      "cat": "Other",
+      "title": "Y",
+      "start": 600,
+      "end": 645,
+      "at": "NOW"
+     },
+     {
+      "id": "e29",
+      "day": "2026-10-30",
+      "cat": "Other",
+      "title": "Z",
+      "start": 600,
+      "end": 1470,
+      "at": "NOW"
+     },
+     {
+      "id": "e30",
+      "day": "2026-10-30",
+      "cat": "Other",
+      "title": "W",
+      "start": 855,
+      "end": 900,
+      "at": "NOW"
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290,
+     "Other": 48
+    },
+    "fresh": [
+     "Other"
+    ],
+    "updates": [],
+    "deletes": [],
+    "goals": []
+   },
+   "uid": 30,
+   "after": {
+    "events": [
+     {
+      "id": "e1",
+      "day": "2026-10-13",
+      "cat": "Marathon training",
+      "title": "Tempo 6k",
+      "start": 1080,
+      "end": 1125,
+      "done": true
+     },
+     {
+      "id": "e2",
+      "day": "2026-10-14",
+      "cat": "Deep work",
+      "title": "Sync spec",
+      "start": 540,
+      "end": 720,
+      "done": true
+     },
+     {
+      "id": "e3",
+      "day": "2026-10-15",
+      "cat": "Deep work",
+      "title": "Sync spec review",
+      "start": 570,
+      "end": 660,
+      "done": true
+     },
+     {
+      "id": "e4",
+      "day": "2026-10-16",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 570,
+      "done": true
+     },
+     {
+      "id": "e5",
+      "day": "2026-10-18",
+      "cat": "Marathon training",
+      "title": "Easy 6k",
+      "start": 1050,
+      "end": 1095,
+      "done": true
+     },
+     {
+      "id": "e6",
+      "day": "2026-10-20",
+      "cat": "Deep work",
+      "title": "Prototype conflict handling",
+      "start": 540,
+      "end": 750,
+      "done": true
+     },
+     {
+      "id": "e7",
+      "day": "2026-10-21",
+      "cat": "Deep work",
+      "title": "Conflict handling, part two",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e8",
+      "day": "2026-10-22",
+      "cat": "Deep work",
+      "title": "Tests for the merge path",
+      "start": 780,
+      "end": 900,
+      "done": true
+     },
+     {
+      "id": "e9",
+      "day": "2026-10-23",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 590,
+      "done": true
+     },
+     {
+      "id": "e10",
+      "day": "2026-10-24",
+      "cat": "Deep work",
+      "title": "Offline queue",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e11",
+      "day": "2026-10-25",
+      "cat": "Marathon training",
+      "title": "Intervals",
+      "start": 1080,
+      "end": 1135,
+      "done": true
+     },
+     {
+      "id": "e12",
+      "day": "2026-10-27",
+      "cat": "Deep work",
+      "title": "Schema migration",
+      "start": 570,
+      "end": 750,
+      "done": true
+     },
+     {
+      "id": "e13",
+      "day": "2026-10-27",
+      "cat": "Marathon training",
+      "title": "Intervals",
+      "start": 1080,
+      "end": 1140,
+      "done": true
+     },
+     {
+      "id": "e14",
+      "day": "2026-10-27",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1275,
+      "end": 1320,
+      "done": true
+     },
+     {
+      "id": "e15",
+      "day": "2026-10-28",
+      "cat": "Deep work",
+      "title": "Migration, part two",
+      "start": 540,
+      "end": 720,
+      "done": true
+     },
+     {
+      "id": "e16",
+      "day": "2026-10-28",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1260,
+      "end": 1310,
+      "done": true
+     },
+     {
+      "id": "e17",
+      "day": "2026-10-29",
+      "cat": "Health",
+      "title": "Morning pages",
+      "start": 450,
+      "end": 480
+     },
+     {
+      "id": "e18",
+      "day": "2026-10-29",
+      "cat": "Deep work",
+      "title": "Rewrite the sync layer",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e19",
+      "day": "2026-10-29",
+      "cat": "Social",
+      "title": "Lunch with Dan",
+      "start": 750,
+      "end": 795
+     },
+     {
+      "id": "e20",
+      "day": "2026-10-29",
+      "cat": "Marathon training",
+      "title": "Easy 8k",
+      "start": 1050,
+      "end": 1110,
+      "done": true
+     },
+     {
+      "id": "e21",
+      "day": "2026-10-29",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1260,
+      "end": 1305,
+      "done": true
+     },
+     {
+      "id": "e22",
+      "day": "2026-10-30",
+      "cat": "Food",
+      "title": "Coffee + plan the day",
+      "start": 480,
+      "end": 505
+     },
+     {
+      "id": "e23",
+      "day": "2026-10-30",
+      "cat": "Deep work",
+      "title": "Sync layer, part two",
+      "start": 540,
+      "end": 690
+     },
+     {
+      "id": "e24",
+      "day": "2026-10-30",
+      "cat": "Pets",
+      "title": "Dog walk",
+      "start": 1050,
+      "end": 1090
+     },
+     {
+      "id": "e25",
+      "day": "2026-10-31",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 600
+     },
+     {
+      "id": "e26",
+      "day": "2026-10-31",
+      "cat": "Family",
+      "title": "Family brunch",
+      "start": 660,
+      "end": 750
+     },
+     {
+      "id": "e27",
+      "day": "2026-12-29",
+      "cat": "Other",
+      "title": "X",
+      "start": 1425,
+      "end": 1501,
+      "at": "NOW"
+     },
+     {
+      "id": "e28",
+      "day": "2026-10-30",
+      "cat": "Other",
+      "title": "Y",
+      "start": 600,
+      "end": 645,
+      "at": "NOW"
+     },
+     {
+      "id": "e29",
+      "day": "2026-10-30",
+      "cat": "Other",
+      "title": "Z",
+      "start": 600,
+      "end": 1470,
+      "at": "NOW"
+     },
+     {
+      "id": "e30",
+      "day": "2026-10-30",
+      "cat": "Other",
+      "title": "W",
+      "start": 855,
+      "end": 900,
+      "at": "NOW"
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290,
+     "Other": 48
+    },
+    "goals": [
+     {
+      "id": "g1",
+      "title": "Deep work",
+      "cat": "Deep work",
+      "outcome": "Ship the sync layer rewrite",
+      "hours": 70,
+      "start": "2026-10-10",
+      "deadline": "2026-11-24",
+      "hue": 255,
+      "at": "NOW"
+     },
+     {
+      "id": "g2",
+      "title": "Marathon training",
+      "cat": "Marathon training",
+      "outcome": "Run a sub-4 hour marathon",
+      "hours": 95,
+      "start": "2026-10-06",
+      "deadline": "2027-01-04",
+      "hue": 132,
+      "at": "NOW"
+     },
+     {
+      "id": "g3",
+      "title": "Reading",
+      "cat": "Reading",
+      "outcome": "Finish four books",
+      "hours": 14,
+      "start": "2026-10-26",
+      "deadline": "2026-11-12",
+      "hue": 290,
+      "at": "NOW"
+     }
+    ]
+   },
+   "message": "4 events added · new: Other",
+   "newIds": [
+    "e27",
+    "e28",
+    "e29",
+    "e30"
+   ],
+   "history": {
+    "label": "Claude · 4 events added · new: Other",
+    "kind": "claude"
+   },
+   "unchanged": false
+  },
+  "update_move": {
+   "input": [
+    {
+     "op": "update",
+     "id": "e22",
+     "start": 900,
+     "end": 960
+    },
+    {
+     "op": "update",
+     "id": "e23",
+     "title": "sync layer part 3",
+     "cat": "Work",
+     "dayOffset": 1
+    }
+   ],
+   "resolved": {
+    "events": [],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290
+    },
+    "fresh": [],
+    "updates": [
+     {
+      "id": "e22",
+      "patch": {
+       "start": 900,
+       "end": 960
+      }
+     },
+     {
+      "id": "e23",
+      "patch": {
+       "title": "Sync layer part 3",
+       "cat": "Work",
+       "day": "2026-10-31"
+      }
+     }
+    ],
+    "deletes": [],
+    "goals": []
+   },
+   "uid": 26,
+   "after": {
+    "events": [
+     {
+      "id": "e1",
+      "day": "2026-10-13",
+      "cat": "Marathon training",
+      "title": "Tempo 6k",
+      "start": 1080,
+      "end": 1125,
+      "done": true
+     },
+     {
+      "id": "e2",
+      "day": "2026-10-14",
+      "cat": "Deep work",
+      "title": "Sync spec",
+      "start": 540,
+      "end": 720,
+      "done": true
+     },
+     {
+      "id": "e3",
+      "day": "2026-10-15",
+      "cat": "Deep work",
+      "title": "Sync spec review",
+      "start": 570,
+      "end": 660,
+      "done": true
+     },
+     {
+      "id": "e4",
+      "day": "2026-10-16",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 570,
+      "done": true
+     },
+     {
+      "id": "e5",
+      "day": "2026-10-18",
+      "cat": "Marathon training",
+      "title": "Easy 6k",
+      "start": 1050,
+      "end": 1095,
+      "done": true
+     },
+     {
+      "id": "e6",
+      "day": "2026-10-20",
+      "cat": "Deep work",
+      "title": "Prototype conflict handling",
+      "start": 540,
+      "end": 750,
+      "done": true
+     },
+     {
+      "id": "e7",
+      "day": "2026-10-21",
+      "cat": "Deep work",
+      "title": "Conflict handling, part two",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e8",
+      "day": "2026-10-22",
+      "cat": "Deep work",
+      "title": "Tests for the merge path",
+      "start": 780,
+      "end": 900,
+      "done": true
+     },
+     {
+      "id": "e9",
+      "day": "2026-10-23",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 590,
+      "done": true
+     },
+     {
+      "id": "e10",
+      "day": "2026-10-24",
+      "cat": "Deep work",
+      "title": "Offline queue",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e11",
+      "day": "2026-10-25",
+      "cat": "Marathon training",
+      "title": "Intervals",
+      "start": 1080,
+      "end": 1135,
+      "done": true
+     },
+     {
+      "id": "e12",
+      "day": "2026-10-27",
+      "cat": "Deep work",
+      "title": "Schema migration",
+      "start": 570,
+      "end": 750,
+      "done": true
+     },
+     {
+      "id": "e13",
+      "day": "2026-10-27",
+      "cat": "Marathon training",
+      "title": "Intervals",
+      "start": 1080,
+      "end": 1140,
+      "done": true
+     },
+     {
+      "id": "e14",
+      "day": "2026-10-27",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1275,
+      "end": 1320,
+      "done": true
+     },
+     {
+      "id": "e15",
+      "day": "2026-10-28",
+      "cat": "Deep work",
+      "title": "Migration, part two",
+      "start": 540,
+      "end": 720,
+      "done": true
+     },
+     {
+      "id": "e16",
+      "day": "2026-10-28",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1260,
+      "end": 1310,
+      "done": true
+     },
+     {
+      "id": "e17",
+      "day": "2026-10-29",
+      "cat": "Health",
+      "title": "Morning pages",
+      "start": 450,
+      "end": 480
+     },
+     {
+      "id": "e18",
+      "day": "2026-10-29",
+      "cat": "Deep work",
+      "title": "Rewrite the sync layer",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e19",
+      "day": "2026-10-29",
+      "cat": "Social",
+      "title": "Lunch with Dan",
+      "start": 750,
+      "end": 795
+     },
+     {
+      "id": "e20",
+      "day": "2026-10-29",
+      "cat": "Marathon training",
+      "title": "Easy 8k",
+      "start": 1050,
+      "end": 1110,
+      "done": true
+     },
+     {
+      "id": "e21",
+      "day": "2026-10-29",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1260,
+      "end": 1305,
+      "done": true
+     },
+     {
+      "id": "e22",
+      "day": "2026-10-30",
+      "cat": "Food",
+      "title": "Coffee + plan the day",
+      "start": 900,
+      "end": 960
+     },
+     {
+      "id": "e23",
+      "day": "2026-10-31",
+      "cat": "Work",
+      "title": "Sync layer part 3",
+      "start": 540,
+      "end": 690
+     },
+     {
+      "id": "e24",
+      "day": "2026-10-30",
+      "cat": "Pets",
+      "title": "Dog walk",
+      "start": 1050,
+      "end": 1090
+     },
+     {
+      "id": "e25",
+      "day": "2026-10-31",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 600
+     },
+     {
+      "id": "e26",
+      "day": "2026-10-31",
+      "cat": "Family",
+      "title": "Family brunch",
+      "start": 660,
+      "end": 750
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290
+    },
+    "goals": [
+     {
+      "id": "g1",
+      "title": "Deep work",
+      "cat": "Deep work",
+      "outcome": "Ship the sync layer rewrite",
+      "hours": 70,
+      "start": "2026-10-10",
+      "deadline": "2026-11-24",
+      "hue": 255,
+      "at": "NOW"
+     },
+     {
+      "id": "g2",
+      "title": "Marathon training",
+      "cat": "Marathon training",
+      "outcome": "Run a sub-4 hour marathon",
+      "hours": 95,
+      "start": "2026-10-06",
+      "deadline": "2027-01-04",
+      "hue": 132,
+      "at": "NOW"
+     },
+     {
+      "id": "g3",
+      "title": "Reading",
+      "cat": "Reading",
+      "outcome": "Finish four books",
+      "hours": 14,
+      "start": "2026-10-26",
+      "deadline": "2026-11-12",
+      "hue": 290,
+      "at": "NOW"
+     }
+    ]
+   },
+   "message": "2 updated",
+   "newIds": [
+    "e22",
+    "e23"
+   ],
+   "history": {
+    "label": "Claude · 2 updated",
+    "kind": "claude"
+   },
+   "unchanged": false
+  },
+  "update_allday": {
+   "input": [
+    {
+     "op": "update",
+     "id": "e24",
+     "allDay": true,
+     "days": 2
+    },
+    {
+     "op": "update",
+     "id": "e25",
+     "span": "week"
+    }
+   ],
+   "resolved": {
+    "events": [],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290
+    },
+    "fresh": [],
+    "updates": [
+     {
+      "id": "e24",
+      "patch": {
+       "allDay": true,
+       "days": 2,
+       "start": 0,
+       "end": 1440
+      }
+     },
+     {
+      "id": "e25",
+      "patch": {
+       "allDay": true,
+       "days": 7,
+       "day": "2026-10-26",
+       "start": 0,
+       "end": 1440
+      }
+     }
+    ],
+    "deletes": [],
+    "goals": []
+   },
+   "uid": 26,
+   "after": {
+    "events": [
+     {
+      "id": "e1",
+      "day": "2026-10-13",
+      "cat": "Marathon training",
+      "title": "Tempo 6k",
+      "start": 1080,
+      "end": 1125,
+      "done": true
+     },
+     {
+      "id": "e2",
+      "day": "2026-10-14",
+      "cat": "Deep work",
+      "title": "Sync spec",
+      "start": 540,
+      "end": 720,
+      "done": true
+     },
+     {
+      "id": "e3",
+      "day": "2026-10-15",
+      "cat": "Deep work",
+      "title": "Sync spec review",
+      "start": 570,
+      "end": 660,
+      "done": true
+     },
+     {
+      "id": "e4",
+      "day": "2026-10-16",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 570,
+      "done": true
+     },
+     {
+      "id": "e5",
+      "day": "2026-10-18",
+      "cat": "Marathon training",
+      "title": "Easy 6k",
+      "start": 1050,
+      "end": 1095,
+      "done": true
+     },
+     {
+      "id": "e6",
+      "day": "2026-10-20",
+      "cat": "Deep work",
+      "title": "Prototype conflict handling",
+      "start": 540,
+      "end": 750,
+      "done": true
+     },
+     {
+      "id": "e7",
+      "day": "2026-10-21",
+      "cat": "Deep work",
+      "title": "Conflict handling, part two",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e8",
+      "day": "2026-10-22",
+      "cat": "Deep work",
+      "title": "Tests for the merge path",
+      "start": 780,
+      "end": 900,
+      "done": true
+     },
+     {
+      "id": "e9",
+      "day": "2026-10-23",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 590,
+      "done": true
+     },
+     {
+      "id": "e10",
+      "day": "2026-10-24",
+      "cat": "Deep work",
+      "title": "Offline queue",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e11",
+      "day": "2026-10-25",
+      "cat": "Marathon training",
+      "title": "Intervals",
+      "start": 1080,
+      "end": 1135,
+      "done": true
+     },
+     {
+      "id": "e12",
+      "day": "2026-10-27",
+      "cat": "Deep work",
+      "title": "Schema migration",
+      "start": 570,
+      "end": 750,
+      "done": true
+     },
+     {
+      "id": "e13",
+      "day": "2026-10-27",
+      "cat": "Marathon training",
+      "title": "Intervals",
+      "start": 1080,
+      "end": 1140,
+      "done": true
+     },
+     {
+      "id": "e14",
+      "day": "2026-10-27",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1275,
+      "end": 1320,
+      "done": true
+     },
+     {
+      "id": "e15",
+      "day": "2026-10-28",
+      "cat": "Deep work",
+      "title": "Migration, part two",
+      "start": 540,
+      "end": 720,
+      "done": true
+     },
+     {
+      "id": "e16",
+      "day": "2026-10-28",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1260,
+      "end": 1310,
+      "done": true
+     },
+     {
+      "id": "e17",
+      "day": "2026-10-29",
+      "cat": "Health",
+      "title": "Morning pages",
+      "start": 450,
+      "end": 480
+     },
+     {
+      "id": "e18",
+      "day": "2026-10-29",
+      "cat": "Deep work",
+      "title": "Rewrite the sync layer",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e19",
+      "day": "2026-10-29",
+      "cat": "Social",
+      "title": "Lunch with Dan",
+      "start": 750,
+      "end": 795
+     },
+     {
+      "id": "e20",
+      "day": "2026-10-29",
+      "cat": "Marathon training",
+      "title": "Easy 8k",
+      "start": 1050,
+      "end": 1110,
+      "done": true
+     },
+     {
+      "id": "e21",
+      "day": "2026-10-29",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1260,
+      "end": 1305,
+      "done": true
+     },
+     {
+      "id": "e22",
+      "day": "2026-10-30",
+      "cat": "Food",
+      "title": "Coffee + plan the day",
+      "start": 480,
+      "end": 505
+     },
+     {
+      "id": "e23",
+      "day": "2026-10-30",
+      "cat": "Deep work",
+      "title": "Sync layer, part two",
+      "start": 540,
+      "end": 690
+     },
+     {
+      "id": "e24",
+      "day": "2026-10-30",
+      "cat": "Pets",
+      "title": "Dog walk",
+      "start": 0,
+      "end": 1440,
+      "allDay": true,
+      "days": 2
+     },
+     {
+      "id": "e25",
+      "day": "2026-10-26",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 0,
+      "end": 1440,
+      "allDay": true,
+      "days": 7
+     },
+     {
+      "id": "e26",
+      "day": "2026-10-31",
+      "cat": "Family",
+      "title": "Family brunch",
+      "start": 660,
+      "end": 750
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290
+    },
+    "goals": [
+     {
+      "id": "g1",
+      "title": "Deep work",
+      "cat": "Deep work",
+      "outcome": "Ship the sync layer rewrite",
+      "hours": 70,
+      "start": "2026-10-10",
+      "deadline": "2026-11-24",
+      "hue": 255,
+      "at": "NOW"
+     },
+     {
+      "id": "g2",
+      "title": "Marathon training",
+      "cat": "Marathon training",
+      "outcome": "Run a sub-4 hour marathon",
+      "hours": 95,
+      "start": "2026-10-06",
+      "deadline": "2027-01-04",
+      "hue": 132,
+      "at": "NOW"
+     },
+     {
+      "id": "g3",
+      "title": "Reading",
+      "cat": "Reading",
+      "outcome": "Finish four books",
+      "hours": 14,
+      "start": "2026-10-26",
+      "deadline": "2026-11-12",
+      "hue": 290,
+      "at": "NOW"
+     }
+    ]
+   },
+   "message": "2 updated",
+   "newIds": [
+    "e24",
+    "e25"
+   ],
+   "history": {
+    "label": "Claude · 2 updated",
+    "kind": "claude"
+   },
+   "unchanged": false
+  },
+  "delete": {
+   "input": [
+    {
+     "op": "delete",
+     "id": "e22"
+    },
+    {
+     "op": "delete",
+     "id": "e404"
+    }
+   ],
+   "resolved": {
+    "events": [],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290
+    },
+    "fresh": [],
+    "updates": [],
+    "deletes": [
+     "e22"
+    ],
+    "goals": []
+   },
+   "uid": 26,
+   "after": {
+    "events": [
+     {
+      "id": "e1",
+      "day": "2026-10-13",
+      "cat": "Marathon training",
+      "title": "Tempo 6k",
+      "start": 1080,
+      "end": 1125,
+      "done": true
+     },
+     {
+      "id": "e2",
+      "day": "2026-10-14",
+      "cat": "Deep work",
+      "title": "Sync spec",
+      "start": 540,
+      "end": 720,
+      "done": true
+     },
+     {
+      "id": "e3",
+      "day": "2026-10-15",
+      "cat": "Deep work",
+      "title": "Sync spec review",
+      "start": 570,
+      "end": 660,
+      "done": true
+     },
+     {
+      "id": "e4",
+      "day": "2026-10-16",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 570,
+      "done": true
+     },
+     {
+      "id": "e5",
+      "day": "2026-10-18",
+      "cat": "Marathon training",
+      "title": "Easy 6k",
+      "start": 1050,
+      "end": 1095,
+      "done": true
+     },
+     {
+      "id": "e6",
+      "day": "2026-10-20",
+      "cat": "Deep work",
+      "title": "Prototype conflict handling",
+      "start": 540,
+      "end": 750,
+      "done": true
+     },
+     {
+      "id": "e7",
+      "day": "2026-10-21",
+      "cat": "Deep work",
+      "title": "Conflict handling, part two",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e8",
+      "day": "2026-10-22",
+      "cat": "Deep work",
+      "title": "Tests for the merge path",
+      "start": 780,
+      "end": 900,
+      "done": true
+     },
+     {
+      "id": "e9",
+      "day": "2026-10-23",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 590,
+      "done": true
+     },
+     {
+      "id": "e10",
+      "day": "2026-10-24",
+      "cat": "Deep work",
+      "title": "Offline queue",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e11",
+      "day": "2026-10-25",
+      "cat": "Marathon training",
+      "title": "Intervals",
+      "start": 1080,
+      "end": 1135,
+      "done": true
+     },
+     {
+      "id": "e12",
+      "day": "2026-10-27",
+      "cat": "Deep work",
+      "title": "Schema migration",
+      "start": 570,
+      "end": 750,
+      "done": true
+     },
+     {
+      "id": "e13",
+      "day": "2026-10-27",
+      "cat": "Marathon training",
+      "title": "Intervals",
+      "start": 1080,
+      "end": 1140,
+      "done": true
+     },
+     {
+      "id": "e14",
+      "day": "2026-10-27",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1275,
+      "end": 1320,
+      "done": true
+     },
+     {
+      "id": "e15",
+      "day": "2026-10-28",
+      "cat": "Deep work",
+      "title": "Migration, part two",
+      "start": 540,
+      "end": 720,
+      "done": true
+     },
+     {
+      "id": "e16",
+      "day": "2026-10-28",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1260,
+      "end": 1310,
+      "done": true
+     },
+     {
+      "id": "e17",
+      "day": "2026-10-29",
+      "cat": "Health",
+      "title": "Morning pages",
+      "start": 450,
+      "end": 480
+     },
+     {
+      "id": "e18",
+      "day": "2026-10-29",
+      "cat": "Deep work",
+      "title": "Rewrite the sync layer",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e19",
+      "day": "2026-10-29",
+      "cat": "Social",
+      "title": "Lunch with Dan",
+      "start": 750,
+      "end": 795
+     },
+     {
+      "id": "e20",
+      "day": "2026-10-29",
+      "cat": "Marathon training",
+      "title": "Easy 8k",
+      "start": 1050,
+      "end": 1110,
+      "done": true
+     },
+     {
+      "id": "e21",
+      "day": "2026-10-29",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1260,
+      "end": 1305,
+      "done": true
+     },
+     {
+      "id": "e23",
+      "day": "2026-10-30",
+      "cat": "Deep work",
+      "title": "Sync layer, part two",
+      "start": 540,
+      "end": 690
+     },
+     {
+      "id": "e24",
+      "day": "2026-10-30",
+      "cat": "Pets",
+      "title": "Dog walk",
+      "start": 1050,
+      "end": 1090
+     },
+     {
+      "id": "e25",
+      "day": "2026-10-31",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 600
+     },
+     {
+      "id": "e26",
+      "day": "2026-10-31",
+      "cat": "Family",
+      "title": "Family brunch",
+      "start": 660,
+      "end": 750
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290
+    },
+    "goals": [
+     {
+      "id": "g1",
+      "title": "Deep work",
+      "cat": "Deep work",
+      "outcome": "Ship the sync layer rewrite",
+      "hours": 70,
+      "start": "2026-10-10",
+      "deadline": "2026-11-24",
+      "hue": 255,
+      "at": "NOW"
+     },
+     {
+      "id": "g2",
+      "title": "Marathon training",
+      "cat": "Marathon training",
+      "outcome": "Run a sub-4 hour marathon",
+      "hours": 95,
+      "start": "2026-10-06",
+      "deadline": "2027-01-04",
+      "hue": 132,
+      "at": "NOW"
+     },
+     {
+      "id": "g3",
+      "title": "Reading",
+      "cat": "Reading",
+      "outcome": "Finish four books",
+      "hours": 14,
+      "start": "2026-10-26",
+      "deadline": "2026-11-12",
+      "hue": 290,
+      "at": "NOW"
+     }
+    ]
+   },
+   "message": "1 removed",
+   "newIds": [],
+   "history": {
+    "label": "Claude · 1 removed",
+    "kind": "claude"
+   },
+   "unchanged": false
+  },
+  "goal_create": {
+   "input": [
+    {
+     "op": "goal",
+     "title": "piano",
+     "outcome": "Grade 3",
+     "deadline": "2026-12-06",
+     "hours": 40
+    }
+   ],
+   "resolved": {
+    "events": [],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290
+    },
+    "fresh": [],
+    "updates": [],
+    "deletes": [],
+    "goals": [
+     {
+      "create": {
+       "title": "Piano",
+       "outcome": "Grade 3",
+       "deadline": "2026-12-06",
+       "hours": 40
+      }
+     }
+    ]
+   },
+   "uid": 26,
+   "after": {
+    "events": [
+     {
+      "id": "e1",
+      "day": "2026-10-13",
+      "cat": "Marathon training",
+      "title": "Tempo 6k",
+      "start": 1080,
+      "end": 1125,
+      "done": true
+     },
+     {
+      "id": "e2",
+      "day": "2026-10-14",
+      "cat": "Deep work",
+      "title": "Sync spec",
+      "start": 540,
+      "end": 720,
+      "done": true
+     },
+     {
+      "id": "e3",
+      "day": "2026-10-15",
+      "cat": "Deep work",
+      "title": "Sync spec review",
+      "start": 570,
+      "end": 660,
+      "done": true
+     },
+     {
+      "id": "e4",
+      "day": "2026-10-16",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 570,
+      "done": true
+     },
+     {
+      "id": "e5",
+      "day": "2026-10-18",
+      "cat": "Marathon training",
+      "title": "Easy 6k",
+      "start": 1050,
+      "end": 1095,
+      "done": true
+     },
+     {
+      "id": "e6",
+      "day": "2026-10-20",
+      "cat": "Deep work",
+      "title": "Prototype conflict handling",
+      "start": 540,
+      "end": 750,
+      "done": true
+     },
+     {
+      "id": "e7",
+      "day": "2026-10-21",
+      "cat": "Deep work",
+      "title": "Conflict handling, part two",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e8",
+      "day": "2026-10-22",
+      "cat": "Deep work",
+      "title": "Tests for the merge path",
+      "start": 780,
+      "end": 900,
+      "done": true
+     },
+     {
+      "id": "e9",
+      "day": "2026-10-23",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 590,
+      "done": true
+     },
+     {
+      "id": "e10",
+      "day": "2026-10-24",
+      "cat": "Deep work",
+      "title": "Offline queue",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e11",
+      "day": "2026-10-25",
+      "cat": "Marathon training",
+      "title": "Intervals",
+      "start": 1080,
+      "end": 1135,
+      "done": true
+     },
+     {
+      "id": "e12",
+      "day": "2026-10-27",
+      "cat": "Deep work",
+      "title": "Schema migration",
+      "start": 570,
+      "end": 750,
+      "done": true
+     },
+     {
+      "id": "e13",
+      "day": "2026-10-27",
+      "cat": "Marathon training",
+      "title": "Intervals",
+      "start": 1080,
+      "end": 1140,
+      "done": true
+     },
+     {
+      "id": "e14",
+      "day": "2026-10-27",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1275,
+      "end": 1320,
+      "done": true
+     },
+     {
+      "id": "e15",
+      "day": "2026-10-28",
+      "cat": "Deep work",
+      "title": "Migration, part two",
+      "start": 540,
+      "end": 720,
+      "done": true
+     },
+     {
+      "id": "e16",
+      "day": "2026-10-28",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1260,
+      "end": 1310,
+      "done": true
+     },
+     {
+      "id": "e17",
+      "day": "2026-10-29",
+      "cat": "Health",
+      "title": "Morning pages",
+      "start": 450,
+      "end": 480
+     },
+     {
+      "id": "e18",
+      "day": "2026-10-29",
+      "cat": "Deep work",
+      "title": "Rewrite the sync layer",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e19",
+      "day": "2026-10-29",
+      "cat": "Social",
+      "title": "Lunch with Dan",
+      "start": 750,
+      "end": 795
+     },
+     {
+      "id": "e20",
+      "day": "2026-10-29",
+      "cat": "Marathon training",
+      "title": "Easy 8k",
+      "start": 1050,
+      "end": 1110,
+      "done": true
+     },
+     {
+      "id": "e21",
+      "day": "2026-10-29",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1260,
+      "end": 1305,
+      "done": true
+     },
+     {
+      "id": "e22",
+      "day": "2026-10-30",
+      "cat": "Food",
+      "title": "Coffee + plan the day",
+      "start": 480,
+      "end": 505
+     },
+     {
+      "id": "e23",
+      "day": "2026-10-30",
+      "cat": "Deep work",
+      "title": "Sync layer, part two",
+      "start": 540,
+      "end": 690
+     },
+     {
+      "id": "e24",
+      "day": "2026-10-30",
+      "cat": "Pets",
+      "title": "Dog walk",
+      "start": 1050,
+      "end": 1090
+     },
+     {
+      "id": "e25",
+      "day": "2026-10-31",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 600
+     },
+     {
+      "id": "e26",
+      "day": "2026-10-31",
+      "cat": "Family",
+      "title": "Family brunch",
+      "start": 660,
+      "end": 750
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290,
+     "Piano": 350
+    },
+    "goals": [
+     {
+      "id": "g1",
+      "title": "Deep work",
+      "cat": "Deep work",
+      "outcome": "Ship the sync layer rewrite",
+      "hours": 70,
+      "start": "2026-10-10",
+      "deadline": "2026-11-24",
+      "hue": 255,
+      "at": "NOW"
+     },
+     {
+      "id": "g2",
+      "title": "Marathon training",
+      "cat": "Marathon training",
+      "outcome": "Run a sub-4 hour marathon",
+      "hours": 95,
+      "start": "2026-10-06",
+      "deadline": "2027-01-04",
+      "hue": 132,
+      "at": "NOW"
+     },
+     {
+      "id": "g3",
+      "title": "Reading",
+      "cat": "Reading",
+      "outcome": "Finish four books",
+      "hours": 14,
+      "start": "2026-10-26",
+      "deadline": "2026-11-12",
+      "hue": 290,
+      "at": "NOW"
+     },
+     {
+      "id": "g{now36}248",
+      "title": "Piano",
+      "cat": "Piano",
+      "outcome": "Grade 3",
+      "deadline": "2026-12-06",
+      "hours": 40,
+      "start": "2026-10-30",
+      "hue": 350,
+      "at": "NOW"
+     }
+    ]
+   },
+   "message": "goal set",
+   "newIds": [],
+   "history": {
+    "label": "Claude · goal set",
+    "kind": "claude"
+   },
+   "unchanged": false
+  },
+  "goal_change": {
+   "input": [
+    {
+     "op": "goal",
+     "id": "g2",
+     "hours": 50
+    },
+    {
+     "op": "goal",
+     "id": "g3",
+     "title": "Books",
+     "deadline": "2026-11-20"
+    }
+   ],
+   "resolved": {
+    "events": [],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290
+    },
+    "fresh": [],
+    "updates": [],
+    "deletes": [],
+    "goals": [
+     {
+      "id": "g2",
+      "patch": {
+       "hours": 50
+      }
+     },
+     {
+      "id": "g3",
+      "patch": {
+       "title": "Books",
+       "deadline": "2026-11-20"
+      }
+     }
+    ]
+   },
+   "uid": 26,
+   "after": {
+    "events": [
+     {
+      "id": "e1",
+      "day": "2026-10-13",
+      "cat": "Marathon training",
+      "title": "Tempo 6k",
+      "start": 1080,
+      "end": 1125,
+      "done": true
+     },
+     {
+      "id": "e2",
+      "day": "2026-10-14",
+      "cat": "Deep work",
+      "title": "Sync spec",
+      "start": 540,
+      "end": 720,
+      "done": true
+     },
+     {
+      "id": "e3",
+      "day": "2026-10-15",
+      "cat": "Deep work",
+      "title": "Sync spec review",
+      "start": 570,
+      "end": 660,
+      "done": true
+     },
+     {
+      "id": "e4",
+      "day": "2026-10-16",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 570,
+      "done": true
+     },
+     {
+      "id": "e5",
+      "day": "2026-10-18",
+      "cat": "Marathon training",
+      "title": "Easy 6k",
+      "start": 1050,
+      "end": 1095,
+      "done": true
+     },
+     {
+      "id": "e6",
+      "day": "2026-10-20",
+      "cat": "Deep work",
+      "title": "Prototype conflict handling",
+      "start": 540,
+      "end": 750,
+      "done": true
+     },
+     {
+      "id": "e7",
+      "day": "2026-10-21",
+      "cat": "Deep work",
+      "title": "Conflict handling, part two",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e8",
+      "day": "2026-10-22",
+      "cat": "Deep work",
+      "title": "Tests for the merge path",
+      "start": 780,
+      "end": 900,
+      "done": true
+     },
+     {
+      "id": "e9",
+      "day": "2026-10-23",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 590,
+      "done": true
+     },
+     {
+      "id": "e10",
+      "day": "2026-10-24",
+      "cat": "Deep work",
+      "title": "Offline queue",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e11",
+      "day": "2026-10-25",
+      "cat": "Marathon training",
+      "title": "Intervals",
+      "start": 1080,
+      "end": 1135,
+      "done": true
+     },
+     {
+      "id": "e12",
+      "day": "2026-10-27",
+      "cat": "Deep work",
+      "title": "Schema migration",
+      "start": 570,
+      "end": 750,
+      "done": true
+     },
+     {
+      "id": "e13",
+      "day": "2026-10-27",
+      "cat": "Marathon training",
+      "title": "Intervals",
+      "start": 1080,
+      "end": 1140,
+      "done": true
+     },
+     {
+      "id": "e14",
+      "day": "2026-10-27",
+      "cat": "Books",
+      "title": "Reading",
+      "start": 1275,
+      "end": 1320,
+      "done": true
+     },
+     {
+      "id": "e15",
+      "day": "2026-10-28",
+      "cat": "Deep work",
+      "title": "Migration, part two",
+      "start": 540,
+      "end": 720,
+      "done": true
+     },
+     {
+      "id": "e16",
+      "day": "2026-10-28",
+      "cat": "Books",
+      "title": "Reading",
+      "start": 1260,
+      "end": 1310,
+      "done": true
+     },
+     {
+      "id": "e17",
+      "day": "2026-10-29",
+      "cat": "Health",
+      "title": "Morning pages",
+      "start": 450,
+      "end": 480
+     },
+     {
+      "id": "e18",
+      "day": "2026-10-29",
+      "cat": "Deep work",
+      "title": "Rewrite the sync layer",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e19",
+      "day": "2026-10-29",
+      "cat": "Social",
+      "title": "Lunch with Dan",
+      "start": 750,
+      "end": 795
+     },
+     {
+      "id": "e20",
+      "day": "2026-10-29",
+      "cat": "Marathon training",
+      "title": "Easy 8k",
+      "start": 1050,
+      "end": 1110,
+      "done": true
+     },
+     {
+      "id": "e21",
+      "day": "2026-10-29",
+      "cat": "Books",
+      "title": "Reading",
+      "start": 1260,
+      "end": 1305,
+      "done": true
+     },
+     {
+      "id": "e22",
+      "day": "2026-10-30",
+      "cat": "Food",
+      "title": "Coffee + plan the day",
+      "start": 480,
+      "end": 505
+     },
+     {
+      "id": "e23",
+      "day": "2026-10-30",
+      "cat": "Deep work",
+      "title": "Sync layer, part two",
+      "start": 540,
+      "end": 690
+     },
+     {
+      "id": "e24",
+      "day": "2026-10-30",
+      "cat": "Pets",
+      "title": "Dog walk",
+      "start": 1050,
+      "end": 1090
+     },
+     {
+      "id": "e25",
+      "day": "2026-10-31",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 600
+     },
+     {
+      "id": "e26",
+      "day": "2026-10-31",
+      "cat": "Family",
+      "title": "Family brunch",
+      "start": 660,
+      "end": 750
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 132,
+     "Books": 290
+    },
+    "goals": [
+     {
+      "id": "g1",
+      "title": "Deep work",
+      "cat": "Deep work",
+      "outcome": "Ship the sync layer rewrite",
+      "hours": 70,
+      "start": "2026-10-10",
+      "deadline": "2026-11-24",
+      "hue": 255,
+      "at": "NOW"
+     },
+     {
+      "id": "g2",
+      "title": "Marathon training",
+      "cat": "Marathon training",
+      "outcome": "Run a sub-4 hour marathon",
+      "hours": 50,
+      "start": "2026-10-06",
+      "deadline": "2027-01-04",
+      "hue": 132,
+      "at": "NOW"
+     },
+     {
+      "id": "g3",
+      "title": "Books",
+      "cat": "Books",
+      "outcome": "Finish four books",
+      "hours": 14,
+      "start": "2026-10-26",
+      "deadline": "2026-11-20",
+      "hue": 290,
+      "at": "NOW"
+     }
+    ]
+   },
+   "message": "2 goals set",
+   "newIds": [],
+   "history": {
+    "label": "Claude · 2 goals set",
+    "kind": "claude"
+   },
+   "unchanged": false
+  },
+  "goal_delete": {
+   "input": [
+    {
+     "op": "goal",
+     "id": "g1",
+     "delete": true
+    }
+   ],
+   "resolved": {
+    "events": [],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290
+    },
+    "fresh": [],
+    "updates": [],
+    "deletes": [],
+    "goals": [
+     {
+      "id": "g1",
+      "remove": true
+     }
+    ]
+   },
+   "uid": 26,
+   "after": {
+    "events": [
+     {
+      "id": "e1",
+      "day": "2026-10-13",
+      "cat": "Marathon training",
+      "title": "Tempo 6k",
+      "start": 1080,
+      "end": 1125,
+      "done": true
+     },
+     {
+      "id": "e2",
+      "day": "2026-10-14",
+      "cat": "Deep work",
+      "title": "Sync spec",
+      "start": 540,
+      "end": 720,
+      "done": true
+     },
+     {
+      "id": "e3",
+      "day": "2026-10-15",
+      "cat": "Deep work",
+      "title": "Sync spec review",
+      "start": 570,
+      "end": 660,
+      "done": true
+     },
+     {
+      "id": "e4",
+      "day": "2026-10-16",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 570,
+      "done": true
+     },
+     {
+      "id": "e5",
+      "day": "2026-10-18",
+      "cat": "Marathon training",
+      "title": "Easy 6k",
+      "start": 1050,
+      "end": 1095,
+      "done": true
+     },
+     {
+      "id": "e6",
+      "day": "2026-10-20",
+      "cat": "Deep work",
+      "title": "Prototype conflict handling",
+      "start": 540,
+      "end": 750,
+      "done": true
+     },
+     {
+      "id": "e7",
+      "day": "2026-10-21",
+      "cat": "Deep work",
+      "title": "Conflict handling, part two",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e8",
+      "day": "2026-10-22",
+      "cat": "Deep work",
+      "title": "Tests for the merge path",
+      "start": 780,
+      "end": 900,
+      "done": true
+     },
+     {
+      "id": "e9",
+      "day": "2026-10-23",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 590,
+      "done": true
+     },
+     {
+      "id": "e10",
+      "day": "2026-10-24",
+      "cat": "Deep work",
+      "title": "Offline queue",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e11",
+      "day": "2026-10-25",
+      "cat": "Marathon training",
+      "title": "Intervals",
+      "start": 1080,
+      "end": 1135,
+      "done": true
+     },
+     {
+      "id": "e12",
+      "day": "2026-10-27",
+      "cat": "Deep work",
+      "title": "Schema migration",
+      "start": 570,
+      "end": 750,
+      "done": true
+     },
+     {
+      "id": "e13",
+      "day": "2026-10-27",
+      "cat": "Marathon training",
+      "title": "Intervals",
+      "start": 1080,
+      "end": 1140,
+      "done": true
+     },
+     {
+      "id": "e14",
+      "day": "2026-10-27",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1275,
+      "end": 1320,
+      "done": true
+     },
+     {
+      "id": "e15",
+      "day": "2026-10-28",
+      "cat": "Deep work",
+      "title": "Migration, part two",
+      "start": 540,
+      "end": 720,
+      "done": true
+     },
+     {
+      "id": "e16",
+      "day": "2026-10-28",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1260,
+      "end": 1310,
+      "done": true
+     },
+     {
+      "id": "e17",
+      "day": "2026-10-29",
+      "cat": "Health",
+      "title": "Morning pages",
+      "start": 450,
+      "end": 480
+     },
+     {
+      "id": "e18",
+      "day": "2026-10-29",
+      "cat": "Deep work",
+      "title": "Rewrite the sync layer",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e19",
+      "day": "2026-10-29",
+      "cat": "Social",
+      "title": "Lunch with Dan",
+      "start": 750,
+      "end": 795
+     },
+     {
+      "id": "e20",
+      "day": "2026-10-29",
+      "cat": "Marathon training",
+      "title": "Easy 8k",
+      "start": 1050,
+      "end": 1110,
+      "done": true
+     },
+     {
+      "id": "e21",
+      "day": "2026-10-29",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1260,
+      "end": 1305,
+      "done": true
+     },
+     {
+      "id": "e22",
+      "day": "2026-10-30",
+      "cat": "Food",
+      "title": "Coffee + plan the day",
+      "start": 480,
+      "end": 505
+     },
+     {
+      "id": "e23",
+      "day": "2026-10-30",
+      "cat": "Deep work",
+      "title": "Sync layer, part two",
+      "start": 540,
+      "end": 690
+     },
+     {
+      "id": "e24",
+      "day": "2026-10-30",
+      "cat": "Pets",
+      "title": "Dog walk",
+      "start": 1050,
+      "end": 1090
+     },
+     {
+      "id": "e25",
+      "day": "2026-10-31",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 600
+     },
+     {
+      "id": "e26",
+      "day": "2026-10-31",
+      "cat": "Family",
+      "title": "Family brunch",
+      "start": 660,
+      "end": 750
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290
+    },
+    "goals": [
+     {
+      "id": "g2",
+      "title": "Marathon training",
+      "cat": "Marathon training",
+      "outcome": "Run a sub-4 hour marathon",
+      "hours": 95,
+      "start": "2026-10-06",
+      "deadline": "2027-01-04",
+      "hue": 132,
+      "at": "NOW"
+     },
+     {
+      "id": "g3",
+      "title": "Reading",
+      "cat": "Reading",
+      "outcome": "Finish four books",
+      "hours": 14,
+      "start": "2026-10-26",
+      "deadline": "2026-11-12",
+      "hue": 290,
+      "at": "NOW"
+     }
+    ]
+   },
+   "message": "goal removed",
+   "newIds": [],
+   "history": {
+    "label": "Claude · goal removed",
+    "kind": "claude"
+   },
+   "unchanged": false
+  },
+  "mixed": {
+   "input": [
+    {
+     "op": "create",
+     "title": "Gym",
+     "start": 420,
+     "end": 480
+    },
+    {
+     "op": "update",
+     "id": "e22",
+     "end": 1000
+    },
+    {
+     "op": "delete",
+     "id": "e23"
+    },
+    {
+     "op": "goal",
+     "title": "Marathon training",
+     "hours": 100
+    }
+   ],
+   "resolved": {
+    "events": [
+     {
+      "id": "e27",
+      "day": "2026-10-30",
+      "cat": "Other",
+      "title": "Gym",
+      "start": 420,
+      "end": 480,
+      "at": "NOW"
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290,
+     "Other": 48
+    },
+    "fresh": [
+     "Other"
+    ],
+    "updates": [
+     {
+      "id": "e22",
+      "patch": {
+       "end": 1000
+      }
+     }
+    ],
+    "deletes": [
+     "e23"
+    ],
+    "goals": [
+     {
+      "id": "g2",
+      "patch": {
+       "title": "Marathon training",
+       "hours": 100
+      }
+     }
+    ]
+   },
+   "uid": 27,
+   "after": {
+    "events": [
+     {
+      "id": "e1",
+      "day": "2026-10-13",
+      "cat": "Marathon training",
+      "title": "Tempo 6k",
+      "start": 1080,
+      "end": 1125,
+      "done": true
+     },
+     {
+      "id": "e2",
+      "day": "2026-10-14",
+      "cat": "Deep work",
+      "title": "Sync spec",
+      "start": 540,
+      "end": 720,
+      "done": true
+     },
+     {
+      "id": "e3",
+      "day": "2026-10-15",
+      "cat": "Deep work",
+      "title": "Sync spec review",
+      "start": 570,
+      "end": 660,
+      "done": true
+     },
+     {
+      "id": "e4",
+      "day": "2026-10-16",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 570,
+      "done": true
+     },
+     {
+      "id": "e5",
+      "day": "2026-10-18",
+      "cat": "Marathon training",
+      "title": "Easy 6k",
+      "start": 1050,
+      "end": 1095,
+      "done": true
+     },
+     {
+      "id": "e6",
+      "day": "2026-10-20",
+      "cat": "Deep work",
+      "title": "Prototype conflict handling",
+      "start": 540,
+      "end": 750,
+      "done": true
+     },
+     {
+      "id": "e7",
+      "day": "2026-10-21",
+      "cat": "Deep work",
+      "title": "Conflict handling, part two",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e8",
+      "day": "2026-10-22",
+      "cat": "Deep work",
+      "title": "Tests for the merge path",
+      "start": 780,
+      "end": 900,
+      "done": true
+     },
+     {
+      "id": "e9",
+      "day": "2026-10-23",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 590,
+      "done": true
+     },
+     {
+      "id": "e10",
+      "day": "2026-10-24",
+      "cat": "Deep work",
+      "title": "Offline queue",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e11",
+      "day": "2026-10-25",
+      "cat": "Marathon training",
+      "title": "Intervals",
+      "start": 1080,
+      "end": 1135,
+      "done": true
+     },
+     {
+      "id": "e12",
+      "day": "2026-10-27",
+      "cat": "Deep work",
+      "title": "Schema migration",
+      "start": 570,
+      "end": 750,
+      "done": true
+     },
+     {
+      "id": "e13",
+      "day": "2026-10-27",
+      "cat": "Marathon training",
+      "title": "Intervals",
+      "start": 1080,
+      "end": 1140,
+      "done": true
+     },
+     {
+      "id": "e14",
+      "day": "2026-10-27",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1275,
+      "end": 1320,
+      "done": true
+     },
+     {
+      "id": "e15",
+      "day": "2026-10-28",
+      "cat": "Deep work",
+      "title": "Migration, part two",
+      "start": 540,
+      "end": 720,
+      "done": true
+     },
+     {
+      "id": "e16",
+      "day": "2026-10-28",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1260,
+      "end": 1310,
+      "done": true
+     },
+     {
+      "id": "e17",
+      "day": "2026-10-29",
+      "cat": "Health",
+      "title": "Morning pages",
+      "start": 450,
+      "end": 480
+     },
+     {
+      "id": "e18",
+      "day": "2026-10-29",
+      "cat": "Deep work",
+      "title": "Rewrite the sync layer",
+      "start": 540,
+      "end": 690,
+      "done": true
+     },
+     {
+      "id": "e19",
+      "day": "2026-10-29",
+      "cat": "Social",
+      "title": "Lunch with Dan",
+      "start": 750,
+      "end": 795
+     },
+     {
+      "id": "e20",
+      "day": "2026-10-29",
+      "cat": "Marathon training",
+      "title": "Easy 8k",
+      "start": 1050,
+      "end": 1110,
+      "done": true
+     },
+     {
+      "id": "e21",
+      "day": "2026-10-29",
+      "cat": "Reading",
+      "title": "Reading",
+      "start": 1260,
+      "end": 1305,
+      "done": true
+     },
+     {
+      "id": "e22",
+      "day": "2026-10-30",
+      "cat": "Food",
+      "title": "Coffee + plan the day",
+      "start": 480,
+      "end": 1000
+     },
+     {
+      "id": "e24",
+      "day": "2026-10-30",
+      "cat": "Pets",
+      "title": "Dog walk",
+      "start": 1050,
+      "end": 1090
+     },
+     {
+      "id": "e25",
+      "day": "2026-10-31",
+      "cat": "Marathon training",
+      "title": "Long run",
+      "start": 480,
+      "end": 600
+     },
+     {
+      "id": "e26",
+      "day": "2026-10-31",
+      "cat": "Family",
+      "title": "Family brunch",
+      "start": 660,
+      "end": 750
+     },
+     {
+      "id": "e27",
+      "day": "2026-10-30",
+      "cat": "Other",
+      "title": "Gym",
+      "start": 420,
+      "end": 480,
+      "at": "NOW"
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 132,
+     "Reading": 290,
+     "Other": 48
+    },
+    "goals": [
+     {
+      "id": "g1",
+      "title": "Deep work",
+      "cat": "Deep work",
+      "outcome": "Ship the sync layer rewrite",
+      "hours": 70,
+      "start": "2026-10-10",
+      "deadline": "2026-11-24",
+      "hue": 255,
+      "at": "NOW"
+     },
+     {
+      "id": "g2",
+      "title": "Marathon training",
+      "cat": "Marathon training",
+      "outcome": "Run a sub-4 hour marathon",
+      "hours": 100,
+      "start": "2026-10-06",
+      "deadline": "2027-01-04",
+      "hue": 132,
+      "at": "NOW"
+     },
+     {
+      "id": "g3",
+      "title": "Reading",
+      "cat": "Reading",
+      "outcome": "Finish four books",
+      "hours": 14,
+      "start": "2026-10-26",
+      "deadline": "2026-11-12",
+      "hue": 290,
+      "at": "NOW"
+     }
+    ]
+   },
+   "message": "1 event added · 1 updated · 1 removed · goal set · new: Other",
+   "newIds": [
+    "e27",
+    "e22"
+   ],
+   "history": {
+    "label": "Claude · 1 event added · 1 updated · 1 removed · goal set · new: Other",
+    "kind": "claude"
+   },
+   "unchanged": false
+  }
+ },
+ "checkOps": [
+  {
+   "input": [
+    {
+     "op": "create",
+     "title": "Standup",
+     "cat": "Work",
+     "start": 570,
+     "end": 585,
+     "dayOffset": 0
+    }
+   ],
+   "noAsk": [
+    [],
+    []
+   ]
+  },
+  {
+   "input": [],
+   "noAsk": [
+    [
+     "the reply is empty"
+    ],
+    [
+     "the reply is empty"
+    ]
+   ]
+  },
+  {
+   "input": [
+    {
+     "op": "create",
+     "title": "",
+     "start": 1,
+     "end": 2
+    }
+   ],
+   "noAsk": [
+    [
+     "#1 create has no title"
+    ],
+    [
+     "#1 create has no title"
+    ]
+   ]
+  },
+  {
+   "input": [
+    {
+     "op": "create",
+     "title": "x",
+     "start": 600
+    }
+   ],
+   "noAsk": [
+    [
+     "#1 timed create needs numeric start and end"
+    ],
+    [
+     "#1 timed create needs numeric start and end"
+    ]
+   ]
+  },
+  {
+   "input": [
+    {
+     "op": "create",
+     "title": "x",
+     "start": 600,
+     "end": 2100
+    }
+   ],
+   "noAsk": [
+    [
+     "#1 end must be greater than start and at most start+1440"
+    ],
+    [
+     "#1 end must be greater than start and at most start+1440"
+    ]
+   ]
+  },
+  {
+   "input": [
+    {
+     "op": "create",
+     "title": "x",
+     "start": 600,
+     "end": 500
+    }
+   ],
+   "noAsk": [
+    [
+     "#1 end must be greater than start and at most start+1440"
+    ],
+    [
+     "#1 end must be greater than start and at most start+1440"
+    ]
+   ]
+  },
+  {
+   "input": [
+    {
+     "op": "create",
+     "title": "x",
+     "allDay": true,
+     "days": 0
+    }
+   ],
+   "noAsk": [
+    [
+     "#1 days must be 1 or more"
+    ],
+    [
+     "#1 days must be 1 or more"
+    ]
+   ]
+  },
+  {
+   "input": [
+    {
+     "op": "create",
+     "title": "x",
+     "start": 1,
+     "end": 2,
+     "dayOffset": "1"
+    }
+   ],
+   "noAsk": [
+    [
+     "#1 dayOffset must be a number"
+    ],
+    [
+     "#1 dayOffset must be a number"
+    ]
+   ]
+  },
+  {
+   "input": [
+    {
+     "op": "update",
+     "id": "e404",
+     "start": 1,
+     "end": 1
+    }
+   ],
+   "noAsk": [
+    [
+     "#1 update id \"e404\" is not on the calendar",
+     "#1 end must be greater than start and at most start+1440"
+    ],
+    [
+     "#1 update id \"e404\" is not on the calendar",
+     "#1 end must be greater than start and at most start+1440"
+    ]
+   ]
+  },
+  {
+   "input": [
+    {
+     "op": "delete",
+     "id": "e22"
+    },
+    {
+     "op": "delete",
+     "id": "nope"
+    }
+   ],
+   "noAsk": [
+    [
+     "#2 delete id \"nope\" is not on the calendar"
+    ],
+    [
+     "#2 delete id \"nope\" is not on the calendar"
+    ]
+   ]
+  },
+  {
+   "input": [
+    {
+     "op": "goal",
+     "title": "M",
+     "outcome": "o",
+     "deadline": "2026-12-06",
+     "hours": 90
+    }
+   ],
+   "noAsk": [
+    [],
+    []
+   ]
+  },
+  {
+   "input": [
+    {
+     "op": "goal",
+     "title": "M",
+     "hours": 0,
+     "deadline": "2026-01-01"
+    }
+   ],
+   "noAsk": [
+    [
+     "#1 new goal is missing outcome",
+     "#1 deadline 2026-01-01 is in the past",
+     "#1 hours must be a positive number"
+    ],
+    [
+     "#1 new goal is missing outcome",
+     "#1 deadline 2026-01-01 is in the past",
+     "#1 hours must be a positive number"
+    ]
+   ]
+  },
+  {
+   "input": [
+    {
+     "op": "goal",
+     "id": "g404",
+     "deadline": "6 Dec"
+    }
+   ],
+   "noAsk": [
+    [
+     "#1 goal id \"g404\" does not exist",
+     "#1 deadline must be YYYY-MM-DD"
+    ],
+    [
+     "#1 goal id \"g404\" does not exist",
+     "#1 deadline must be YYYY-MM-DD"
+    ]
+   ]
+  },
+  {
+   "input": [
+    {
+     "op": "ask",
+     "question": "Which day?",
+     "options": [
+      {
+       "label": "a"
+      },
+      {
+       "label": "b"
+      }
+     ]
+    }
+   ],
+   "noAsk": [
+    [],
+    [
+     "the note says not to ask, but the reply asks"
+    ]
+   ]
+  },
+  {
+   "input": [
+    {
+     "op": "ask",
+     "question": "",
+     "options": [
+      {
+       "label": "a"
+      }
+     ]
+    }
+   ],
+   "noAsk": [
+    [
+     "#1 ask has no question",
+     "#1 ask has 1 options (needs 2–4)"
+    ],
+    [
+     "#1 ask has no question",
+     "#1 ask has 1 options (needs 2–4)",
+     "the note says not to ask, but the reply asks"
+    ]
+   ]
+  },
+  {
+   "input": [
+    {
+     "op": "ask",
+     "question": "q1",
+     "options": [
+      "a",
+      "b"
+     ]
+    },
+    {
+     "op": "ask",
+     "question": "q2",
+     "options": [
+      "a",
+      "b"
+     ]
+    },
+    {
+     "op": "ask",
+     "question": "q3",
+     "options": [
+      "a",
+      "b"
+     ]
+    },
+    {
+     "op": "ask",
+     "question": "q4",
+     "options": [
+      "a",
+      "b"
+     ]
+    }
+   ],
+   "noAsk": [
+    [
+     "4 questions (max 3)"
+    ],
+    [
+     "4 questions (max 3)",
+     "the note says not to ask, but the reply asks"
+    ]
+   ]
+  },
+  {
+   "input": [
+    {
+     "op": "ask",
+     "question": "q",
+     "options": [
+      "a",
+      "b"
+     ]
+    },
+    {
+     "op": "create",
+     "title": "x",
+     "start": 1,
+     "end": 2
+    }
+   ],
+   "noAsk": [
+    [
+     "the reply mixes questions with create/update/delete: keep it only if this is a goal-conversation step, otherwise return just the questions"
+    ],
+    [
+     "the note says not to ask, but the reply asks",
+     "the reply mixes questions with create/update/delete: keep it only if this is a goal-conversation step, otherwise return just the questions"
+    ]
+   ]
+  },
+  {
+   "input": [
+    {
+     "op": "frobnicate"
+    },
+    null,
+    5
+   ],
+   "noAsk": [
+    [
+     "#1 unknown op \"frobnicate\"",
+     "#2 is not an object",
+     "#3 is not an object"
+    ],
+    [
+     "#1 unknown op \"frobnicate\"",
+     "#2 is not an object",
+     "#3 is not an object"
+    ]
+   ]
+  }
+ ],
+ "winIds": [
+  "e20",
+  "e21",
+  "e23"
+ ],
+ "checkCi": [
+  {
+   "input": [
+    {
+     "field": "goal",
+     "q": "Behind?",
+     "id": "g1"
+    },
+    {
+     "field": "log",
+     "q": "Walk?",
+     "chips": [
+      "07:30"
+     ]
+    }
+   ],
+   "issues": []
+  },
+  {
+   "input": [
+    {
+     "field": "log",
+     "q": "only one"
+    }
+   ],
+   "issues": [
+    "1 questions (needs 2–4)"
+   ]
+  },
+  {
+   "input": [
+    {
+     "field": "log",
+     "q": "a"
+    },
+    {
+     "field": "goal",
+     "q": "late goal",
+     "id": "g1"
+    }
+   ],
+   "issues": [
+    "#2 goal question must come first"
+   ]
+  },
+  {
+   "input": [
+    {
+     "field": "goal",
+     "q": "x",
+     "id": "g404"
+    },
+    {
+     "field": "log",
+     "q": "y"
+    }
+   ],
+   "issues": [
+    "#1 goal id \"g404\" does not exist"
+   ]
+  },
+  {
+   "input": [
+    {
+     "field": "goal",
+     "q": "x",
+     "id": "g1"
+    },
+    {
+     "field": "goal",
+     "q": "y",
+     "id": "g2"
+    },
+    {
+     "field": "log",
+     "q": "z"
+    }
+   ],
+   "issues": [
+    "#2 goal question must come first",
+    "more than one goal question"
+   ]
+  },
+  {
+   "input": [
+    {
+     "field": "log",
+     "q": "a",
+     "chips": [
+      "1",
+      "2",
+      "3",
+      "4"
+     ]
+    },
+    {
+     "field": "other",
+     "q": "b"
+    },
+    {
+     "field": "log"
+    }
+   ],
+   "issues": [
+    "#1 more than 3 chips",
+    "#2 field must be \"goal\", \"win\" or \"log\"",
+    "#3 has no q"
+   ]
+  },
+  {
+   "input": [
+    {
+     "field": "win",
+     "q": "w",
+     "id": "e404"
+    }
+   ],
+   "issues": [
+    "#1 win id \"e404\" is not a listed goal session"
+   ]
+  }
+ ],
+ "parse": {
+  "0": [
+   {
+    "note": "gym at 7am then lunch with Dan 12:30-1:30 and dentist at 3pm tomorrow",
+    "events": [
+     {
+      "id": "e27",
+      "day": "2026-10-30",
+      "cat": "Health",
+      "title": "Gym",
+      "start": 420,
+      "end": 480,
+      "at": "NOW"
+     },
+     {
+      "id": "e28",
+      "day": "2026-10-31",
+      "cat": "Social",
+      "title": "Lunch with Dan and dentist at 3pm",
+      "start": 720,
+      "end": 810,
+      "at": "NOW"
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290
+    },
+    "fresh": []
+   },
+   {
+    "note": "standup 9:30 for 15 minutes, review PRs, call mum",
+    "events": [
+     {
+      "id": "e27",
+      "day": "2026-10-30",
+      "cat": "Work",
+      "title": "Standup",
+      "start": 570,
+      "end": 585,
+      "at": "NOW"
+     },
+     {
+      "id": "e28",
+      "day": "2026-10-30",
+      "cat": "Work",
+      "title": "Review PRs",
+      "start": 585,
+      "end": 645,
+      "at": "NOW"
+     },
+     {
+      "id": "e29",
+      "day": "2026-10-30",
+      "cat": "Work",
+      "title": "Call mum",
+      "start": 645,
+      "end": 705,
+      "at": "NOW"
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290
+    },
+    "fresh": []
+   },
+   {
+    "note": "dinner at 7pm for 2 hours\nwalk the dog",
+    "events": [
+     {
+      "id": "e27",
+      "day": "2026-10-30",
+      "cat": "Food",
+      "title": "Dinner",
+      "start": 1140,
+      "end": 1260,
+      "at": "NOW"
+     },
+     {
+      "id": "e28",
+      "day": "2026-10-30",
+      "cat": "Pets",
+      "title": "Walk the dog",
+      "start": 1260,
+      "end": 1300,
+      "at": "NOW"
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290
+    },
+    "fresh": []
+   },
+   {
+    "note": "novel writing until 5pm",
+    "events": [
+     {
+      "id": "e27",
+      "day": "2026-10-30",
+      "cat": "Work",
+      "title": "Novel writing",
+      "start": 480,
+      "end": 1020,
+      "at": "NOW"
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290
+    },
+    "fresh": []
+   },
+   {
+    "note": "sleep 10pm-6am",
+    "events": [
+     {
+      "id": "e27",
+      "day": "2026-10-30",
+      "cat": "Health",
+      "title": "Sleep",
+      "start": 1320,
+      "end": 1800,
+      "at": "NOW"
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290
+    },
+    "fresh": []
+   },
+   {
+    "note": "run yesterday at 6:30am for an hour",
+    "events": [
+     {
+      "id": "e27",
+      "day": "2026-10-29",
+      "cat": "Health",
+      "title": "Run",
+      "start": 390,
+      "end": 450,
+      "at": "NOW"
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290
+    },
+    "fresh": []
+   },
+   {
+    "note": "lunch at noon for half an hour then call Sam 1pm",
+    "events": [
+     {
+      "id": "e27",
+      "day": "2026-10-30",
+      "cat": "Food",
+      "title": "Lunch at noon",
+      "start": 720,
+      "end": 750,
+      "at": "NOW"
+     },
+     {
+      "id": "e28",
+      "day": "2026-10-30",
+      "cat": "Work",
+      "title": "Call Sam",
+      "start": 780,
+      "end": 840,
+      "at": "NOW"
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290
+    },
+    "fresh": []
+   },
+   {
+    "note": "plant the garden",
+    "events": [
+     {
+      "id": "e27",
+      "day": "2026-10-30",
+      "cat": "Plant",
+      "title": "Plant the garden",
+      "start": 480,
+      "end": 525,
+      "at": "NOW"
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290,
+     "Plant": 350
+    },
+    "fresh": [
+     "Plant"
+    ]
+   },
+   {
+    "note": "zumba at 6 pm",
+    "events": [
+     {
+      "id": "e27",
+      "day": "2026-10-30",
+      "cat": "Zumba",
+      "title": "Zumba",
+      "start": 1080,
+      "end": 1125,
+      "at": "NOW"
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290,
+     "Zumba": 350
+    },
+    "fresh": [
+     "Zumba"
+    ]
+   }
+  ],
+  "860": [
+   {
+    "note": "gym at 7am then lunch with Dan 12:30-1:30 and dentist at 3pm tomorrow",
+    "events": [
+     {
+      "id": "e27",
+      "day": "2026-10-30",
+      "cat": "Health",
+      "title": "Gym",
+      "start": 420,
+      "end": 480,
+      "at": "NOW"
+     },
+     {
+      "id": "e28",
+      "day": "2026-10-31",
+      "cat": "Social",
+      "title": "Lunch with Dan and dentist at 3pm",
+      "start": 720,
+      "end": 810,
+      "at": "NOW"
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290
+    },
+    "fresh": []
+   },
+   {
+    "note": "standup 9:30 for 15 minutes, review PRs, call mum",
+    "events": [
+     {
+      "id": "e27",
+      "day": "2026-10-30",
+      "cat": "Work",
+      "title": "Standup",
+      "start": 570,
+      "end": 585,
+      "at": "NOW"
+     },
+     {
+      "id": "e28",
+      "day": "2026-10-30",
+      "cat": "Work",
+      "title": "Review PRs",
+      "start": 585,
+      "end": 645,
+      "at": "NOW"
+     },
+     {
+      "id": "e29",
+      "day": "2026-10-30",
+      "cat": "Work",
+      "title": "Call mum",
+      "start": 645,
+      "end": 705,
+      "at": "NOW"
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290
+    },
+    "fresh": []
+   },
+   {
+    "note": "dinner at 7pm for 2 hours\nwalk the dog",
+    "events": [
+     {
+      "id": "e27",
+      "day": "2026-10-30",
+      "cat": "Food",
+      "title": "Dinner",
+      "start": 1140,
+      "end": 1260,
+      "at": "NOW"
+     },
+     {
+      "id": "e28",
+      "day": "2026-10-30",
+      "cat": "Pets",
+      "title": "Walk the dog",
+      "start": 1260,
+      "end": 1300,
+      "at": "NOW"
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290
+    },
+    "fresh": []
+   },
+   {
+    "note": "novel writing until 5pm",
+    "events": [
+     {
+      "id": "e27",
+      "day": "2026-10-30",
+      "cat": "Work",
+      "title": "Novel writing",
+      "start": 855,
+      "end": 1020,
+      "at": "NOW"
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290
+    },
+    "fresh": []
+   },
+   {
+    "note": "sleep 10pm-6am",
+    "events": [
+     {
+      "id": "e27",
+      "day": "2026-10-30",
+      "cat": "Health",
+      "title": "Sleep",
+      "start": 1320,
+      "end": 1800,
+      "at": "NOW"
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290
+    },
+    "fresh": []
+   },
+   {
+    "note": "run yesterday at 6:30am for an hour",
+    "events": [
+     {
+      "id": "e27",
+      "day": "2026-10-29",
+      "cat": "Health",
+      "title": "Run",
+      "start": 390,
+      "end": 450,
+      "at": "NOW"
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290
+    },
+    "fresh": []
+   },
+   {
+    "note": "lunch at noon for half an hour then call Sam 1pm",
+    "events": [
+     {
+      "id": "e27",
+      "day": "2026-10-30",
+      "cat": "Food",
+      "title": "Lunch at noon",
+      "start": 720,
+      "end": 750,
+      "at": "NOW"
+     },
+     {
+      "id": "e28",
+      "day": "2026-10-30",
+      "cat": "Work",
+      "title": "Call Sam",
+      "start": 780,
+      "end": 840,
+      "at": "NOW"
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290
+    },
+    "fresh": []
+   },
+   {
+    "note": "plant the garden",
+    "events": [
+     {
+      "id": "e27",
+      "day": "2026-10-30",
+      "cat": "Plant",
+      "title": "Plant the garden",
+      "start": 855,
+      "end": 900,
+      "at": "NOW"
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290,
+     "Plant": 350
+    },
+    "fresh": [
+     "Plant"
+    ]
+   },
+   {
+    "note": "zumba at 6 pm",
+    "events": [
+     {
+      "id": "e27",
+      "day": "2026-10-30",
+      "cat": "Zumba",
+      "title": "Zumba",
+      "start": 1080,
+      "end": 1125,
+      "at": "NOW"
+     }
+    ],
+    "cats": {
+     "Work": 255,
+     "Food": 72,
+     "Health": 132,
+     "Family": 28,
+     "Social": 12,
+     "Routine": 104,
+     "Pets": 166,
+     "Deep work": 240,
+     "Marathon training": 125,
+     "Reading": 290,
+     "Zumba": 350
+    },
+    "fresh": [
+     "Zumba"
+    ]
+   }
+  ]
+ },
+ "paint": {
+  "28": {
+   "edge": "#d97757",
+   "fill": "color-mix(in oklab, #d97757 28%, #171615)",
+   "line": "color-mix(in oklab, #d97757 58%, #171615)",
+   "ink": "color-mix(in oklab, #d97757 32%, #f3efe8)",
+   "mid": "color-mix(in oklab, color-mix(in oklab, #d97757 55%, #f3efe8) 62%, #171615)"
+  },
+  "60": {
+   "edge": "#d4a27f",
+   "fill": "color-mix(in oklab, #d4a27f 28%, #171615)",
+   "line": "color-mix(in oklab, #d4a27f 58%, #171615)",
+   "ink": "color-mix(in oklab, #d4a27f 32%, #f3efe8)",
+   "mid": "color-mix(in oklab, color-mix(in oklab, #d4a27f 55%, #f3efe8) 62%, #171615)"
+  },
+  "125": {
+   "edge": "#788c5d",
+   "fill": "color-mix(in oklab, #788c5d 28%, #171615)",
+   "line": "color-mix(in oklab, #788c5d 58%, #171615)",
+   "ink": "color-mix(in oklab, #788c5d 32%, #f3efe8)",
+   "mid": "color-mix(in oklab, color-mix(in oklab, #788c5d 55%, #f3efe8) 62%, #171615)"
+  },
+  "170": {
+   "edge": "#8fb3a6",
+   "fill": "color-mix(in oklab, #8fb3a6 28%, #171615)",
+   "line": "color-mix(in oklab, #8fb3a6 58%, #171615)",
+   "ink": "color-mix(in oklab, #8fb3a6 32%, #f3efe8)",
+   "mid": "color-mix(in oklab, color-mix(in oklab, #8fb3a6 55%, #f3efe8) 62%, #171615)"
+  },
+  "240": {
+   "edge": "#6a9bcc",
+   "fill": "color-mix(in oklab, #6a9bcc 28%, #171615)",
+   "line": "color-mix(in oklab, #6a9bcc 58%, #171615)",
+   "ink": "color-mix(in oklab, #6a9bcc 32%, #f3efe8)",
+   "mid": "color-mix(in oklab, color-mix(in oklab, #6a9bcc 55%, #f3efe8) 62%, #171615)"
+  },
+  "290": {
+   "edge": "#9a8fbf",
+   "fill": "color-mix(in oklab, #9a8fbf 28%, #171615)",
+   "line": "color-mix(in oklab, #9a8fbf 58%, #171615)",
+   "ink": "color-mix(in oklab, #9a8fbf 32%, #f3efe8)",
+   "mid": "color-mix(in oklab, color-mix(in oklab, #9a8fbf 55%, #f3efe8) 62%, #171615)"
+  },
+  "350": {
+   "edge": "#c4758a",
+   "fill": "color-mix(in oklab, #c4758a 28%, #171615)",
+   "line": "color-mix(in oklab, #c4758a 58%, #171615)",
+   "ink": "color-mix(in oklab, #c4758a 32%, #f3efe8)",
+   "mid": "color-mix(in oklab, color-mix(in oklab, #c4758a 55%, #f3efe8) 62%, #171615)"
+  },
+  "1000": {
+   "edge": "#b0aea5",
+   "fill": "color-mix(in oklab, #b0aea5 28%, #171615)",
+   "line": "color-mix(in oklab, #b0aea5 58%, #171615)",
+   "ink": "color-mix(in oklab, #b0aea5 32%, #f3efe8)",
+   "mid": "color-mix(in oklab, color-mix(in oklab, #b0aea5 55%, #f3efe8) 62%, #171615)"
+  }
+ }
+}
