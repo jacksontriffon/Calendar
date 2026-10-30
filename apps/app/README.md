@@ -79,6 +79,20 @@ the same variables with `eas env:create`.
 4. **Supabase:** create or link a project, then fill `.env.local`.
 5. **Icons and splash:** `assets/` holds Expo's default icons as placeholders (phase 9).
 
+## Sign-in setup (phase 2)
+
+Welcome, setup, import, Account and the re-sign-in sheet live in `src/features/{welcome,onboarding,auth}`.
+What the maintainer must configure (values in `.env.example`):
+
+- **Supabase Auth > URL configuration:** allow-list `aicalendar://auth/callback` and the web origin.
+- **Apple:** Services ID + key in Supabase's Apple provider (web and Android use the OAuth redirect); iOS uses the
+  native sheet (`usesAppleSignIn` is set) and `signInWithIdToken`.
+- **Google:** a web OAuth client (Supabase's Google provider), an iOS client and an Android client (package + SHA-1).
+  Set `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID`, `EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID` and `GOOGLE_IOS_URL_SCHEME` (reversed iOS
+  client id, read by `app.config.ts`). In Supabase's Google provider list the iOS + web client ids as authorized and
+  enable "Skip nonce checks" (the native library cannot pass a nonce).
+- Native sign-in needs a dev-client build; it cannot run in Expo Go or on web.
+
 ## Layout
 
 ```
