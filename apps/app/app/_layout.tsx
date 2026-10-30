@@ -7,9 +7,11 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { SessionExpiredSheet } from '@/features/auth/SessionExpiredSheet';
-import { SessionProvider, useSession } from '@/features/auth/session';
+import { SessionProvider, useSession, useSessionExpired } from '@/features/auth/session';
 import { decideEntryStage } from '@/features/onboarding/entry';
 import { useAppFonts } from '@/lib/fonts';
+import { useSessionExpired as useSyncSessionExpired } from '@/store';
+import { SyncProvider, useSyncLoading } from '@/sync';
 import { colors } from '@/theme/tokens';
 
 // Hold the splash until fonts and the stored session are read.
@@ -36,14 +38,27 @@ export default function RootLayout() {
           <BottomSheetModalProvider>
             <StatusBar style="light" />
             <SessionProvider>
-              <Gate fontsReady={fontsReady} />
-              <SessionExpiredSheet />
+              <SyncProvider>
+                <SyncExpiryBridge />
+                <Gate fontsReady={fontsReady} />
+                <SessionExpiredSheet />
+              </SyncProvider>
             </SessionProvider>
           </BottomSheetModalProvider>
         </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
+}
+
+/** The sync layer also notices expiry (a 401 mid-sync); show the same re-sign-in sheet. */
+function SyncExpiryBridge() {
+  const syncExpired = useSyncSessionExpired();
+  const { expired, report } = useSessionExpired();
+  useEffect(() => {
+    if (syncExpired && !expired) report();
+  }, [syncExpired, expired, report]);
+  return null;
 }
 
 /**
@@ -66,7 +81,9 @@ function Gate({ fontsReady }: { fontsReady: boolean }) {
   const { status, profile, profileState } = useSession();
   const stage = decideEntryStage({ status, profileState, profile });
 
-  const ready = fontsReady && status !== 'loading';
+  // Also wait for the local cache, so the calendar never flashes empty.
+  const syncLoading = useSyncLoading();
+  const ready = fontsReady && status !== 'loading' && !syncLoading;
   useEffect(() => {
     if (ready) void SplashScreen.hideAsync().catch(() => undefined);
   }, [ready]);
