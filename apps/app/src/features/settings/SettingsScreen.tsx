@@ -10,7 +10,7 @@ import { UserAvatar } from '@/features/auth';
 import { Icon, type IconName } from '@/components/Icon';
 import { ToastHost } from '@/components/Toast';
 import { useGoogleAccounts, useHiddenItems } from '../calendars/data';
-import { PHONE_CALENDARS_ROUTE, usePhoneCalendarsSummary } from '../calendars/device';
+import { PHONE_CALENDARS_ROUTE, useHiddenDeviceEvents, usePhoneCalendarsSummary } from '../calendars/device';
 import { getStore, useHistory, usePrefs, useSyncStatus } from '@/store';
 import { useNow } from '../calendar/useNow';
 import { runCheckInNow } from '../checkin/CheckInHost';
@@ -36,6 +36,8 @@ export function SettingsScreen() {
   const google = useGoogleAccounts();
   const hidden = useHiddenItems();
   const phoneSummary = usePhoneCalendarsSummary();
+  const hiddenPhone = useHiddenDeviceEvents();
+  const nHidden = hidden.length + new Set(hiddenPhone.map((e) => e.hiddenKey)).size;
   const nGoogle = google.views.length;
   const setSun = (which: 'sunrise' | 'sunset', v: string) => {
     const next = sunWithTime(prefs.sun, which, v);
@@ -91,7 +93,7 @@ export function SettingsScreen() {
             <NavRow
               icon="eye"
               title="Hidden events"
-              sub={hidden.length ? String(hidden.length) : 'None'}
+              sub={nHidden ? nHidden + (nHidden === 1 ? ' event' : ' events') : 'None'}
               onPress={() => router.push('/settings/calendars/hidden' as never)}
               last
             />

@@ -406,7 +406,7 @@ function ReadOnly({ ev, close }: { ev: ProtoEvent; close: () => void }) {
       <Pressable onPress={remove} accessibilityRole="button" accessibilityLabel="Remove" style={styles.removeBtn}>
         <AppText style={{ fontSize: 13, color: text(0.7) }}>Remove</AppText>
       </Pressable>
-      <AppText style={[styles.note, { textAlign: 'center', marginTop: 0 }]}>Hides it in this app only. The calendar it comes from doesn{'\u2019'}t change.</AppText>
+      <AppText style={[styles.note, { textAlign: 'center', marginTop: 8 }]}>Hides it in this app only. The calendar it comes from doesn{'\u2019'}t change.</AppText>
     </View>
   );
 }

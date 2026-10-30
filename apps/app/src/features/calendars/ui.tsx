@@ -74,6 +74,7 @@ export function Toggle({ value, onChange, label, disabled }: { value: boolean; o
       trackColor={{ false: white(0.12), true: ACCENT }}
       thumbColor={value ? '#17120f' : text(0.65)}
       accessibilityLabel={label}
+      {...({ activeThumbColor: '#17120f' } as object)}
     />
   );
 }
