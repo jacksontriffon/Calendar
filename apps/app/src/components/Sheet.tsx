@@ -77,7 +77,7 @@ export function Sheet({ onClosed, children, maxHeightFraction = 0.9, testID }: P
 
   return (
     <SheetCtx.Provider value={ctx}>
-      <View style={StyleSheet.absoluteFill} pointerEvents="box-none" testID={testID}>
+      <View style={[StyleSheet.absoluteFill, { zIndex: 60 }]} pointerEvents="box-none" testID={testID}>
         <Animated.View style={[StyleSheet.absoluteFill, styles.backdrop, backdrop]}>
           <Pressable style={StyleSheet.absoluteFill} onPress={close} accessibilityLabel="Close" />
         </Animated.View>
