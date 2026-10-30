@@ -65,9 +65,11 @@ describe('repeat and all-day', () => {
       ev('b', '2026-10-29', { seriesId: 's' }), // Thu
       ev('c', '2026-11-03', { seriesId: 's' }), // Tue
     ];
-    expect(repeatLabel(e, e[0])).toBe('Every Tue and Thu');
+    expect(repeatLabel([], e, e[0])).toBe('Every Tue and Thu');
+    const row = { id: 's', freq: 'weekly' as const, weekdays: [2], startDay: '2026-10-27', until: '2026-12-01' };
+    expect(repeatLabel([row], e, e[0])).toBe('Every Tue until 1 Dec');
     expect(seriesCount(e, e[0])).toBe(3);
-    expect(repeatLabel(e, ev('z', '2026-10-30'))).toBeNull();
+    expect(repeatLabel([], e, ev('z', '2026-10-30'))).toBeNull();
   });
 
   it('labels all-day spans', () => {

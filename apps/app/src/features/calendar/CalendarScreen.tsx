@@ -1,18 +1,18 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, View, useWindowDimensions } from 'react-native';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { Easing, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 import {
-  ACCENT, editEvent, key, toggleDone, white,
+  ACCENT, dnum, editEvent, key, toggleDone, white,
   type ProtoEvent,
 } from '@calendar/core';
 
 import { AppText } from '@/components/AppText';
 import { Icon } from '@/components/Icon';
 import { ToastHost } from '@/components/Toast';
-import { getStore, useCalendarData, usePrefs } from '@/store';
+import { getStore, useCalendarData, usePrefs, useSyncStatus } from '@/store';
 import { stampSeen } from '../checkin/state';
 import { CheckInHost } from '../checkin/CheckInHost';
 import { GoalChips } from '../goals/GoalChips';
@@ -50,6 +50,8 @@ export function CalendarScreen() {
   const [dir, setDir] = useState<1 | -1>(1);
   const [goalsOpen, setGoalsOpen] = useState(false);
   const [bottomH, setBottomH] = useState(110);
+  const sync = useSyncStatus();
+  const params = useLocalSearchParams<{ day?: string; compose?: string }>();
 
   const tx = useSharedValue(0);
   const navOp = useSharedValue(1);
@@ -142,6 +144,16 @@ export function CalendarScreen() {
     getStore().setPrefs({ view: 'day3' });
   }, [animate]);
 
+  /* deep link aicalendar://day/2026-10-30 -> /?day=...: jump to that date (adjusted during render, no effect) */
+  const [seenDay, setSeenDay] = useState<string | undefined>(undefined);
+  if (params.day !== seenDay) {
+    setSeenDay(params.day);
+    if (params.day && /^\d{4}-\d{2}-\d{2}$/.test(params.day)) {
+      setMode((m) => (m === 'month' ? 'day3' : m));
+      setFocus(startOfDay(dnum(params.day)));
+    }
+  }
+
   const openAllDay = useCallback((ev: ProtoEvent) => openEvent(ev.id), [openEvent]);
 
   const bottomPad = insets.bottom + 190;
@@ -230,6 +242,14 @@ export function CalendarScreen() {
           onLayout={(e) => setBottomH(e.nativeEvent.layout.height)}
         >
           <BottomFade />
+          {sync === 'offline' ? (
+            <View style={styles.returnWrap} pointerEvents="none">
+              <View style={styles.offlinePill} testID="offline-pill">
+                <Icon name="cloud" size={13} color={white(0.6)} />
+                <AppText style={styles.offlineTxt}>Offline {'\u00b7'} changes sync when you\u2019re back</AppText>
+              </View>
+            </View>
+          ) : null}
           {away ? (
             <View style={styles.returnWrap} pointerEvents="box-none">
               <Pressable onPress={toToday} accessibilityRole="button" style={({ pressed }) => [styles.returnPill, pressed && { transform: [{ scale: 0.95 }] }]}>
@@ -243,7 +263,7 @@ export function CalendarScreen() {
             )}
             {hasTimerPill ? <TimerPill onPress={openTimer} /> : null}
           </View>
-          <ComposerSlot />
+          <ComposerSlot focusToken={params.compose} />
         </View>
 
         <ToastHost bottom={bottomH + 4} />
@@ -295,6 +315,11 @@ const styles = StyleSheet.create({
     paddingVertical: 7, paddingHorizontal: 14, borderRadius: 999, backgroundColor: white(0.06),
     borderWidth: 1, borderColor: white(0.09),
   },
+  offlinePill: {
+    flexDirection: 'row', alignItems: 'center', gap: 7, paddingVertical: 7, paddingHorizontal: 13, borderRadius: 999,
+    backgroundColor: white(0.06), borderWidth: 1, borderColor: white(0.09),
+  },
+  offlineTxt: { fontSize: 12, color: white(0.6) },
   returnTxt: { fontSize: 12.5, fontWeight: '600', letterSpacing: -0.1, color: ACCENT },
   chipsRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 10 },
   monthNav: { flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: -9, marginTop: 4, height: 36 },

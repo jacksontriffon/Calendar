@@ -1,12 +1,12 @@
 import { useState, type ReactNode } from 'react';
-import { Pressable, ScrollView, StyleSheet, Switch, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ACCENT, SURFACE, text, white } from '@calendar/core';
 
 import { AppInput, AppText } from '@/components/AppText';
 import { FONT_LABELS, asFontKey, fontFamilyFor, type FontKey } from '@/components/fonts';
-import { HeaderAvatar } from '@/components/HeaderAvatar';
+import { UserAvatar } from '@/features/auth';
 import { Icon, type IconName } from '@/components/Icon';
 import { ToastHost } from '@/components/Toast';
 import { showToast } from '@/components/toast';
@@ -58,7 +58,7 @@ export function SettingsScreen() {
           {/* Account first (CA 5.1). The Account screen is owned by the auth work. */}
           <Group>
             <Pressable onPress={() => router.push('/settings/account' as never)} accessibilityRole="button" style={styles.accountRow} testID="account-row">
-              <HeaderAvatar size={38} />
+              <UserAvatar size={38} />
               <View style={{ flex: 1 }}>
                 <AppText style={styles.rowTitle}>Account</AppText>
                 <AppText style={styles.rowSub}>
@@ -145,7 +145,7 @@ export function SettingsScreen() {
                   accessibilityState={{ selected: font === f }}
                   style={[styles.fontOpt, font === f && styles.fontOn]}
                 >
-                  <AppText style={[styles.fontSample, { fontFamily: fontFamilyFor(f) }]}>Aa</AppText>
+                  <Text style={[styles.fontSample, { fontFamily: fontFamilyFor(f, 500) }]}>Aa</Text>
                   <AppText style={[styles.fontName, font === f && { color: text(1) }]}>{f === 'serif' ? 'Serif' : f === 'sans' ? 'Sans' : 'Mono'}</AppText>
                   <AppText style={styles.fontSub}>{FONT_LABELS[f]}</AppText>
                 </Pressable>

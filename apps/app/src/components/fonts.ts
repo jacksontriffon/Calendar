@@ -1,38 +1,40 @@
 /**
- * Typeface mapping for the Serif / Sans / Mono preference (`prefs.font`).
- *
- * The prototype uses Spectral (serif), Geist (sans) and Geist Mono. Until the
- * font files are loaded with expo-font in the root layout, each key maps to a
- * system family. When they are, call `setFontFamilies({ serif: 'Spectral', ... })`
- * once after `useFonts` resolves and every `AppText` follows.
+ * Typeface mapping for the Serif / Sans / Mono preference (`prefs.font`), on
+ * top of the families loaded by `@/lib/fonts` (Spectral, Geist, Geist Mono;
+ * Newsreader for the serif display face). React Native picks a weight by
+ * family name there, so a requested `fontWeight` is snapped to a loaded file
+ * and `fontWeight` itself is reset to normal.
  */
-import { Platform } from 'react-native';
+import type { TextStyle } from 'react-native';
 
-export type FontKey = 'serif' | 'sans' | 'mono';
+import { asFontKind, displayFamily, fontFamily, type FontKind } from '@/lib/fonts';
+
+export type FontKey = FontKind;
 
 export const FONT_LABELS: Record<FontKey, string> = { serif: 'Spectral', sans: 'Geist', mono: 'Geist Mono' };
 
-const system: Record<FontKey, string | undefined> = {
-  serif: Platform.select({ ios: 'Georgia', android: 'serif', default: 'Georgia, "Times New Roman", serif' }),
-  sans: Platform.select({
-    ios: undefined,
-    android: undefined,
-    default: '-apple-system, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif',
-  }),
-  mono: Platform.select({ ios: 'Menlo', android: 'monospace', default: 'ui-monospace, SFMono-Regular, Menlo, monospace' }),
-};
+export const asFontKey = asFontKind;
 
-let overrides: Partial<Record<FontKey, string>> = {};
-
-/** Register the loaded font family names (call after expo-font has loaded them). */
-export function setFontFamilies(map: Partial<Record<FontKey, string>>): void {
-  overrides = { ...overrides, ...map };
+/** CSS-style weight from a style's `fontWeight` ('600', 'bold', 650...). */
+export function weightOf(w: TextStyle['fontWeight']): number {
+  if (w == null || w === 'normal') return 400;
+  if (w === 'bold') return 600;
+  const n = Number(w);
+  return Number.isFinite(n) ? n : 400;
 }
 
-export const asFontKey = (f: string | null | undefined): FontKey => (f === 'sans' || f === 'mono' ? f : 'serif');
+/** `fontFamily` for a preference value at a weight. */
+export function fontFamilyFor(f: string | null | undefined, weight = 400): string {
+  return fontFamily(asFontKind(f), weight);
+}
 
-/** `fontFamily` for a preference value (unknown values fall back to serif). */
-export function fontFamilyFor(f: string | null | undefined): string | undefined {
-  const k = asFontKey(f);
-  return overrides[k] ?? system[k];
+/** The display face (calendar title): Newsreader with serif, else the chosen face. */
+export function displayFamilyFor(f: string | null | undefined, weight = 400): string {
+  return displayFamily(asFontKind(f), weight);
+}
+
+/** Style overrides that put a text style into the app's typeface: family by weight, `fontWeight` normal. */
+export function typeface(f: string | null | undefined, flat: TextStyle | undefined, display = false): TextStyle {
+  const w = weightOf(flat?.fontWeight);
+  return { fontFamily: display ? displayFamilyFor(f, w) : fontFamilyFor(f, w), fontWeight: 'normal' };
 }

@@ -9,7 +9,7 @@ import {
 import { AppInput, AppText } from '@/components/AppText';
 import { Icon } from '@/components/Icon';
 import { Sheet, useSheetClose } from '@/components/Sheet';
-import { getStore, useCalendarData } from '@/store';
+import { getStore, useCalendarData, useSeries } from '@/store';
 import { commitUndoable } from '../history/commit';
 import { startTimer, useTimer } from '../timer/store';
 import {
@@ -100,6 +100,7 @@ interface EditProps {
 
 function EditBody({ ev, view, patch, catOp, onDelete, onTimer }: EditProps) {
   const timer = useTimer();
+  const series = useSeries();
   const [startTxt, setStartTxt] = useState(timeText(ev.start));
   const [endTxt, setEndTxt] = useState(timeText(ev.end));
   const [hueOpen, setHueOpen] = useState(false);
@@ -109,7 +110,7 @@ function EditBody({ ev, view, patch, catOp, onDelete, onTimer }: EditProps) {
   const [newDraft, setNewDraft] = useState('');
   const P = paint(hueFor(view.cats, ev.cat ?? ''));
   const names = Object.keys(view.cats);
-  const rep = repeatLabel(view.events, ev);
+  const rep = repeatLabel(series, view.events, ev);
   const worked = !ev.allDay && (ev.pauses?.length || (timer.tm && timer.tm.id === ev.id))
     ? fmtDur(workedMins(ev, timer.tm && timer.tm.id === ev.id ? minsIn(ev.day, timer.tmNow) : null, { tm: timer.tm, tmNow: timer.tmNow }))
     : '';

@@ -14,7 +14,6 @@ import {
 } from '@calendar/core';
 
 import { AppText } from '@/components/AppText';
-import { fontFamilyFor } from '@/components/fonts';
 import { useStoreState } from '@/store';
 import { getLastSeen } from '../checkin/state';
 import { EventBlock, type BlockTimer } from './EventBlock';
@@ -247,7 +246,6 @@ function CalendarGridImpl(p: Props) {
   const stops = useMemo(() => sunStops(p.sun.sunrise, p.sun.sunset), [p.sun.sunrise, p.sun.sunset]);
   const hours = visibleHours(hhTarget);
   const todayIdx = days.findIndex((d) => key(d) === todayKey);
-  const family = fontFamilyFor(font);
 
   const tmCtx = useMemo(() => ({ tm: timer.tm, tmNow: timer.tmNow, nowMs }), [timer.tm, timer.tmNow, nowMs]);
 
@@ -283,7 +281,7 @@ function CalendarGridImpl(p: Props) {
         >
           <Animated.View style={[styles.body, { paddingLeft: GRID_PAD_LEFT, minWidth: '100%' }, bodyH, slide]}>
             <View style={{ width: GUTTER }}>
-              {hours.map((h) => <HourLabel key={h} h={h} hh={hh} font={font} family={family} />)}
+              {hours.map((h) => <HourLabel key={h} h={h} hh={hh} font={font} />)}
             </View>
             <View style={{ width: colW * nCols }} testID="calendar-columns">
               {stops ? (
@@ -351,14 +349,14 @@ function CalendarGridImpl(p: Props) {
 
 export const CalendarGrid = memo(CalendarGridImpl);
 
-function HourLabel({ h, hh, font, family }: { h: number; hh: SharedValue<number>; font: string; family?: string }) {
+function HourLabel({ h, hh, font }: { h: number; hh: SharedValue<number>; font: string }) {
   const style = useAnimatedStyle(() => ({ top: Math.max(h * hh.value - 6, 0) }));
   const major = h === 0 || h === 12 || h === 24;
   return (
     <Animated.View pointerEvents="none" style={[styles.hourLabel, style]}>
       <AppText
         style={{
-          fontFamily: family, fontSize: font === 'mono' ? 9 : 10.5, letterSpacing: font === 'mono' ? -0.2 : 0.2,
+          fontSize: font === 'mono' ? 9 : 10.5, letterSpacing: font === 'mono' ? -0.2 : 0.2,
           color: major ? text(0.42) : text(0.26), fontVariant: ['tabular-nums'],
         }}
       >

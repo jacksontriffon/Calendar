@@ -4,7 +4,7 @@ import Animated, { FadeInRight, FadeInLeft, type SharedValue, useAnimatedStyle }
 import { ACCENT, BEHIND_INK, SURFACE, key, text, white } from '@calendar/core';
 
 import { AppText } from '@/components/AppText';
-import { HeaderAvatar } from '@/components/HeaderAvatar';
+import { UserAvatar } from '@/features/auth';
 import { Icon } from '@/components/Icon';
 import { GUTTER, dowLabel, type Mode } from './model';
 
@@ -16,8 +16,6 @@ interface HeaderProps {
   onMode: (m: Mode) => void;
   onGoals: () => void;
   onSettings: () => void;
-  /** display name for the avatar initials */
-  userName?: string | null;
   topInset: number;
   children?: ReactNode;
 }
@@ -30,7 +28,7 @@ export function CalendarHeader(p: HeaderProps) {
     <View style={[styles.header, { paddingTop: p.topInset + 14 }]}>
       <View style={styles.top}>
         <View style={styles.titles}>
-          <AppText style={styles.title} numberOfLines={1} accessibilityRole="header">{p.title}</AppText>
+          <AppText display style={styles.title} numberOfLines={1} accessibilityRole="header">{p.title}</AppText>
           <Pressable onPress={p.onGoals} accessibilityRole="button" accessibilityLabel={'Goals: ' + p.sub}>
             <AppText numberOfLines={1} style={[styles.sub, p.behind ? { color: BEHIND_INK } : null]}>{p.sub}</AppText>
           </Pressable>
@@ -49,7 +47,7 @@ export function CalendarHeader(p: HeaderProps) {
               </Pressable>
             ))}
           </View>
-          <HeaderAvatar name={p.userName} onPress={p.onSettings} />
+          <UserAvatar size={36} onPress={p.onSettings} testID="header-avatar" />
         </View>
       </View>
       {p.children}

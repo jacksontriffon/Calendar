@@ -5,7 +5,7 @@
  */
 import {
   DOWL, addDays, dnum, editEvent, editLabel, hm, repWords, retimeFromText,
-  type CalendarData, type ProtoEvent, type Visibility,
+  type CalendarData, type ProtoEvent, type Series, type Visibility,
 } from '@calendar/core';
 
 export type CatOp = (d: CalendarData) => CalendarData;
@@ -54,9 +54,14 @@ export function sheetLabel(before: CalendarData, after: CalendarData, id: string
   return editLabel(before, after, ev);
 }
 
-/** "Every Tue" for a repeating event, from the weekdays of the events that share its series id. */
-export function repeatLabel(events: readonly ProtoEvent[], ev: ProtoEvent): string | null {
+/**
+ * "Every Tue" for a repeating event: from its `series` row when the store has
+ * one (weekdays and end date), else from the weekdays of the events sharing its series id.
+ */
+export function repeatLabel(series: readonly Series[], events: readonly ProtoEvent[], ev: ProtoEvent): string | null {
   if (!ev.seriesId) return null;
+  const row = series.find((s) => s.id === ev.seriesId);
+  if (row) return repWords(row);
   const days = new Set<number>();
   events.forEach((e) => { if (e.seriesId === ev.seriesId) days.add(dnum(e.day).getDay()); });
   if (!days.size) days.add(dnum(ev.day).getDay());

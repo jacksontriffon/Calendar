@@ -4,10 +4,11 @@ import Animated, { FadeInDown, FadeOut } from 'react-native-reanimated';
 import { ACCENT, SURFACE, text, white } from '@calendar/core';
 
 import { undoEntry } from '@/features/history/commit';
+import { dismissSyncConflict, useSyncConflict } from '@/store';
 import { AppText } from './AppText';
 import { Icon } from './Icon';
 import {
-  dismissToast, registerHost, subscribeHosts, topHost, useToastItem,
+  dismissToast, registerHost, showToast, subscribeHosts, topHost, useToastItem,
 } from './toast';
 
 interface Props {
@@ -21,6 +22,17 @@ export function ToastHost({ bottom = 0 }: Props) {
   const me = useId();
   useEffect(() => registerHost(me), [me]);
   const top = useSyncExternalStore(subscribeHosts, topHost, topHost);
+  const { conflict } = useSyncConflict();
+  const isTop = top === me;
+  /* OA 05: a remote change replaced a local edit. Show it as an Undo toast (the conflict's own undo puts the edit back). */
+  useEffect(() => {
+    if (!isTop || !conflict) return;
+    showToast({
+      label: 'Updated from another device \u00b7 ' + conflict.label,
+      action: { label: 'Undo', run: conflict.undo },
+    });
+    dismissSyncConflict(conflict.id);
+  }, [isTop, conflict]);
   if (!toast || top !== me) return null;
 
   const onUndo = () => {
