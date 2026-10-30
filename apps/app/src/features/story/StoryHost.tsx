@@ -74,7 +74,7 @@ export function StoryHost() {
   }
 
   return (
-    <View style={StyleSheet.absoluteFill} testID="recap">
+    <View style={[StyleSheet.absoluteFill, { zIndex: 60 }]} testID="recap">
       <Pressable style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(10,9,9,0.55)' }]} onPress={close} />
       <View style={styles.sheetWrap} pointerEvents="box-none">
         <View style={[styles.sheet, { paddingBottom: insets.bottom + 22 }]}>
