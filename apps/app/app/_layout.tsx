@@ -9,6 +9,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { SessionExpiredSheet } from '@/features/auth/SessionExpiredSheet';
 import { SessionProvider, useSession, useSessionExpired } from '@/features/auth/session';
 import { decideEntryStage } from '@/features/onboarding/entry';
+import { WidgetSync } from '@/features/widget';
 import { useAppFonts } from '@/lib/fonts';
 import { useSessionExpired as useSyncSessionExpired } from '@/store';
 import { SyncProvider, useSyncLoading } from '@/sync';
@@ -40,6 +41,7 @@ export default function RootLayout() {
             <SessionProvider>
               <SyncProvider>
                 <SyncExpiryBridge />
+                <WidgetSync />
                 <Gate fontsReady={fontsReady} />
                 <SessionExpiredSheet />
               </SyncProvider>
