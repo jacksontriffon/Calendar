@@ -13,6 +13,7 @@ import { AppText } from '@/components/AppText';
 import { Icon } from '@/components/Icon';
 import { ToastHost } from '@/components/Toast';
 import { getStore, useCalendarData, usePrefs, useSyncStatus } from '@/store';
+import { useVisibleData } from '../calendars/overlay';
 import { stampSeen } from '../checkin/state';
 import { CheckInHost } from '../checkin/CheckInHost';
 import { GoalChips } from '../goals/GoalChips';
@@ -39,7 +40,8 @@ const NAV_EASE = Easing.bezier(0.22, 0.9, 0.16, 1);
 export function CalendarScreen() {
   const insets = useSafeAreaInsets();
   const { width: winW } = useWindowDimensions();
-  const data = useCalendarData();
+  // hidden events (Remove on someone else's event) are filtered out of every view
+  const data = useVisibleData(useCalendarData());
   const prefs = usePrefs();
   const now = useNow();
   const timer = useTimer();

@@ -9,6 +9,7 @@ import {
 
 import { AppText } from '@/components/AppText';
 import { Icon } from '@/components/Icon';
+import { useEventOverlay } from '../calendars/overlay';
 import { useGridCtx } from './ctx';
 import { dragOutcome, type DragMode } from './gesture-math';
 import { blockMetrics, metaText, type Seg } from './model';
@@ -54,7 +55,9 @@ function EventBlockImpl(p: BlockProps) {
   const seg = item.ev;
   const ev = seg.ev;
   const id = seg.id;
-  const P = paint(hue);
+  // imported Google events have no category: they take their calendar's colour (open question 4)
+  const ov = useEventOverlay(ev);
+  const P = ov.paint ?? paint(hue);
   const mine = ev.isMine !== false;
   const laneW = (colW - 4) * item.w;
   const left = dayIdx * colW + 2 + item.x * (colW - 4);
@@ -78,7 +81,7 @@ function EventBlockImpl(p: BlockProps) {
   const radius = seg.part === 'first' ? [6, 6, 2, 2] : seg.part === 'second' ? [2, 2, 6, 6] : [6, 6, 6, 6];
   const small = week || dense;
   const showOnOther = ev.source === 'google';
-  const mover = mine;
+  const mover = mine && ev.source !== 'google';
 
   const startMin = seg.start;
   const endMin = seg.end;
@@ -241,15 +244,22 @@ function EventBlockImpl(p: BlockProps) {
             </Text>
           ) : null}
           {m.showGrip ? <View pointerEvents="none" style={[styles.grip, { backgroundColor: P.line }]} /> : null}
-          {showOnOther ? <View pointerEvents="none" style={[styles.calDot, { backgroundColor: text(0.55) }]} /> : null}
+          {showOnOther ? <View pointerEvents="none" style={[styles.calDot, { backgroundColor: ov.dotColor ?? text(0.55) }]} testID="calendar-dot" /> : null}
           {m.showPublicGlyph ? (
-            <View pointerEvents="none" style={styles.glyph} testID="public-glyph">
-              <Icon name="globe" size={10} color={P.ink} strokeWidth={2} />
+            <View
+              pointerEvents="none"
+              style={[styles.glyph, ov.glyph === 'pending' && { opacity: 0.4 }]}
+              testID="public-glyph"
+              accessibilityLabel={ov.glyph === 'failed' ? 'Public, failed to publish' : ov.glyph === 'pending' ? 'Public, publishing' : 'Public'}
+            >
+              <Icon name="globe" size={10} color={P.ink} strokeWidth={ov.glyph === 'pending' ? 1.4 : 2} />
+              {ov.publicCount > 0 && !week && laneW >= 90 ? <Text style={[styles.glyphCount, { color: P.ink }]}>{ov.publicCount}</Text> : null}
+              {ov.glyph === 'failed' ? <View style={styles.glyphFail} testID="public-glyph-failed" /> : null}
             </View>
           ) : null}
-          {!mine && p.initials ? (
+          {!mine && (p.initials ?? ov.initials) ? (
             <View pointerEvents="none" style={styles.initials} testID="owner-initials">
-              <Text style={styles.initialsTxt}>{p.initials}</Text>
+              <Text style={styles.initialsTxt}>{p.initials ?? ov.initials}</Text>
             </View>
           ) : null}
         </Animated.View>
@@ -294,7 +304,9 @@ const styles = StyleSheet.create({
   grip: { position: 'absolute', bottom: 3, left: '50%', marginLeft: -7, width: 14, height: 2, borderRadius: 2, opacity: 0.5 },
   winMark: { position: 'absolute', right: 5, width: 5, height: 5, borderRadius: 1, transform: [{ rotate: '45deg' }] },
   timerTxt: { position: 'absolute', right: 5, letterSpacing: 0.2, fontVariant: ['tabular-nums'] },
-  glyph: { position: 'absolute', right: 4, bottom: 3, opacity: 0.8 },
+  glyph: { position: 'absolute', right: 4, bottom: 3, opacity: 0.8, flexDirection: 'row', alignItems: 'center', gap: 3 },
+  glyphCount: { fontSize: 9.5, lineHeight: 11, fontWeight: '700' },
+  glyphFail: { position: 'absolute', right: -2, bottom: -2, width: 5, height: 5, borderRadius: 3, backgroundColor: '#e8745f' },
   calDot: { position: 'absolute', left: 5, bottom: 4, width: 5, height: 5, borderRadius: 2.5 },
   initials: {
     position: 'absolute', top: 3, right: 3, width: 16, height: 16, borderRadius: 8,

@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { DOW, ACCENT, SURFACE, hueFor, key, paint, text, white, type CatMap, type ProtoEvent } from '@calendar/core';
 
 import { AppText } from '@/components/AppText';
+import { usePaintResolver } from '../calendars/overlay';
 import { monthGrid } from './model';
 
 interface Props {
@@ -22,6 +23,7 @@ const MAX = 3;
  * never carry the public glyph (EV 04); someone else's events are outlined.
  */
 function MonthViewImpl({ focus, events, cats, todayKey, bottomPad, onDay }: Props) {
+  const paintOf = usePaintResolver();
   const cells = useMemo(() => monthGrid(focus), [focus]);
   const byDay = useMemo(() => {
     const m = new Map<string, ProtoEvent[]>();
@@ -66,7 +68,7 @@ function MonthViewImpl({ focus, events, cats, todayKey, bottomPad, onDay }: Prop
                   </AppText>
                 </View>
                 {list.slice(0, MAX).map((e) => {
-                  const P = paint(hueFor(cats, e.cat ?? ''));
+                  const P = paintOf(e) ?? paint(hueFor(cats, e.cat ?? ''));
                   const mine = e.isMine !== false;
                   return (
                     <View
