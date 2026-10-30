@@ -25,7 +25,7 @@ import {
   deadlineLabel,
   doneToday,
   endsInLabel,
-  fmtClock,
+  fmtNow,
   fmtRange,
   fmtTime,
   goalSpanAt,
@@ -224,7 +224,7 @@ export function buildModel(
   const tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
   const dayAfter = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2);
   const todayKey = dayKey(today);
-  const nowLabel = fmtClock(now.getHours() * 60 + now.getMinutes(), clock);
+  const nowLabel = fmtNow(now.getHours() * 60 + now.getMinutes(), clock);
 
   const all = timed(snap.events);
   // Today's events: anything overlapping today (a session that started last night and runs on counts).

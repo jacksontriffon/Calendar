@@ -12,23 +12,9 @@
  * e.g. `widget.snapshot.v1`. Other features can adopt this instead of
  * reaching for MMKV or localStorage directly.
  */
-export interface DeviceKv {
-  getString(key: string): string | undefined;
-  set(key: string, value: string): void;
-  remove(key: string): void;
-  keys(): string[];
-}
+import { createMemoryDeviceKv, type DeviceKv } from './deviceKvMemory';
 
-/** An in-memory store (tests, and the fallback when storage is unavailable). */
-export function createMemoryDeviceKv(initial?: Record<string, string>): DeviceKv {
-  const m = new Map<string, string>(Object.entries(initial ?? {}));
-  return {
-    getString: (k) => m.get(k),
-    set: (k, v) => void m.set(k, v),
-    remove: (k) => void m.delete(k),
-    keys: () => [...m.keys()],
-  };
-}
+export { createMemoryDeviceKv, type DeviceKv };
 
 const PREFIX = 'calendar:device:';
 

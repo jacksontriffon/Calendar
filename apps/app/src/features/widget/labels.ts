@@ -48,6 +48,14 @@ export function fmtClock(min: number, clock: Clock): string {
   return `${h12}${mm ? ':' + pad(mm) : ''}${h >= 12 ? 'pm' : 'am'}`;
 }
 
+/** The clock on the now line and in "Now 11:48 · 6 left": no am/pm in 12h (the spec), HH:mm in 24h. */
+export function fmtNow(min: number, clock: Clock): string {
+  const m = ((Math.round(min) % 1440) + 1440) % 1440;
+  const h = Math.floor(m / 60);
+  const mm = pad(m % 60);
+  return clock === '24h' ? `${pad(h)}:${mm}` : `${h % 12 === 0 ? 12 : h % 12}:${mm}`;
+}
+
 const minOfDay = (d: Date) => d.getHours() * 60 + d.getMinutes();
 
 /** "12:30pm" for a Date. */

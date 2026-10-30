@@ -1,10 +1,9 @@
 /** iOS / Android: MMKV (synchronous, memory-mapped). See `deviceKv.ts` for the contract. */
 import { createMMKV } from 'react-native-mmkv';
 
-import type { DeviceKv } from './deviceKv';
+import { createMemoryDeviceKv, type DeviceKv } from './deviceKvMemory';
 
-export type { DeviceKv } from './deviceKv';
-export { createMemoryDeviceKv } from './deviceKv';
+export { createMemoryDeviceKv, type DeviceKv };
 
 let instance: DeviceKv | null = null;
 
