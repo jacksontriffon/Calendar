@@ -142,6 +142,14 @@ export function staleLevel(ageMs: number): StaleLevel {
   return 'old';
 }
 
+/** "45m" / "3h" / "2d": how old, without the words around it. */
+export function ageShort(ageMs: number): string {
+  const min = Math.floor(ageMs / 60000);
+  if (min < 60) return `${Math.max(1, min)}m`;
+  const h = Math.floor(min / 60);
+  return h < 24 ? `${h}h` : `${Math.floor(h / 24)}d`;
+}
+
 /** "Updated 45m ago" / "Updated 3h ago" / "Updated 2d ago". */
 export function staleLabel(ageMs: number): string {
   const min = Math.floor(ageMs / 60000);

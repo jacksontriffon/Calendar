@@ -41,7 +41,7 @@ export function widgetTokens(): WidgetTokens {
 }
 
 /** `#rrggbb` + alpha -> `rgba(r, g, b, a)` (with the spaces react-native-android-widget parses). */
-export function ink(p: Palette, alpha: number): string {
+export function ink(p: Palette, alpha: number): `rgba(${number}, ${number}, ${number}, ${number})` {
   const h = p.ink.replace('#', '');
   const n = parseInt(h.length === 3 ? h.replace(/(.)/g, '$1$1') : h, 16);
   return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${+alpha.toFixed(3)})`;

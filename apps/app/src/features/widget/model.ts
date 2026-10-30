@@ -19,6 +19,7 @@ import { fmtDur } from '@calendar/core';
 
 import { composeUrl, dayUrl, eventUrl, goalUrl, signinUrl } from './links';
 import {
+  ageShort,
   dayKey,
   dayLabel,
   deadlineLabel,
@@ -137,6 +138,8 @@ export interface WidgetModel {
   goalsDim: boolean;
   /** "Open Calendar to refresh" */
   strip: string | null;
+  /** Android's offline banner: "Can't refresh. Showing 3h old data." (with a Retry button) */
+  banner: string | null;
   /** an empty day: "Nothing scheduled", "Add a note", and the next event as text */
   empty: { next: string | null } | null;
   items: Item[];
@@ -190,6 +193,7 @@ const signedOutModel = (layout: Layout): WidgetModel => ({
   level: 'fresh',
   goalsDim: false,
   strip: null,
+  banner: null,
   empty: null,
   items: [],
   more: null,
@@ -346,6 +350,7 @@ export function buildModel(
     level,
     goalsDim,
     strip: level === 'old' && layout !== 'small' ? 'Open Calendar to refresh' : null,
+    banner: level !== 'fresh' && layout !== 'small' ? `Can’t refresh. Showing ${ageShort(age)} old data.` : null,
     empty,
     items,
     more,
