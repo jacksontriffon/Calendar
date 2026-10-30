@@ -5,7 +5,7 @@
 import type { EventTarget } from '@calendar/db';
 
 import { calendarColor, calendarSubtitle, publishableCalendars, type AccountView } from '../calendars/view';
-import type { DeviceCalendar, DeviceTargetStatusValue } from '../calendars/device';
+import type { DeviceCalendarView as DeviceCalendar, TargetStatus as DeviceTargetStatusValue } from '../calendars/device';
 import { failureReason, targetUiStatus, type LocalOp, type UiStatus } from './status';
 import { initPicker, type PickerState } from './state';
 import type { Visibility } from '@calendar/core';

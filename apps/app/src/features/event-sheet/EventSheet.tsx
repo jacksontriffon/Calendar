@@ -70,8 +70,9 @@ function SheetBody({ id }: { id: string }) {
     // targets are saved after the event itself (the RPC needs the event row), even when only they changed
     const t = targetsRef.current;
     if (t) {
-      const isSeries = !!live.events.find((e) => e.id === id)?.seriesId;
-      persistChoice({ eventId: id, before: t.before, after: t.after, isSeries });
+      const me = live.events.find((e) => e.id === id);
+      const seriesEventIds = me?.seriesId ? live.events.filter((e) => e.seriesId === me.seriesId && e.day > me.day).map((e) => e.id) : [];
+      persistChoice({ eventId: id, before: t.before, after: t.after, isSeries: !!me?.seriesId, seriesEventIds });
     }
   }, [id, base]);
   useEffect(() => () => flush(), [flush]);

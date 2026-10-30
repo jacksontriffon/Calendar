@@ -47,5 +47,5 @@ export function useVisibilityData(eventId: string, visibility: Visibility): Visi
     return { ...c, total: Math.max(picked.size, c.total) };
   }, [groups, saved]);
 
-  return { load, error, groups, saved, counts, online, deviceAvailable: device.available, refresh };
+  return { load, error, groups, saved, counts, online, deviceAvailable: device.supported, refresh };
 }

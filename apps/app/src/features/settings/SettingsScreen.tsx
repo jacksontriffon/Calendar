@@ -10,7 +10,7 @@ import { UserAvatar } from '@/features/auth';
 import { Icon, type IconName } from '@/components/Icon';
 import { ToastHost } from '@/components/Toast';
 import { useGoogleAccounts, useHiddenItems } from '../calendars/data';
-import { useDeviceCalendars } from '../calendars/device';
+import { PHONE_CALENDARS_ROUTE, usePhoneCalendarsSummary } from '../calendars/device';
 import { getStore, useHistory, usePrefs, useSyncStatus } from '@/store';
 import { useNow } from '../calendar/useNow';
 import { runCheckInNow } from '../checkin/CheckInHost';
@@ -35,7 +35,7 @@ export function SettingsScreen() {
 
   const google = useGoogleAccounts();
   const hidden = useHiddenItems();
-  const phone = useDeviceCalendars();
+  const phoneSummary = usePhoneCalendarsSummary();
   const nGoogle = google.views.length;
   const setSun = (which: 'sunrise' | 'sunset', v: string) => {
     const next = sunWithTime(prefs.sun, which, v);
@@ -85,8 +85,8 @@ export function SettingsScreen() {
             <NavRow
               icon="phone"
               title="On this phone"
-              sub={phone.available ? 'Choose which calendars to show' : 'Available in the mobile app'}
-              onPress={() => router.push('/settings/calendars/phone' as never)}
+              sub={phoneSummary}
+              onPress={() => router.push(PHONE_CALENDARS_ROUTE as never)}
             />
             <NavRow
               icon="eye"

@@ -7,6 +7,7 @@ import { AppText } from '@/components/AppText';
 import { Icon } from '@/components/Icon';
 import { showToast } from '@/components/toast';
 import { useCalendarData } from '@/store';
+import { unhideDeviceEvent, useHiddenDeviceEvents, type DeviceEvent } from './device';
 import { Spinner } from '../visibility/glyphs';
 import { getCalendarsStore, useCalendarsSelector, useGoogleAccounts, useHiddenItems } from './data';
 import { FALLBACK_CALENDAR_COLOR } from './colors';
@@ -16,7 +17,9 @@ import { Card, ColorBar, Divider, Label, Screen } from './ui';
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 export interface HiddenRow {
+  /** a `hidden_items` row, or a phone event the bridge hid (`device`) */
   item: HiddenItem;
+  device?: DeviceEvent;
   title: string;
   when: string;
   from: string;
@@ -37,6 +40,7 @@ export function hiddenRows(
   });
   const seen = new Set<string>();
   return items
+    .filter((h) => h.source === 'google')
     .filter((h) => (seen.has(h.source + h.external_key) ? false : (seen.add(h.source + h.external_key), true)))
     .slice()
     .sort((a, b) => b.hidden_at.localeCompare(a.hidden_at))
@@ -63,9 +67,29 @@ export function HiddenEventsScreen() {
   const meta = useCalendarsSelector((s) => s.meta);
   const load = useCalendarsSelector((s) => s.load);
   const { calendars } = useGoogleAccounts();
-  const rows = useMemo(() => hiddenRows(items, data.events, meta, calendars), [items, data.events, meta, calendars]);
+  const phone = useHiddenDeviceEvents();
+  const rows = useMemo(() => {
+    const google = hiddenRows(items, data.events, meta, calendars);
+    const seenKeys = new Set<string>();
+    const device: HiddenRow[] = phone
+      .filter((e) => (seenKeys.has(e.hiddenKey) ? false : (seenKeys.add(e.hiddenKey), true)))
+      .map((e) => {
+        const d = dnum(e.day);
+        const when = DOWL[d.getDay()].slice(0, 3) + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()] + ' \u00b7 ' + (e.allDay ? 'All day' : hm(e.start) + '\u2013' + hm(e.end));
+        return {
+          item: { id: 'device:' + e.hiddenKey, user_id: '', source: 'device', external_key: e.hiddenKey, hidden_at: '' },
+          device: e, title: e.title, when, from: e.calendarName + (e.account ? ' \u00b7 ' + e.account : ''), color: e.color,
+        };
+      });
+    return [...google, ...device];
+  }, [items, data.events, meta, calendars, phone]);
 
-  const unhide = (item: HiddenItem) => {
+  const unhide = (item: HiddenItem, device?: DeviceEvent) => {
+    if (device) {
+      unhideDeviceEvent(device.hiddenKey);
+      showToast({ label: 'Back in your calendar' });
+      return;
+    }
     getCalendarsStore().unhide(item).then(
       () => showToast({ label: 'Back in your calendar' }),
       () => showToast({ label: 'Couldn’t unhide. Try again in a moment.' }),
@@ -100,7 +124,7 @@ export function HiddenEventsScreen() {
                       <AppText style={styles.sub} numberOfLines={1}>{r.when}</AppText>
                       {r.from ? <AppText style={[styles.sub, { color: text(0.38) }]} numberOfLines={1}>{r.from}</AppText> : null}
                     </View>
-                    <Pressable onPress={() => unhide(r.item)} accessibilityRole="button" accessibilityLabel={'Unhide ' + r.title} style={styles.unhide}>
+                    <Pressable onPress={() => unhide(r.item, r.device)} accessibilityRole="button" accessibilityLabel={'Unhide ' + r.title} style={styles.unhide}>
                       <AppText style={{ fontSize: 13 }}>Unhide</AppText>
                     </Pressable>
                   </View>

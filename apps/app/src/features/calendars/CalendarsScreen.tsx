@@ -8,7 +8,7 @@ import { Icon } from '@/components/Icon';
 import { showToast } from '@/components/toast';
 import { Glyph, Spinner } from '../visibility/glyphs';
 import { useGoogleAccounts, useHiddenItems, getCalendarsStore } from './data';
-import { useDeviceCalendars } from './device';
+import { PHONE_CALENDARS_ROUTE, usePhoneCalendarsSummary, useDeviceCalendars } from './device';
 import { calendarColor, calendarRoleLabel, syncedLabel, type AccountView } from './view';
 import { useConnectGoogle, useConnectReturn } from './useConnect';
 import { Banner, Card, ColorBar, Divider, GoogleBadge, Label, NavRow, PlainButton, Screen, SharedPill, Toggle } from './ui';
@@ -35,12 +35,7 @@ export function CalendarsScreen() {
     getCalendarsStore().setCalendarFlag(id, patch).catch(() => showToast({ label: 'Couldn’t save that change.' }));
   };
 
-  const phoneCals = device.calendars.filter((c) => c.showInApp);
-  const phoneSub = !device.available
-    ? 'Available in the mobile app'
-    : phoneCals.length
-      ? phoneCals.slice(0, 2).map((c) => c.name).join(', ') + (phoneCals.length > 2 ? ' and ' + (phoneCals.length - 2) + ' more' : '') + ' shown'
-      : 'Show your phone’s calendars here';
+  const phoneSub = usePhoneCalendarsSummary();
 
   return (
     <Screen title="Calendars" subtitle="Choose what shows in your views">
@@ -108,7 +103,7 @@ export function CalendarsScreen() {
             icon={<Icon name="phone" size={16} color={text(0.8)} />}
             title="On this phone"
             sub={phoneSub}
-            onPress={() => (device.available ? router.push('/settings/calendars/phone' as never) : showToast({ label: 'Phone calendars are available in the mobile app' }))}
+            onPress={() => (device.supported ? router.push(PHONE_CALENDARS_ROUTE as never) : showToast({ label: 'Phone calendars are available in the mobile app' }))}
           />
         </Card>
 

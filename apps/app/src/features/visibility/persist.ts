@@ -4,20 +4,19 @@
  * the event reaches the server, see CalendarsStore.setEventGoogleTargets), the phone ones through the
  * phone-calendar bridge's optional `setDeviceTargets`.
  */
-import * as deviceModule from '../calendars/device';
+import { setDeviceTargets } from '../calendars/device';
 import { getCalendarsStore } from '../calendars/data';
 import { isUuid } from '@/sync/mapping';
 import { planPersist, targetsRpcArgs } from './payload';
 import type { PickerState } from './state';
-
-type DeviceApi = { setDeviceTargets?: (eventId: string, calendarKeys: string[], applyToSeries: boolean) => void | Promise<void> };
-const deviceApi = deviceModule as unknown as DeviceApi;
 
 export interface PersistArgs {
   eventId: string;
   before: PickerState;
   after: PickerState;
   isSeries: boolean;
+  /** the later events of the same series (the phone bridge takes one event at a time) */
+  seriesEventIds?: string[];
 }
 
 /** Fire-and-forget: failures show up as "Failed · Retry" on the target. */
@@ -26,12 +25,10 @@ export function persistChoice(args: PersistArgs): void {
   if (!isUuid(args.eventId)) return;
   const plan = planPersist(args);
   if (plan.google) void getCalendarsStore().setEventGoogleTargets(plan.google);
-  if (plan.device && deviceApi.setDeviceTargets) {
-    try {
-      void Promise.resolve(deviceApi.setDeviceTargets(plan.device.eventId, plan.device.keys, plan.device.applyToSeries)).catch(() => undefined);
-    } catch {
-      // the bridge reports its own failures as target statuses
-    }
+  if (plan.device) {
+    // the bridge reports its own failures as target statuses
+    const ids = [plan.device.eventId, ...(plan.device.applyToSeries ? args.seriesEventIds ?? [] : [])];
+    ids.forEach((id) => void Promise.resolve(setDeviceTargets(id, plan.device!.keys)).catch(() => undefined));
   }
 }
 
