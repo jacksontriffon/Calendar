@@ -17,6 +17,7 @@
     "preset": "jest-expo"
   },
   "dependencies": {
+    "@bacons/apple-targets": "^5.0.0",
     "@calendar/core": "workspace:*",
     "@calendar/db": "workspace:*",
     "@expo-google-fonts/geist": "^0.4.2",
@@ -51,6 +52,7 @@
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-native": "0.88.1",
+    "react-native-android-widget": "^0.26.0",
     "react-native-gesture-handler": "~3.3.0",
     "react-native-mmkv": "^4.3.2",
     "react-native-nitro-modules": "0.37.1",
