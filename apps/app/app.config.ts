@@ -17,6 +17,24 @@ const APP_ID = 'com.claudecalendar.app';
  */
 const GOOGLE_IOS_URL_SCHEME = process.env.GOOGLE_IOS_URL_SCHEME || 'com.googleusercontent.apps.REPLACE_ME';
 
+/**
+ * App Group shared by the app and the iOS widget extension (the snapshot and the
+ * mark-done queue live in its UserDefaults). It must be registered on the Apple
+ * Developer account for both App IDs. Keep in sync with `APP_GROUP` in
+ * src/features/widget/types.ts and `Shared.group` in targets/widget/Snapshot.swift.
+ */
+const APP_GROUP = `group.${APP_ID}`;
+
+/**
+ * Android home-screen widgets fixed at 2x2, 4x2 and 4x4 (open question 8). The
+ * names must match `ANDROID_WIDGETS` in src/features/widget/types.ts.
+ */
+const ANDROID_WIDGETS = [
+  { name: 'CalendarSmall', label: 'Calendar · Next', description: 'What is next, and when.', minWidth: '110dp', minHeight: '110dp', targetCellWidth: 2, targetCellHeight: 2, resizeMode: 'none', updatePeriodMillis: 1800000 },
+  { name: 'CalendarMedium', label: 'Calendar · Agenda', description: 'Your next events and goals.', minWidth: '250dp', minHeight: '110dp', targetCellWidth: 4, targetCellHeight: 2, resizeMode: 'none', updatePeriodMillis: 1800000 },
+  { name: 'CalendarLarge', label: 'Calendar · Day', description: 'Your day, with goals and a check for each session.', minWidth: '250dp', minHeight: '250dp', targetCellWidth: 4, targetCellHeight: 4, resizeMode: 'none', updatePeriodMillis: 1800000 },
+] as const;
+
 const config: ExpoConfig = {
   name: 'Calendar',
   slug: 'calendar',
@@ -30,6 +48,8 @@ const config: ExpoConfig = {
     bundleIdentifier: APP_ID,
     supportsTablet: true,
     usesAppleSignIn: true,
+    // The widget extension mirrors this group (@bacons/apple-targets).
+    entitlements: { 'com.apple.security.application-groups': [APP_GROUP] },
   },
   android: {
     package: APP_ID,
@@ -79,6 +99,9 @@ const config: ExpoConfig = {
     ],
     'expo-notifications',
     'expo-background-task',
+    // Widgets: the iOS WidgetKit extension in ./targets/widget, and the Android providers.
+    '@bacons/apple-targets',
+    ['react-native-android-widget', { widgets: ANDROID_WIDGETS.map((w) => ({ ...w })) }],
   ],
   experiments: {
     typedRoutes: true,
