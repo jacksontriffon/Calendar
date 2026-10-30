@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from 'react';
-import { Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ACCENT, SURFACE, text, white } from '@calendar/core';
@@ -12,8 +12,8 @@ import { ToastHost } from '@/components/Toast';
 import { useGoogleAccounts, useHiddenItems } from '../calendars/data';
 import { PHONE_CALENDARS_ROUTE, useHiddenDeviceEvents, usePhoneCalendarsSummary } from '../calendars/device';
 import { getStore, useHistory, usePrefs, useSyncStatus } from '@/store';
+import { ClaudeSettings } from '../ai/ClaudeSettings';
 import { useNow } from '../calendar/useNow';
-import { runCheckInNow } from '../checkin/CheckInHost';
 import { undoEntry } from '../history/commit';
 import {
   REGION_LIST, daylightNote, historyRows, regionLabel, sunForRegion, sunWithTime,
@@ -174,41 +174,7 @@ export function SettingsScreen() {
             </View>
           </Group>
 
-          <Label>Claude parsing</Label>
-          <Group>
-            {/* TODO(phase 4): model, ask-first and usage toggles live here once ai-schedule exists. */}
-            <View style={styles.row}>
-              <View style={{ flex: 1 }}>
-                <AppText style={styles.rowTitle}>Claude parsing</AppText>
-                <AppText style={styles.rowSub}>Model, questions and usage arrive with the composer.</AppText>
-              </View>
-              <AppText style={styles.value}>Soon</AppText>
-            </View>
-            <View style={[styles.row, { borderTopWidth: 1, borderTopColor: white(0.06) }]}>
-              <View style={{ flex: 1 }}>
-                <AppText style={styles.rowTitle}>Check-ins</AppText>
-                <AppText style={styles.rowSub}>A few questions after a long time away.</AppText>
-              </View>
-              <Switch
-                value={prefs.ai.checkin}
-                onValueChange={(v) => getStore().setPrefs({ ai: { ...prefs.ai, checkin: v } })}
-                trackColor={{ false: white(0.12), true: ACCENT }}
-                thumbColor={prefs.ai.checkin ? '#17120f' : text(0.65)}
-                accessibilityLabel="Check-ins"
-              />
-            </View>
-            <Pressable
-              onPress={() => {
-                if (router.canGoBack()) router.back();
-                else router.replace('/');
-                setTimeout(runCheckInNow, 320);
-              }}
-              style={[styles.row, { borderTopWidth: 1, borderTopColor: white(0.06) }]}
-              accessibilityRole="button"
-            >
-              <AppText style={[styles.rowTitle, { color: ACCENT }]}>Run a check-in now</AppText>
-            </Pressable>
-          </Group>
+          <ClaudeSettings />
 
           <Label>History</Label>
           <Group>
