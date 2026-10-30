@@ -37,7 +37,7 @@ export function Sheet({ onClosed, children, maxHeightFraction = 0.9, testID }: P
   const closing = useSharedValue(false);
 
   useEffect(() => {
-    p.value = withTiming(1, { duration: 300, easing: OPEN_EASE });
+    p.set(withTiming(1, { duration: 300, easing: OPEN_EASE }));
   }, [p]);
 
   const finish = useCallback(() => onClosed(), [onClosed]);
@@ -45,10 +45,10 @@ export function Sheet({ onClosed, children, maxHeightFraction = 0.9, testID }: P
     runOnUI(() => {
       'worklet';
       if (closing.value) return;
-      closing.value = true;
-      p.value = withTiming(0, { duration: 230, easing: CLOSE_EASE }, (done) => {
+      closing.set(true);
+      p.set(withTiming(0, { duration: 230, easing: CLOSE_EASE }, (done) => {
         if (done) scheduleOnRN(finish);
-      });
+      }));
     })();
   }, [closing, p, finish]);
 
@@ -56,16 +56,16 @@ export function Sheet({ onClosed, children, maxHeightFraction = 0.9, testID }: P
     activeOffsetY: [-4, 4],
     onUpdate: (e) => {
       'worklet';
-      drag.value = Math.max(0, e.translationY);
+      drag.set(Math.max(0, e.translationY));
     },
     onDeactivate: (e) => {
       'worklet';
       if (drag.value > 90 || e.velocityY > 900) {
-        closing.value = true;
-        p.value = withTiming(0, { duration: 200, easing: CLOSE_EASE }, (done) => {
+        closing.set(true);
+        p.set(withTiming(0, { duration: 200, easing: CLOSE_EASE }, (done) => {
           if (done) scheduleOnRN(finish);
-        });
-      } else drag.value = withTiming(0, { duration: 180 });
+        }));
+      } else drag.set(withTiming(0, { duration: 180 }));
     },
   });
 

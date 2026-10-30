@@ -55,7 +55,7 @@ export function sheetLabel(before: CalendarData, after: CalendarData, id: string
 }
 
 /** "Every Tue" for a repeating event, from the weekdays of the events that share its series id. */
-export function repeatLabel(events: ReadonlyArray<ProtoEvent>, ev: ProtoEvent): string | null {
+export function repeatLabel(events: readonly ProtoEvent[], ev: ProtoEvent): string | null {
   if (!ev.seriesId) return null;
   const days = new Set<number>();
   events.forEach((e) => { if (e.seriesId === ev.seriesId) days.add(dnum(e.day).getDay()); });
@@ -63,7 +63,7 @@ export function repeatLabel(events: ReadonlyArray<ProtoEvent>, ev: ProtoEvent): 
   return repWords({ weekdays: Array.from(days), until: null });
 }
 
-export const seriesCount = (events: ReadonlyArray<ProtoEvent>, ev: ProtoEvent): number =>
+export const seriesCount = (events: readonly ProtoEvent[], ev: ProtoEvent): number =>
   ev.seriesId ? events.filter((e) => e.seriesId === ev.seriesId).length : 0;
 
 /** "Thursday" for the day an event ends on (an overnight event shows its end day). */

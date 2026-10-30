@@ -53,23 +53,19 @@ export function subscribeToast(l: () => void): () => void {
 export const useToastItem = (): ToastItem | null => useSyncExternalStore(subscribeToast, getToast, getToast);
 
 /* The most recently mounted host renders the toast, so screens can each mount one. */
-const hosts: number[] = [];
-let hostSeq = 0;
+const hosts: string[] = [];
 const hostListeners = new Set<() => void>();
-export function registerHost(): { id: number; unregister: () => void } {
-  const id = ++hostSeq;
+/** Register a mounted host; returns the unregister function. */
+export function registerHost(id: string): () => void {
   hosts.push(id);
   hostListeners.forEach((l) => l());
-  return {
-    id,
-    unregister() {
-      const i = hosts.indexOf(id);
-      if (i >= 0) hosts.splice(i, 1);
-      hostListeners.forEach((l) => l());
-    },
+  return () => {
+    const i = hosts.indexOf(id);
+    if (i >= 0) hosts.splice(i, 1);
+    hostListeners.forEach((l) => l());
   };
 }
-export const topHost = (): number | undefined => hosts[hosts.length - 1];
+export const topHost = (): string | undefined => hosts[hosts.length - 1];
 export function subscribeHosts(l: () => void): () => void {
   hostListeners.add(l);
   return () => {

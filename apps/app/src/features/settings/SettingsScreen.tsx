@@ -11,6 +11,7 @@ import { Icon, type IconName } from '@/components/Icon';
 import { ToastHost } from '@/components/Toast';
 import { showToast } from '@/components/toast';
 import { getStore, useHistory, usePrefs, useSyncStatus } from '@/store';
+import { useNow } from '../calendar/useNow';
 import { runCheckInNow } from '../checkin/CheckInHost';
 import { undoEntry } from '../history/commit';
 import {
@@ -25,6 +26,7 @@ export function SettingsScreen() {
   const prefs = usePrefs();
   const history = useHistory();
   const sync = useSyncStatus();
+  const now = useNow();
   const [regionOpen, setRegionOpen] = useState(false);
   const [sr, setSr] = useState<string | null>(null);
   const [ss, setSs] = useState<string | null>(null);
@@ -35,7 +37,7 @@ export function SettingsScreen() {
     const next = sunWithTime(prefs.sun, which, v);
     if (next) getStore().setPrefs({ sun: next });
   };
-  const rows = historyRows(history, Date.now());
+  const rows = historyRows(history, now.nowMs);
 
   return (
     <View style={styles.root}>
@@ -175,7 +177,11 @@ export function SettingsScreen() {
               />
             </View>
             <Pressable
-              onPress={() => { router.canGoBack() ? router.back() : router.replace('/'); setTimeout(runCheckInNow, 320); }}
+              onPress={() => {
+                if (router.canGoBack()) router.back();
+                else router.replace('/');
+                setTimeout(runCheckInNow, 320);
+              }}
               style={[styles.row, { borderTopWidth: 1, borderTopColor: white(0.06) }]}
               accessibilityRole="button"
             >

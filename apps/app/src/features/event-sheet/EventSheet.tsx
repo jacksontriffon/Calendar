@@ -33,12 +33,13 @@ export function EventSheet({ id }: { id: string }) {
 function SheetBody({ id }: { id: string }) {
   const close = useSheetClose();
   const data = useCalendarData();
-  const base = useRef<CalendarData | null>(null);
+  const [base] = useState<CalendarData>(data);
   const [draft, setDraft] = useState<Draft>(emptyDraft);
   const draftRef = useRef(draft);
-  draftRef.current = draft;
+  useEffect(() => {
+    draftRef.current = draft;
+  }, [draft]);
   const settled = useRef(false);
-  if (!base.current) base.current = data;
 
   const view = useMemo(() => applyDraft(data, id, draft), [data, id, draft]);
   const ev = view.events.find((e) => e.id === id);
@@ -52,8 +53,8 @@ function SheetBody({ id }: { id: string }) {
     const store = getStore();
     const live = store.getState().data;
     const next = commitDraft(live, id, d);
-    commitUndoable(next, sheetLabel(base.current ?? live, applyDraft(live, id, d), id, d), 'edit');
-  }, [id]);
+    commitUndoable(next, sheetLabel(base, applyDraft(live, id, d), id, d), 'edit');
+  }, [id, base]);
   useEffect(() => () => flush(), [flush]);
 
   const patch = useCallback((p: Partial<ProtoEvent>) => setDraft((d) => ({ ...d, patch: { ...d.patch, ...p } })), []);
@@ -120,8 +121,11 @@ function EditBody({ ev, view, patch, catOp, onDelete, onTimer }: EditProps) {
   };
   const syncTimes = () => { setStartTxt(timeText(ev.start)); setEndTxt(timeText(ev.end)); };
 
-  const todayK = key(new Date());
-  const nowM = new Date().getHours() * 60 + new Date().getMinutes();
+  const [clock] = useState(() => {
+    const n = new Date();
+    return { todayK: key(n), nowM: n.getHours() * 60 + n.getMinutes() };
+  });
+  const { todayK, nowM } = clock;
   const next = view.events.filter((e) => !e.allDay && e.day === todayK && e.start > nowM).sort((a, b) => a.start - b.start)[0];
   const canTime = !ev.allDay && ev.day === todayK && ((ev.start <= nowM && ev.end > nowM) || (!!next && next.id === ev.id));
   const mine = !!timer.tm && timer.tm.id === ev.id;
@@ -333,15 +337,21 @@ function VisibilityRow({ value, onChange, series }: { value: Visibility; onChang
   );
 }
 
+/** Copy someone else's event to My calendar as a private app event. */
+export function copyToMyCalendar(ev: ProtoEvent): void {
+  const store = getStore();
+  const d = store.getState().data;
+  const copyEv: ProtoEvent = {
+    ...ev, id: store.newId(), source: 'app', isMine: true, visibility: 'private', seriesId: null, done: false, at: Date.now(),
+  };
+  commitUndoable({ ...d, events: d.events.concat([copyEv]) }, 'Copied \u00b7 ' + ev.title, 'edit');
+}
+
 /** Someone else's event (EV 05): read-only, with Copy to my calendar and a quiet Remove. */
 function ReadOnly({ ev, close }: { ev: ProtoEvent; close: () => void }) {
   const store = getStore();
   const copy = () => {
-    const d = store.getState().data;
-    const copyEv: ProtoEvent = {
-      ...ev, id: store.newId(), source: 'app', isMine: true, visibility: 'private', seriesId: null, done: false, at: Date.now(),
-    };
-    commitUndoable({ ...d, events: d.events.concat([copyEv]) }, 'Copied · ' + ev.title, 'edit');
+    copyToMyCalendar(ev);
     close();
   };
   const remove = () => {

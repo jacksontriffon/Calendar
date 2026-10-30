@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import {
-  createGoal, goalDue, goalStats, hrs, paceOf, paint, sortGoals, text, white, dur, goalRate, ACCENT,
-  type CalendarData, type NowCtx,
+  goalDue, goalStats, hrs, paceOf, paint, sortGoals, text, white, dur, goalRate, ACCENT,
+  type NowCtx,
 } from '@calendar/core';
 
 import { AppText } from '@/components/AppText';
@@ -10,8 +10,10 @@ import { Ring } from '@/components/Ring';
 import { Sheet, useSheetClose } from '@/components/Sheet';
 import { getStore, useCalendarData } from '@/store';
 import { commitQuiet } from '../history/commit';
+import { openRecap } from '../story/StoryHost';
 import { useTimer } from '../timer/store';
 import { useNow } from '../calendar/useNow';
+import { newGoalIn } from './model';
 
 interface Props {
   onClosed: () => void;
@@ -26,21 +28,6 @@ export function GoalsSheet({ onClosed, onOpenGoal }: Props) {
     </Sheet>
   );
 }
-
-/** Create a goal in the store (title "New goal", a sensible deadline) and return its id. */
-export function newGoalIn(data: CalendarData, nowMs: number, today: Date): { data: CalendarData; id: string } {
-  const r = createGoal(data, { title: uniqueTitle(data, 'New goal'), hours: 10 }, {
-    today, cats: data.cats, goalCount: data.goals.length, nowMs, random: Math.random,
-  });
-  return { data: r.data, id: r.goal.id };
-}
-
-const uniqueTitle = (d: CalendarData, base: string): string => {
-  let t = base;
-  let n = 2;
-  while (d.goals.some((g) => g.title === t) || d.cats[t] != null) t = base + ' ' + n++;
-  return t;
-};
 
 function GoalsList({ onOpenGoal }: { onOpenGoal: (id: string) => void }) {
   const close = useSheetClose();
@@ -65,6 +52,9 @@ function GoalsList({ onOpenGoal }: { onOpenGoal: (id: string) => void }) {
       <View style={styles.head}>
         <AppText style={styles.title} accessibilityRole="header">Goals</AppText>
         <View style={{ flex: 1 }} />
+        <Pressable onPress={() => { close(); setTimeout(openRecap, 260); }} accessibilityRole="button" style={[styles.add, { marginRight: 6 }]}>
+          <AppText style={[styles.addTxt, { color: text(0.6) }]}>Wins</AppText>
+        </Pressable>
         <Pressable onPress={add} accessibilityRole="button" style={styles.add}>
           <AppText style={styles.addTxt}>+ New goal</AppText>
         </Pressable>

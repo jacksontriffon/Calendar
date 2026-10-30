@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -18,14 +18,10 @@ import {
 } from './state';
 
 /* a tiny request channel so Settings can start a check-in */
-let manual = 0;
 const subs = new Set<() => void>();
 export const runCheckInNow = (): void => {
-  manual++;
   subs.forEach((s) => s());
 };
-const useManual = (): number =>
-  useSyncExternalStore((l) => { subs.add(l); return () => { subs.delete(l); }; }, () => manual, () => manual);
 
 const clockNow = (): Clock => {
   const n = new Date();
@@ -42,7 +38,6 @@ export function CheckInHost({ busy }: { busy?: boolean }) {
   const prefs = usePrefs();
   const [flow, setFlow] = useState<Flow | null>(null);
   const [typed, setTyped] = useState('');
-  const req = useManual();
 
   const open = useCallback(() => {
     const clock = clockNow();
@@ -58,8 +53,10 @@ export function CheckInHost({ busy }: { busy?: boolean }) {
 
   /* manual run from Settings */
   useEffect(() => {
-    if (req > 0) open();
-  }, [req, open]);
+    const l = () => { open(); };
+    subs.add(l);
+    return () => { subs.delete(l); };
+  }, [open]);
 
   /* automatic: on mount and every two minutes */
   useEffect(() => {

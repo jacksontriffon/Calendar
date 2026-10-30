@@ -11,7 +11,7 @@ import {
 export interface Flow {
   qs: CheckInQuestion[];
   idx: number;
-  ans: Array<string | undefined>;
+  ans: (string | undefined)[];
 }
 
 export interface Clock { today: Date; nowMin: number; nowMs: number }

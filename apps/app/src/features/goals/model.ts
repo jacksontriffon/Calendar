@@ -1,6 +1,6 @@
 /** Pure helpers for goal detail: the editable draft, date field validation and the stats lines. */
 import {
-  addDays, goalPace, goalRate, hrs, key, niceDate, patchGoal, toGoLabel,
+  addDays, createGoal, goalPace, goalRate, hrs, key, niceDate, patchGoal, toGoLabel,
   type CalendarData, type GoalStats, type ProtoGoal,
 } from '@calendar/core';
 
@@ -81,3 +81,19 @@ export function goalLines(g: ProtoGoal, s: GoalStats, today: Date): GoalLines {
     due: g.deadline ? 'by ' + niceDate(g.deadline) : 'Set a date',
   };
 }
+
+/** Create a goal in the store (title "New goal", a sensible deadline) and return its id. */
+export function newGoalIn(data: CalendarData, nowMs: number, today: Date): { data: CalendarData; id: string } {
+  const r = createGoal(data, { title: uniqueTitle(data, 'New goal'), hours: 10 }, {
+    today, cats: data.cats, goalCount: data.goals.length, nowMs, random: Math.random,
+  });
+  return { data: r.data, id: r.goal.id };
+}
+
+const uniqueTitle = (d: CalendarData, base: string): string => {
+  let t = base;
+  let n = 2;
+  while (d.goals.some((g) => g.title === t) || d.cats[t] != null) t = base + ' ' + n++;
+  return t;
+};
+

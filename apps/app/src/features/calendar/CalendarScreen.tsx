@@ -80,11 +80,11 @@ export function CalendarScreen() {
   const animate = useCallback((d: 1 | -1) => {
     setDir(d);
     setNavSeq((n) => n + 1);
-    tx.value = d * 56;
-    navOp.value = 0;
-    tx.value = withTiming(0, { duration: 380, easing: NAV_EASE });
-    navOp.value = withTiming(1, { duration: 240 });
-    swipeX.value = withTiming(0, { duration: 160 });
+    tx.set(d * 56);
+    navOp.set(0);
+    tx.set(withTiming(0, { duration: 380, easing: NAV_EASE }));
+    navOp.set(withTiming(1, { duration: 240 }));
+    swipeX.set(withTiming(0, { duration: 160 }));
   }, [tx, navOp, swipeX]);
 
   const go = useCallback((d: 1 | -1) => {

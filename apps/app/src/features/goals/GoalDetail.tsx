@@ -37,10 +37,10 @@ function Body({ id }: { id: string }) {
   const [draft, setDraft] = useState<GoalDraft | null>(null);
   const draftRef = useRef<GoalDraft | null>(null);
   const settled = useRef(false);
-  const first = useRef<ProtoGoal | null>(null);
-  if (g && !first.current) first.current = g;
   if (g && !draft) setDraft(draftOf(g));
-  draftRef.current = draft;
+  useEffect(() => {
+    draftRef.current = draft;
+  }, [draft]);
 
   const flush = useCallback(() => {
     if (settled.current) return;

@@ -65,7 +65,7 @@ export const monthTitle = (focus: Date, today: Date): string =>
   MONL[focus.getMonth()] + (focus.getFullYear() === today.getFullYear() ? '' : ' ' + focus.getFullYear());
 
 /** "11/18h · 1 behind" / "2 goals" / "No goals yet · set one". */
-export function goalSummary(goals: ReadonlyArray<ProtoGoal>, events: ReadonlyArray<ProtoEvent>, ctx: NowCtx): { text: string; behind: number } {
+export function goalSummary(goals: readonly ProtoGoal[], events: readonly ProtoEvent[], ctx: NowCtx): { text: string; behind: number } {
   const act = activeGoals(goals, events, ctx);
   if (!act.length) return { text: 'No goals yet · set one', behind: 0 };
   let d = 0;
@@ -128,7 +128,7 @@ export interface Seg {
 }
 
 /** Timed segments in one day column: the day's events plus the tail of yesterday's overnight ones. */
-export function daySegs(events: ReadonlyArray<ProtoEvent>, dk: string, prevDk: string): Seg[] {
+export function daySegs(events: readonly ProtoEvent[], dk: string, prevDk: string): Seg[] {
   const out: Seg[] = [];
   events.forEach((e) => {
     if (e.allDay) return;
@@ -141,13 +141,13 @@ export function daySegs(events: ReadonlyArray<ProtoEvent>, dk: string, prevDk: s
   return out;
 }
 
-const layoutCache = new Map<string, Array<LaidOut<Seg>>>();
+const layoutCache = new Map<string, LaidOut<Seg>[]>();
 
 /**
  * Lane layout for a day, memoised by the day's event signature so a day whose
  * events did not change keeps the same array (and its columns skip re-rendering).
  */
-export function dayLayout(events: ReadonlyArray<ProtoEvent>, dk: string, prevDk: string): Array<LaidOut<Seg>> {
+export function dayLayout(events: readonly ProtoEvent[], dk: string, prevDk: string): LaidOut<Seg>[] {
   const segs = daySegs(events, dk, prevDk);
   const sig = dk + '|' + segs.map((s) => [s.id, s.start, s.end, s.part, s.ev.title, s.ev.cat, s.ev.done ? 1 : 0, s.ev.visibility, s.ev.source, s.ev.isMine, s.ev.win ? 1 : 0, s.ev.pauses ? s.ev.pauses.length : 0, s.ev.at].join(':')).join(',');
   const hit = layoutCache.get(sig);
@@ -170,7 +170,7 @@ export interface AllDayItem {
 }
 
 /** Spanning bars for all-day events, packed into rows (the prototype's all-day band). */
-export function packAllDay(events: ReadonlyArray<ProtoEvent>, days: Date[]): { items: AllDayItem[]; rows: number } {
+export function packAllDay(events: readonly ProtoEvent[], days: Date[]): { items: AllDayItem[]; rows: number } {
   const idx: Record<string, number> = {};
   days.forEach((d, i) => { idx[key(d)] = i; });
   const items: AllDayItem[] = [];

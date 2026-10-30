@@ -12,7 +12,7 @@ export interface HistoryRow {
 const PREFIX = /^(Claude|Offline parse|Note|Reverted)\s*·\s*/i;
 
 /** The History list rows: label without its source prefix, a source tag, "5 mins ago" and the kind dot. */
-export function historyRows(log: ReadonlyArray<HistoryEntry>, nowMs: number): HistoryRow[] {
+export function historyRows(log: readonly HistoryEntry[], nowMs: number): HistoryRow[] {
   return log.map((h) => {
     const label = String(h.label).replace(PREFIX, '').replace(PREFIX, '');
     const tag = /^claude/i.test(h.label) ? 'Claude' : /^offline parse/i.test(h.label) ? 'Offline' : h.kind === 'undo' ? 'Reverted' : '';

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useSyncExternalStore } from 'react';
+import { useEffect, useId, useSyncExternalStore } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown, FadeOut } from 'react-native-reanimated';
 import { ACCENT, SURFACE, text, white } from '@calendar/core';
@@ -18,17 +18,10 @@ interface Props {
 /** Renders the current toast (label, dismiss ×, optional Undo). The latest mounted host wins. */
 export function ToastHost({ bottom = 0 }: Props) {
   const toast = useToastItem();
-  const me = useRef<{ id: number; unregister: () => void } | null>(null);
-  if (!me.current) me.current = registerHost();
-  useEffect(() => {
-    const h = me.current;
-    return () => {
-      h?.unregister();
-      me.current = null;
-    };
-  }, []);
+  const me = useId();
+  useEffect(() => registerHost(me), [me]);
   const top = useSyncExternalStore(subscribeHosts, topHost, topHost);
-  if (!toast || top !== me.current?.id) return null;
+  if (!toast || top !== me) return null;
 
   const onUndo = () => {
     dismissToast();

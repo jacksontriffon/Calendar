@@ -22,7 +22,7 @@ interface HeaderProps {
   children?: ReactNode;
 }
 
-const MODES: Array<[Mode, string]> = [['day3', '3 days'], ['week', 'Week'], ['month', 'Month']];
+const MODES: [Mode, string][] = [['day3', '3 days'], ['week', 'Week'], ['month', 'Month']];
 
 /** Title + goal summary (opens goals), the 3 days / Week / Month control and the avatar that opens Settings. */
 export function CalendarHeader(p: HeaderProps) {

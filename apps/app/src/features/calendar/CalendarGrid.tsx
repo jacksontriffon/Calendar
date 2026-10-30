@@ -85,16 +85,16 @@ function CalendarGridImpl(p: Props) {
   /* zoom: animate the hour height to its new target (the pinch's anchor keeps the focus hour in place) */
   const firstHh = useRef(true);
   useEffect(() => {
-    zoomSV.value = zoom;
+    zoomSV.set(zoom);
     if (!viewportH) return;
     if (firstHh.current) {
       firstHh.current = false;
-      hh.value = hhTarget;
+      hh.set(hhTarget);
       return;
     }
-    hh.value = withTiming(hhTarget, { duration: 260, easing: ZOOM_EASE }, () => {
-      anchoring.value = false;
-    });
+    hh.set(withTiming(hhTarget, { duration: 260, easing: ZOOM_EASE }, () => {
+      anchoring.set(false);
+    }));
   }, [hhTarget, zoom, viewportH, hh, zoomSV, anchoring]);
 
   useAnimatedReaction(
@@ -129,10 +129,12 @@ function CalendarGridImpl(p: Props) {
   const [ghost, setGhost] = useState<Ghost | null>(null);
   const [live, setLive] = useState<{ start: number; end: number } | null>(null);
   const layoutsRef = useRef(layouts);
-  layoutsRef.current = layouts;
   const lastOpen = useRef(0);
   const cbRef = useRef(p);
-  cbRef.current = p;
+  useEffect(() => {
+    layoutsRef.current = layouts;
+    cbRef.current = p;
+  });
 
   const haptic = useCallback((kind: 'start' | 'snap') => {
     try {
@@ -180,7 +182,7 @@ function CalendarGridImpl(p: Props) {
       setGhost(null);
       setLive(null);
     },
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }), [hh, dragOn, dragId, dragStart, dragEnd, dragDay, dragMoved, haptic]);
 
   /* ----- gestures: horizontal swipe + pinch zoom, alongside the native vertical scroll ----- */
@@ -192,13 +194,13 @@ function CalendarGridImpl(p: Props) {
     onUpdate: (e) => {
       'worklet';
       if (dragOn.value) return;
-      p.swipeX.value = swipeOffset(e.translationX);
+      p.swipeX.set(swipeOffset(e.translationX));
     },
     onDeactivate: (e) => {
       'worklet';
       const d = dragOn.value || e.canceled ? 0 : swipeDir(e.translationX);
       if (d !== 0) scheduleOnRN(p.onSwipeNav, d);
-      else p.swipeX.value = withTiming(0, { duration: 260 });
+      else p.swipeX.set(withTiming(0, { duration: 260 }));
     },
   });
 
@@ -216,19 +218,19 @@ function CalendarGridImpl(p: Props) {
   const pinch = usePinchGesture({
     onActivate: () => {
       'worklet';
-      pinchBase.value = 1;
+      pinchBase.set(1);
     },
     onUpdate: (e) => {
       'worklet';
       const s = pinchStep(e.scale / pinchBase.value);
       if (s === 0) return;
-      pinchBase.value = e.scale;
+      pinchBase.set(e.scale);
       const z = stepZoom(zoomSV.value, s);
       if (z === zoomSV.value) return;
-      zoomSV.value = z;
-      anchorHour.value = (scrollY.value + e.focalY) / hh.value;
-      anchorY.value = e.focalY;
-      anchoring.value = true;
+      zoomSV.set(z);
+      anchorHour.set((scrollY.value + e.focalY) / hh.value);
+      anchorY.set(e.focalY);
+      anchoring.set(true);
       scheduleOnRN(applyZoom, z);
     },
   });
@@ -375,7 +377,7 @@ function NowLine({ hh, nowMin, left, width }: { hh: SharedValue<number>; nowMin:
   const style = useAnimatedStyle(() => ({ top: (nowMin / 60) * hh.value }));
   const pulse = useSharedValue(0);
   useEffect(() => {
-    pulse.value = withRepeat(withTiming(1, { duration: 2800, easing: Easing.out(Easing.quad) }), -1, false);
+    pulse.set(withRepeat(withTiming(1, { duration: 2800, easing: Easing.out(Easing.quad) }), -1, false));
   }, [pulse]);
   const ring = useAnimatedStyle(() => ({ opacity: 0.5 * (1 - pulse.value), transform: [{ scale: 1 + pulse.value * 2.4 }] }));
   return (
