@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -8,7 +8,12 @@ import { AppInput, AppText } from '@/components/AppText';
 import { Icon } from '@/components/Icon';
 import { showToast } from '@/components/toast';
 import { getStore, usePrefs } from '@/store';
+import { ThinkingPill } from '../ai/ThinkingPill';
+import { readPhrase } from '../ai/phrases';
+import { modelLabel, useUsageState } from '../ai/usage';
 import { devSeedEnabled } from '../calendar/devSeed';
+import { aiCheckInQuestions, composer } from '../composer/instance';
+import { useComposerHeight } from '../composer/layout';
 import { commitUndoable } from '../history/commit';
 import {
   answer, back, buildQuestions, finish, shouldOpen, startFlow, stepLabel, type Clock, type Flow,
@@ -29,31 +34,56 @@ const clockNow = (): Clock => {
 };
 
 /**
- * The open-space check-in (without AI): after five hours away, or once each
- * evening while goal sessions wait for a win, a short card above the composer
- * asks the local questions, with wins capture. Answers apply through `commit`.
+ * The open-space check-in: after five hours away, or once each evening while
+ * goal sessions wait for a win, a short card above the composer asks a few
+ * questions, with wins capture. With Claude on, `ai-schedule` (mode `checkin`)
+ * writes them, merged with the code-driven ones; offline, on error or at the
+ * limit the local signals do. Answers apply through `commit`; free-text ones
+ * go to the composer as a note.
  */
 export function CheckInHost({ busy }: { busy?: boolean }) {
   const insets = useSafeAreaInsets();
   const prefs = usePrefs();
+  const { model } = useUsageState();
+  const composerH = useComposerHeight();
   const [flow, setFlow] = useState<Flow | null>(null);
   const [typed, setTyped] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [fromAi, setFromAi] = useState(false);
+  const [readSeq, setReadSeq] = useState(0);
+  const busyRef = useRef(false);
 
-  const open = useCallback(() => {
-    const clock = clockNow();
-    const qs = buildQuestions(getStore().getState().data, clock, getLastSeen());
-    if (!qs.length) {
-      showToast({ label: 'Nothing to check in on right now' });
-      return false;
+  /* Claude's questions when it is on (null on any failure: the local ones take over), then the flow */
+  const open = useCallback(async () => {
+    if (busyRef.current) return false;
+    busyRef.current = true;
+    try {
+      const lastSeen = getLastSeen();
+      let ai: Awaited<ReturnType<typeof aiCheckInQuestions>> = null;
+      if (getStore().getState().prefs.ai.on) {
+        setReadSeq((n) => n + 1);
+        setLoading(true);
+        ai = await aiCheckInQuestions(lastSeen);
+        setLoading(false);
+      }
+      const qs = buildQuestions(getStore().getState().data, clockNow(), lastSeen, ai);
+      if (!qs.length) {
+        showToast({ label: 'Nothing to check in on right now' });
+        return false;
+      }
+      setTyped('');
+      setFromAi(!!ai);
+      setFlow(startFlow(qs));
+      return true;
+    } finally {
+      setLoading(false);
+      busyRef.current = false;
     }
-    setTyped('');
-    setFlow(startFlow(qs));
-    return true;
   }, []);
 
   /* manual run from Settings */
   useEffect(() => {
-    const l = () => { open(); };
+    const l = () => { void open(); };
     subs.add(l);
     return () => { subs.delete(l); };
   }, [open]);
@@ -62,14 +92,14 @@ export function CheckInHost({ busy }: { busy?: boolean }) {
   useEffect(() => {
     if (devSeedEnabled()) return; // keep the seeded dev calendar free of surprise cards
     const tick = (eodOnly: boolean) => {
-      if (busy || flow) return;
+      if (busy || flow || busyRef.current) return;
       const clock = clockNow();
       const ok = shouldOpen({
         enabled: prefs.ai.checkin, eodOnly, data: getStore().getState().data, clock,
         lastCheckIn: getLastCheckIn(), lastWinDay: getLastWinDay(),
       });
       if (!ok) return;
-      if (!open()) stampCheckIn();
+      void open().then((ok) => { if (!ok) stampCheckIn(); });
     };
     const t0 = setTimeout(() => tick(false), 1200);
     const t = setInterval(() => tick(true), 120000);
@@ -89,16 +119,25 @@ export function CheckInHost({ busy }: { busy?: boolean }) {
     if (!r.done) { setFlow(r.flow); return; }
     const store = getStore();
     const res = finish(store.getState().data, r.flow, clockNow(), store.newId);
-    // TODO(phase 4): res.followUp (free-text "log" answers) goes to ai-schedule / the offline parser to become events.
     if (res.changed && res.label) commitUndoable(res.data, res.label, 'edit');
+    /* free-text "log" answers become events: a note to Claude, or the offline parser */
+    if (res.followUp) composer.submitCheckInAnswers(res.followUp, res.plain);
     close(r.flow);
   }, [flow, close]);
 
+  const above = insets.bottom + 14 + composerH + 8;
+  if (loading) {
+    return (
+      <View pointerEvents="none" style={[styles.wrap, { bottom: above }]}>
+        <ThinkingPill phrase={readPhrase(readSeq)} testID="checkin-loading" />
+      </View>
+    );
+  }
   if (!flow) return null;
   const q = flow.qs[flow.idx];
-  const tag = q.field === 'win' ? 'Wins' : 'Check-in';
+  const tag = q.field === 'win' ? 'Wins' : fromAi ? modelLabel(model) + ' \u00b7 check-in' : 'Check-in';
   return (
-    <View pointerEvents="box-none" style={[styles.wrap, { bottom: insets.bottom + 14 + 56 }]}>
+    <View pointerEvents="box-none" style={[styles.wrap, { bottom: above }]}>
       <Animated.View entering={FadeInDown.duration(340)} exiting={FadeOutDown.duration(200)} style={styles.card} testID="checkin-card">
         <View style={styles.top}>
           <AppText style={styles.tag}>{tag}</AppText>

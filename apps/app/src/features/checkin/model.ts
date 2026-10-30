@@ -1,7 +1,8 @@
 /**
  * Check-in flow state as pure transitions over core's questions: answer, go
- * back, skip, and the final "apply". The AI-written questions arrive in phase
- * 4; until then the local ones (`ciLocalQs`) feed `assembleCheckIn`.
+ * back, skip, and the final "apply". The questions come from Claude
+ * (`mode: 'checkin'`, see features/ai) when it is on and reachable, else from
+ * the local signals (`ciLocalQs`); both feed `assembleCheckIn`.
  */
 import {
   applyCheckIn, assembleCheckIn, ciLocalQs, shouldCheckIn, winCands,
@@ -16,9 +17,12 @@ export interface Flow {
 
 export interface Clock { today: Date; nowMin: number; nowMs: number }
 
-/** Questions for a check-in right now (without AI): local signals merged with wins and confirmations. */
-export function buildQuestions(data: CalendarData, clock: Clock, lastSeen: number): CheckInQuestion[] {
-  return assembleCheckIn(ciLocalQs(data, { today: clock.today, nowMin: clock.nowMin, nowMs: clock.nowMs }), {
+/**
+ * Questions for a check-in right now: Claude's questions (`ai`, when it answered) or the local signals,
+ * merged with wins and confirmations.
+ */
+export function buildQuestions(data: CalendarData, clock: Clock, lastSeen: number, ai?: CheckInQuestion[] | null): CheckInQuestion[] {
+  return assembleCheckIn(ai && ai.length ? ai : ciLocalQs(data, { today: clock.today, nowMin: clock.nowMin, nowMs: clock.nowMs }), {
     events: data.events, goals: data.goals, today: clock.today, nowMs: clock.nowMs, lastSeen,
   });
 }
