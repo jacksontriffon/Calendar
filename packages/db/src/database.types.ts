@@ -152,6 +152,7 @@ export type Database = {
           user_id: string;
           visibility: string;
           win: Json | null;
+          win_asked: boolean;
         };
         ComputedFields: never;
         Insert: {
@@ -179,6 +180,7 @@ export type Database = {
           user_id?: string;
           visibility?: string;
           win?: Json | null;
+          win_asked?: boolean;
         };
         Update: {
           all_day?: boolean;
@@ -205,6 +207,7 @@ export type Database = {
           user_id?: string;
           visibility?: string;
           win?: Json | null;
+          win_asked?: boolean;
         };
         Relationships: [
           {

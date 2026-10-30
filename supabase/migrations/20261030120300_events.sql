@@ -18,6 +18,8 @@ create table public.events (
   done             boolean not null default false,
   pauses           jsonb not null default '[]'::jsonb check (jsonb_typeof(pauses) = 'array'),
   win              jsonb check (win is null or jsonb_typeof(win) = 'object'),
+  -- The prototype's winAsked flag: a check-in already asked about this event's win.
+  win_asked        boolean not null default false,
   series_id        uuid,
   visibility       text not null default 'private' check (visibility in ('private', 'public')),
   source           text not null default 'app' check (source in ('app', 'google')),
