@@ -29,6 +29,25 @@ Options:
 
 The run prints a table per case and per category, and writes every record (ops, grader reasons, raw token usage) to `results/runs/`.
 
+## Running against the `ai-schedule` function
+
+`--target ai-schedule` skips the browser and sends each case's note and calendar to the deployed (or locally served) `ai-schedule` edge function, then grades the ops it returns with the same grader. The function's own prompt building, skills, model, validator and verifier are what is tested, so this is the check that the server matches the prototype.
+
+```sh
+AI_SCHEDULE_URL=https://<ref>.supabase.co/functions/v1/ai-schedule \
+AI_SCHEDULE_JWT=<access token of a test user> \
+  npm run eval -- --target ai-schedule --concurrency 1
+```
+
+- `AI_SCHEDULE_JWT` is a signed-in user's access token (it expires after an hour by default). No `ANTHROPIC_API_KEY` is needed: the function holds the key.
+- `--model` and `--transport` are ignored; set `AI_MODEL` and the `SKILL_ID_*` secrets on the function instead. The report shows the model and transport the function says it used.
+- Every case counts as a note for that user, and a default run is 60 of them. Give the test account room (`AI_MONTHLY_LIMIT`), and expect `AI_PER_MINUTE` (default 6) to slow the run: the target waits out `rate_limit` responses, so use `--concurrency 1` or raise the limit on the test deployment. A monthly `limit` response aborts the run.
+- The request carries `debug: true`, so the function also returns the scheduler's reply before the verifier; that is what **Scheduler only** is graded on.
+- `--save-baseline` writes `results/baseline-ai-schedule.json` (separate from the browser baseline).
+- `npm test` covers this target against a local stub of the function; no deployment is needed for that.
+
+The default target (`--target browser`) is unchanged.
+
 ## The standard
 
 `standard.json` sets the bar. A run exits non-zero if any of these fail:

@@ -2,11 +2,13 @@
 // Runs every case in cases/*.json through the real app N times and scores the result.
 // Usage: ANTHROPIC_API_KEY=... node run.mjs [--trials 3] [--model id] [--transport inline|skills]
 //        [--only id,category] [--concurrency 4] [--save-baseline]
+//        AI_SCHEDULE_URL=... AI_SCHEDULE_JWT=... node run.mjs --target ai-schedule [--trials 3] [--only ...]
+// --target browser (default) drives the real index.html; --target ai-schedule calls the deployed
+// ai-schedule edge function (model, skills and key are the function's configuration).
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
-import { startHarness } from './lib/harness.mjs';
 import { grade } from './lib/grade.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -15,14 +17,22 @@ const { values: opt } = parseArgs({
     trials: { type: 'string', default: '3' },
     model: { type: 'string' },
     transport: { type: 'string', default: 'inline' },
+    target: { type: 'string', default: 'browser' },
     only: { type: 'string' },
     concurrency: { type: 'string', default: '4' },
     'save-baseline': { type: 'boolean', default: false },
   },
 });
 
+if (opt.target !== 'browser' && opt.target !== 'ai-schedule') { console.error('--target must be "browser" or "ai-schedule"'); process.exit(2); }
+const viaFunction = opt.target === 'ai-schedule';
 const apiKey = process.env.ANTHROPIC_API_KEY;
-if (!apiKey) { console.error('Set ANTHROPIC_API_KEY to run the eval.'); process.exit(2); }
+if (!viaFunction && !apiKey) { console.error('Set ANTHROPIC_API_KEY to run the eval.'); process.exit(2); }
+if (viaFunction && (!process.env.AI_SCHEDULE_URL || !process.env.AI_SCHEDULE_JWT)) {
+  console.error('Set AI_SCHEDULE_URL (the ai-schedule function URL) and AI_SCHEDULE_JWT (a signed-in user\'s access token) for --target ai-schedule.');
+  process.exit(2);
+}
+if (viaFunction && (opt.model || opt.transport !== 'inline')) console.error('Note: --model and --transport are ignored for --target ai-schedule; set AI_MODEL / SKILL_ID_* on the function.');
 const baseUrl = (process.env.ANTHROPIC_BASE_URL || 'https://api.anthropic.com').replace(/\/$/, '');
 
 const readJson = (p) => JSON.parse(fs.readFileSync(p, 'utf8'));
@@ -35,7 +45,8 @@ if (opt.only) {
   cases = cases.filter((c) => keep.has(c.id) || keep.has(c.category));
 }
 const trials = Number(opt.trials);
-const modelLabel = opt.model || 'claude-haiku-4-5';
+let modelLabel = viaFunction ? 'ai-schedule' : opt.model || 'claude-haiku-4-5';
+let transportLabel = viaFunction ? 'ai-schedule' : opt.transport;
 
 const usage = (calls) => calls.reduce((u, c) => {
   const x = (c.json && c.json.usage) || {};
@@ -44,7 +55,9 @@ const usage = (calls) => calls.reduce((u, c) => {
   return u;
 }, { input: 0, output: 0 });
 
-const h = await startHarness({ apiKey, baseUrl, model: opt.model, transport: opt.transport });
+const h = viaFunction
+  ? (await import('./lib/ai-schedule.mjs')).createAiScheduleTarget({ url: process.env.AI_SCHEDULE_URL, jwt: process.env.AI_SCHEDULE_JWT })
+  : await (await import('./lib/harness.mjs')).startHarness({ apiKey, baseUrl, model: opt.model, transport: opt.transport });
 const records = [];
 try {
   await h.prepareSkills(cal);
@@ -80,6 +93,11 @@ try {
 } finally {
   await h.close();
 }
+if (viaFunction) {
+  const d = h.describe();
+  modelLabel = d.model;
+  transportLabel = `ai-schedule/${d.transport}`;
+}
 
 // ---------- report ----------
 const rate = (rs, k = 'pass') => (rs.length ? rs.filter((r) => r[k]).length / rs.length : 0);
@@ -94,7 +112,7 @@ const categories = [...new Set(cases.map((c) => c.category))].map((cat) => {
   return { category: cat, rate: rate(rs), schedRate: rate(rs, 'schedPass'), n: rs.length };
 });
 const summary = {
-  model: modelLabel, transport: opt.transport, trials, at: new Date().toISOString(),
+  model: modelLabel, transport: transportLabel, target: opt.target, trials, at: new Date().toISOString(),
   passRate: rate(records), schedPassRate: rate(records, 'schedPass'),
   verifierFixed: records.filter((r) => !r.schedPass && r.pass).length,
   verifierBroke: records.filter((r) => r.schedPass && !r.pass).length,
@@ -103,7 +121,7 @@ const summary = {
   byCase, categories,
 };
 
-console.log(`\nModel ${modelLabel} · transport ${opt.transport} · ${trials} trial(s) per case\n`);
+console.log(`\nModel ${modelLabel} · transport ${transportLabel} · ${trials} trial(s) per case\n`);
 console.log('| Case | Category | Final | Scheduler only | First failure |');
 console.log('|---|---|---|---|---|');
 for (const c of byCase) console.log(`| ${c.id} | ${c.category} | ${pct(c.rate)} | ${pct(c.schedRate)} | ${c.reason.replace(/\|/g, '/').slice(0, 140)} |`);
@@ -117,7 +135,7 @@ if (httpErr.length) console.log(`HTTP errors (${httpErr.length}), first: ${httpE
 
 // ---------- standard ----------
 const std = readJson(path.join(HERE, 'standard.json'));
-const baselinePath = path.join(HERE, 'results', 'baseline.json');
+const baselinePath = path.join(HERE, 'results', viaFunction ? 'baseline-ai-schedule.json' : 'baseline.json');
 const baseline = fs.existsSync(baselinePath) ? readJson(baselinePath) : null;
 const misses = [];
 if (summary.passRate < std.minPassRate) misses.push(`overall ${pct(summary.passRate)} < ${pct(std.minPassRate)}`);
@@ -133,7 +151,7 @@ console.log(misses.length ? `\nBelow standard:\n- ${misses.join('\n- ')}` : '\nM
 const runsDir = path.join(HERE, 'results', 'runs');
 fs.mkdirSync(runsDir, { recursive: true });
 const stamp = summary.at.replace(/[:.]/g, '-');
-const runFile = path.join(runsDir, `${stamp}-${modelLabel}-${opt.transport}.json`);
+const runFile = path.join(runsDir, `${stamp}-${modelLabel}-${transportLabel.replace(/\//g, '-')}.json`);
 fs.writeFileSync(runFile, JSON.stringify({ summary, records }, null, 1));
 console.log(`Full records: ${path.relative(process.cwd(), runFile)}`);
 if (opt['save-baseline']) {

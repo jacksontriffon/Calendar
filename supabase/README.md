@@ -1,6 +1,6 @@
 # Supabase backend
 
-Database layer for the Expo + Supabase rebuild (see `docs/expo-plan.md` §2, §4, §5 and Phase 1): schema, Row Level Security, Vault, pgmq queues, pg_cron jobs, seed data and tests. Edge functions (`google-sync`, `ai-schedule`, `legacy-import`, ...) are built separately and will live in `supabase/functions/`.
+Database layer for the Expo + Supabase rebuild (see `docs/expo-plan.md` §2, §4, §5 and Phase 1): schema, Row Level Security, Vault, pgmq queues, pg_cron jobs, seed data and tests. Edge functions live in `supabase/functions/` (see [Edge functions](#edge-functions)).
 
 ## Layout
 
@@ -10,6 +10,7 @@ supabase/
   .env.example           the env vars config.toml reads for the auth providers
   migrations/            timestamped SQL, applied in order (see below)
   seed.sql               test user + sample calendar (prototype data)
+  functions/             edge functions (Deno): ai-schedule, account-delete, legacy-import, _shared/; deno.json import map, sync-core.sh
   tests/
     database/            pgTAP tests (`supabase test db`); also run by the no-Docker runner
     local/               no-Docker test runner: shim.sql (stubs + mini pgTAP), run.sh, stub-only tests
@@ -27,6 +28,7 @@ packages/db/             @calendar/db: generated TypeScript types + shared alias
 | `20261030120600_queues` | pgmq queues, `sync_locks` + `try_sync_lock`, Vault token helpers, cron job functions |
 | `20261030120700_cron` | the three pg_cron jobs |
 | `20261030120800_rls` | RLS, grants, policies, Realtime publication |
+| `20261031100000_ai_limits_and_import` | `ai_calls` + `ai_claim()`/`ai_refund()` (ai-schedule allowance and rate limit), `series.legacy_id` |
 
 ### Data model notes
 
@@ -112,6 +114,61 @@ Request bodies sent to `google-sync`:
 ```
 
 For each job `google-sync` should: `rpc('try_sync_lock', { p_user_id })` (a 120 s lease row in `sync_locks`, because session-level advisory locks don't survive PostgREST/pooled connections); skip the job if it returns `false` (it reappears after the visibility timeout); do the work; `rpc('release_sync_lock', { p_user_id })`; then `rpc('queue_ack', { p_queue, p_msg_ids: [msg_id, ...] })`. Un-acked jobs are retried; after 5 reads they go to `pgmq.a_<queue>`. `pg_net` is fire-and-forget, so the consumer never learns the HTTP result; acknowledgement is the function's job.
+
+## Edge functions
+
+`supabase/functions/` (Deno). Each function has an `index.ts` (`Deno.serve`) and a `handler.ts` (`handle(req, deps)`, where the tests inject a fake Anthropic, Google and database).
+
+| Function | What it does |
+|---|---|
+| `ai-schedule` | `POST { mode: 'note'\|'adjust'\|'checkin', note?, goalId?, adjustMode?, noAsk?, lastSeen?, today, nowMin, tz, data: { events, cats, goals } }`. Builds the prompt with core's `prompts.ts`, runs the skill (`calendar-scheduler` / `calendar-goal-adjust` / `calendar-checkin`), the core code validator (`checkOps` / `checkCi`) and one `calendar-verifier` fix round, and returns `{ ok, ops, verified, issues, model, transport, usage: { used, limit, resetsOn } }`. The client applies the ops. Errors: 400-class codes for bad input (`bad_mode`, `bad_today`, `bad_now`, `bad_tz`, `bad_note`, `bad_data`, `bad_goal`, `bad_adjust_mode`, `too_large`), `429 { error: 'limit', used, limit, resetsOn }` at the monthly allowance, `429 { error: 'rate_limit', retryAfter }`, `502/503/504` for provider failures and unusable replies (the note is refunded). |
+| `account-delete` | Revokes each Google refresh token (`oauth2.googleapis.com/revoke`), deletes the `google_accounts` rows (the trigger deletes their Vault secrets), then `auth.admin.deleteUser`; everything else cascades. Returns `{ ok: true }`. |
+| `legacy-import` | One-time, idempotent copy of `legacy_calendar_blobs.data` into `categories` (reused by name), `goals`, `series`, `events` and the old Google links as `event_targets` (onto the primary Google calendar, if connected). Returns `{ status: 'none' }` or `{ status: 'done', events, goals, categories, series, targets, skipped, ... }`; on a failure `{ error: 'import_failed', stage }`, and a retry finishes the job. Never overwrites rows, so edits made in the app survive a re-run. |
+
+`ai-schedule` deviates from the plan's "context from the user's rows": the client sends its own `CalendarData` snapshot, so the prompt matches the local-first data the ops will be applied to. The snapshot is capped (1 MB body, 5000 events, 200 goals, 200 categories, 4000-character note), validated and whitelisted field by field.
+
+### Using `packages/core` from the functions
+
+The functions import `@calendar/core` through the import map in `supabase/functions/deno.json`, which points at `_shared/core/`, **a git-ignored copy of `packages/core/src`** made by:
+
+```sh
+supabase/functions/sync-core.sh        # copies packages/core/src -> _shared/core, generates _shared/skills.generated.ts from skills/
+```
+
+Run it before `supabase functions serve`, `supabase functions deploy` and the Deno tests, and again when `packages/core` or `skills/` change. Why a copy and not `../../packages/core/src` in the import map: the Supabase CLI documents import maps and shared code only inside `supabase/functions` (per-function `deno.json`, `_shared/`), and nothing in its documentation says that `functions deploy` (Docker bundling or `--use-api`) bundles files from outside that directory. That can only be confirmed by deploying, so we don't depend on it. The same script generates the skill files the inline transport sends in its prompt, since the bundle can't read `../../skills` at runtime. The `[functions.*]` entries in `config.toml` set `verify_jwt = true` and `import_map = "./functions/deno.json"` for these three functions.
+
+### Edge function secrets
+
+Set with `supabase secrets set NAME=value` (locally: `supabase functions serve --env-file supabase/functions/.env`, see `supabase/functions/.env.example`). `SUPABASE_URL`, `SUPABASE_ANON_KEY` and `SUPABASE_SERVICE_ROLE_KEY` are provided by the platform. A missing required secret gives a `500 { error: 'server_config', message }` that names it; `ai-schedule` checks before counting anything.
+
+| Secret | Function | Default | Purpose |
+|---|---|---|---|
+| `ANTHROPIC_API_KEY` | ai-schedule | required | Anthropic key (never in the app) |
+| `AI_MODEL` | ai-schedule | `claude-haiku-4-5` (the prototype's default) | model for both passes |
+| `AI_MONTHLY_LIMIT` | ai-schedule | `200` | notes per user per UTC month (open question 1); at the limit the function answers 429 and the app falls back to the offline parser |
+| `AI_PER_MINUTE` | ai-schedule | `6` | calls per user per minute |
+| `SKILL_ID_CALENDAR_SCHEDULER`, `SKILL_ID_CALENDAR_GOAL_ADJUST`, `SKILL_ID_CALENDAR_CHECKIN`, `SKILL_ID_CALENDAR_VERIFIER` | ai-schedule | unset | uploaded skill ids; with all four set the function uses the Skills API + code execution (`skills` transport), otherwise it puts the skill files in the system prompt (`inline`) |
+| `AI_TRANSPORT` | ai-schedule | auto | force `inline` or `skills` |
+| `AI_TIMEOUT_MS`, `AI_MAX_BODY_BYTES`, `ANTHROPIC_BASE_URL`, `ANTHROPIC_BETA` | ai-schedule | 60000, 1000000, api.anthropic.com, code-execution + skills betas | tuning |
+
+Upload the skills once per deploy (and after editing `skills/`); no Supabase access needed:
+
+```sh
+ANTHROPIC_API_KEY=sk-ant-... deno run --allow-read --allow-net --allow-env supabase/functions/ai-schedule/upload-skills.ts
+# prints:  supabase secrets set SKILL_ID_CALENDAR_SCHEDULER=skill_... SKILL_ID_CALENDAR_GOAL_ADJUST=... (run it)
+```
+
+The allowance and rate limit are decided in Postgres by `ai_claim(user, limit, per_minute)`: one atomic call that takes a per-user lock, checks the month's `ai_usage.notes` and a sliding one-minute window (`ai_calls`), and records the call. `ai_refund(user)` gives a note back when the provider failed. Every accepted call counts, including check-ins. The month is the UTC month, and `resetsOn` is the 1st of the next one.
+
+### Testing the functions
+
+```sh
+pnpm test:functions        # sync-core.sh, then deno check on every entrypoint, then deno test (needs network once for npm/jsr deps)
+# or by hand:
+supabase/functions/sync-core.sh && cd supabase/functions && deno check */index.ts && deno test --allow-read
+```
+
+The tests mock `fetch` (Anthropic, Google) and use an in-memory stand-in for the Supabase admin client (`_shared/testing/`), so they need no network, Docker or project. `ai_claim` itself is tested in SQL (`tests/database/05_ai_limits.test.sql`), and the row shapes `legacy-import` writes are checked against the real tables in `06_legacy_import_rows.test.sql`.
 
 ## Regenerating the TypeScript types
 

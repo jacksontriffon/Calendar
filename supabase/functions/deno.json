@@ -1,0 +1,7 @@
+{
+  "imports": {
+    "@calendar/core": "./_shared/core/index.ts",
+    "@supabase/supabase-js": "npm:@supabase/supabase-js@2",
+    "@std/assert": "jsr:@std/assert@1"
+  }
+}

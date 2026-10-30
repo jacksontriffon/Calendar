@@ -3,6 +3,25 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export type Database = {
   public: {
     Tables: {
+      ai_calls: {
+        Row: {
+          called_at: string;
+          id: number;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          called_at?: string;
+          id?: never;
+          user_id: string;
+        };
+        Update: {
+          called_at?: string;
+          id?: never;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       ai_usage: {
         Row: {
           month: string;
@@ -496,6 +515,7 @@ export type Database = {
           created_at: string;
           freq: string;
           id: string;
+          legacy_id: string | null;
           start_day: string;
           until: string | null;
           updated_at: string;
@@ -507,6 +527,7 @@ export type Database = {
           created_at?: string;
           freq?: string;
           id?: string;
+          legacy_id?: string | null;
           start_day: string;
           until?: string | null;
           updated_at?: string;
@@ -517,6 +538,7 @@ export type Database = {
           created_at?: string;
           freq?: string;
           id?: string;
+          legacy_id?: string | null;
           start_day?: string;
           until?: string | null;
           updated_at?: string;
@@ -592,6 +614,17 @@ export type Database = {
       };
     };
     Functions: {
+      ai_claim: {
+        Args: { p_limit: number; p_per_minute: number; p_user_id: string };
+        Returns: {
+          allowed: boolean;
+          reason: string;
+          retry_after: number;
+          usage_month: string;
+          used: number;
+        }[];
+      };
+      ai_refund: { Args: { p_user_id: string }; Returns: number };
       enqueue_import: { Args: { p_calendar_id: string }; Returns: number };
       enqueue_import_sweep: { Args: Record<PropertyKey, never>; Returns: number };
       get_google_refresh_token: { Args: { p_account_id: string }; Returns: string };
