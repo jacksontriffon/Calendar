@@ -5,6 +5,7 @@
 Fit to the note
 - Every distinct activity, change or cancellation in the note has exactly one operation.
 - Nothing is created, changed or deleted that the note didn't refer to.
+- A `win` appears only on a session that has already happened, and only with a result the note states.
 - Titles are short, capitalised and in the user's own words.
 
 Days and times (`time-rules.md`)
@@ -44,7 +45,8 @@ Rules are in `/skills/calendar-goal-adjust/references/adjusting.md`.
 
 ## kind="checkin"
 
-- 2 to 4 objects, each with `field` ("goal" or "log") and `q`; `chips` has 0–3 items.
+- Each object has `field` ("goal", "win" or "log") and `q`; `chips` has 0–3 items. 2 to 4 objects without `win` questions, 1 to 5 with them.
+- Every session under "Goal sessions that ended with no win logged" (up to three) has one `win` question carrying its `id`, placed after any `goal` question. Its chips are two past-tense guesses at a result plus "Nothing notable".
 - At most one `goal` question; it comes first, its `id` exists, and that goal is behind pace.
 - No question about anything under "Already on today" or "Already being confirmed separately".
 - No question about a time that hasn't arrived yet.

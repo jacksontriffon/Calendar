@@ -1,0 +1,4 @@
+{
+  "installCommand": "echo 'static legacy app: no install'",
+  "outputDirectory": "."
+}

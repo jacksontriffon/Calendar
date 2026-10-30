@@ -6,6 +6,7 @@ Return a JSON array. Each item has an `op`: `create`, `update`, `delete`, `goal`
 [{"op":"create","title":"Standup","cat":"Work","start":570,"end":585,"dayOffset":0},
  {"op":"create","title":"Lisbon trip","cat":"Travel","allDay":true,"dayOffset":4,"days":3},
  {"op":"create","title":"Launch week","cat":"Work","allDay":true,"span":"week","weekOffset":1},
+ {"op":"create","title":"Novel","cat":"Novel","start":840,"end":1020,"dayOffset":-1,"win":"Finished chapter 3"},
  {"op":"update","id":"e12","start":900,"end":960},
  {"op":"delete","id":"e7"},
  {"op":"goal","title":"Marathon","outcome":"Run a sub-4 hour marathon","deadline":"2026-12-06","hours":90},
@@ -25,4 +26,5 @@ Return a JSON array. Each item has an `op`: `create`, `update`, `delete`, `goal`
 - On `update`, include only the fields that change (`title`, `cat`, `start`, `end`, `dayOffset`, `allDay`, `days`).
 - Goals: `op` `goal` with `title`, `outcome`, `deadline` (YYYY-MM-DD) and `hours` (the total estimate to reach the outcome). To change one, send its `id` plus only the fields that change. To drop one, send its `id` with `"delete": true`.
 - To log or book time against a goal, create a normal event whose `cat` is that goal's title.
+- `win`: on `create` or `update`, one short past-tense line saying what the user achieved in a session that has already happened, taken from the note ("3h on the novel yesterday, finished chapter 3" gives `"win":"Finished chapter 3"`). Never invent one; leave it out when the note doesn't say. The app asks about goal sessions logged without one.
 - `ask`: `question` plus 2–4 `options`, each `{"label", "note"?}`. See `asking.md`.

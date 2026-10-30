@@ -1,0 +1,8 @@
+# Until the web cutover (phase 8) Vercel serves only the legacy index.html.
+apps
+packages
+supabase
+evals
+skills
+docs
+node_modules
