@@ -1,14 +1,15 @@
-import { useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 
-import { Placeholder } from '@/components/Placeholder';
+import { GoalDetail } from '@/features/goals/GoalDetail';
 
-export default function GoalScreen() {
+export default function GoalRoute() {
   const { id } = useLocalSearchParams<{ id: string }>();
   return (
-    <Placeholder
-      title={`Goal ${id}`}
-      description="Goal detail: outcome, deadline, hours, daily progress and pacing."
-      todos={['Goal maths from packages/core', 'Goal-adjust actions via ai-schedule', 'Sessions list']}
-    />
+    <>
+      <Stack.Screen
+        options={{ presentation: 'transparentModal', animation: 'none', contentStyle: { backgroundColor: 'transparent' } }}
+      />
+      <GoalDetail id={String(id)} />
+    </>
   );
 }

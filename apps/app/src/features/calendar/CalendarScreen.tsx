@@ -49,6 +49,7 @@ export function CalendarScreen() {
   const [navSeq, setNavSeq] = useState(0);
   const [dir, setDir] = useState<1 | -1>(1);
   const [goalsOpen, setGoalsOpen] = useState(false);
+  const [bottomH, setBottomH] = useState(110);
 
   const tx = useSharedValue(0);
   const navOp = useSharedValue(1);
@@ -223,7 +224,11 @@ export function CalendarScreen() {
           />
         )}
 
-        <View style={[styles.bottom, { paddingBottom: insets.bottom + 14 }]} pointerEvents="box-none">
+        <View
+          style={[styles.bottom, { paddingBottom: insets.bottom + 14 }]}
+          pointerEvents="box-none"
+          onLayout={(e) => setBottomH(e.nativeEvent.layout.height)}
+        >
           <BottomFade />
           {away ? (
             <View style={styles.returnWrap} pointerEvents="box-none">
@@ -241,7 +246,7 @@ export function CalendarScreen() {
           <ComposerSlot />
         </View>
 
-        <ToastHost bottom={insets.bottom + 14 + 44 + 14} />
+        <ToastHost bottom={bottomH + 4} />
         <TimerOverlay />
         {goalsOpen ? (
           <GoalsSheet

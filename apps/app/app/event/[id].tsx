@@ -1,19 +1,16 @@
-import { useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 
-import { Placeholder } from '@/components/Placeholder';
+import { EventSheet } from '@/features/event-sheet/EventSheet';
 
-export default function EventScreen() {
+export default function EventRoute() {
   const { id } = useLocalSearchParams<{ id: string }>();
   return (
-    <Placeholder
-      spec="EV 01-05"
-      title={`Event ${id}`}
-      description="Event sheet: title, time, category, repeat, visibility row and picker, trash-icon delete."
-      todos={[
-        'Edit form bound to the local store',
-        'Visibility row (Private / Public) and target picker',
-        'Read-only variant for someone else’s event, with Copy and Remove',
-      ]}
-    />
+    <>
+      {/* a bottom sheet over the calendar: transparent modal, the sheet draws its own backdrop */}
+      <Stack.Screen
+        options={{ presentation: 'transparentModal', animation: 'none', contentStyle: { backgroundColor: 'transparent' } }}
+      />
+      <EventSheet id={String(id)} />
+    </>
   );
 }
