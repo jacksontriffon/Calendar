@@ -66,7 +66,7 @@ function EventBlockImpl(p: BlockProps) {
   const hT = Math.max(((seg.end - seg.start) / 60) * hhTarget, minH);
   const elapsed = evEndMs(ev) <= nowMs;
   const scheduledAhead = !ev.at || ev.at < evEndMs(ev);
-  const needsConfirm = elapsed && !ev.done && scheduledAhead && mine;
+  const needsConfirm = elapsed && !ev.done && scheduledAhead && mine && ev.source !== 'device';
   const m = blockMetrics({
     h: hT, w: laneW, week, dense, part: seg.part, needsConfirm,
     hasWin: !!ev.win, isPublic: ev.visibility === 'public',
@@ -80,8 +80,8 @@ function EventBlockImpl(p: BlockProps) {
   const fill = needsConfirm ? 'transparent' : isFuture ? mixOklab(P.fill, 55, SURFACE.bg) : P.fill;
   const radius = seg.part === 'first' ? [6, 6, 2, 2] : seg.part === 'second' ? [2, 2, 6, 6] : [6, 6, 6, 6];
   const small = week || dense;
-  const showOnOther = ev.source === 'google';
-  const mover = mine && ev.source !== 'google';
+  const showOnOther = ev.source === 'google' || ev.source === 'device';
+  const mover = mine && ev.source !== 'device' && ev.source !== 'google';
 
   const startMin = seg.start;
   const endMin = seg.end;
