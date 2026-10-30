@@ -1,3 +1,4 @@
+import type { Database } from '@calendar/db';
 import { createClient } from '@supabase/supabase-js';
 import { AppState, Platform } from 'react-native';
 
@@ -21,12 +22,16 @@ const isWeb = Platform.OS === 'web';
 // Static web export / SSR has no `window`; fall back to no persistence there.
 const hasWindow = typeof window !== 'undefined';
 
-export const supabase = createClient(url || 'http://127.0.0.1:54321', anonKey || 'missing-anon-key', {
+export const supabase = createClient<Database>(url || 'http://127.0.0.1:54321', anonKey || 'missing-anon-key', {
   auth: {
     // Native: encrypted-at-rest SecureStore. Web: supabase-js defaults to localStorage.
     storage: isWeb ? undefined : secureStorage,
     persistSession: isWeb ? hasWindow : true,
     autoRefreshToken: true,
+    // PKCE for every OAuth flow: the redirect carries a one-time `code` that
+    // exchangeCodeForSession() trades for the session, never the tokens
+    // themselves (see features/auth/oauth.ts).
+    flowType: 'pkce',
     // Web OAuth redirects return with the session in the URL; native uses
     // deep links handled by the auth screens instead.
     detectSessionInUrl: isWeb && hasWindow,
