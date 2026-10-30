@@ -3,13 +3,20 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
 import {
   PICKER, SURFACE, addCat, deleteCat, deleteEvent, fmtDur, hm, hueFor, key, minsIn, paint, renameCat, text, white, workedMins,
-  DANGER, ACCENT, type CalendarData, type ProtoEvent, type Visibility,
+  DANGER, ACCENT, dnum, type CalendarData, type ProtoEvent,
 } from '@calendar/core';
 
 import { AppInput, AppText } from '@/components/AppText';
 import { Icon } from '@/components/Icon';
 import { Sheet, useSheetClose } from '@/components/Sheet';
 import { getStore, useCalendarData, useSeries } from '@/store';
+import { removeSomeoneElsesEvent } from '../calendars/actions';
+import { useGoogleEventMeta, useGoogleAccounts } from '../calendars/data';
+import { calendarColor } from '../calendars/view';
+import { initials } from '@/features/auth/initials';
+import { persistChoice } from '../visibility/persist';
+import { VisibilityRow } from '../visibility/VisibilityRow';
+import type { PickerState } from '../visibility/state';
 import { commitUndoable } from '../history/commit';
 import { startTimer, useTimer } from '../timer/store';
 import {
@@ -40,6 +47,10 @@ function SheetBody({ id }: { id: string }) {
     draftRef.current = draft;
   }, [draft]);
   const settled = useRef(false);
+  const targetsRef = useRef<{ before: PickerState; after: PickerState } | null>(null);
+  const onTargets = useCallback((after: PickerState, before: PickerState) => {
+    targetsRef.current = { before: targetsRef.current?.before ?? before, after };
+  }, []);
 
   const view = useMemo(() => applyDraft(data, id, draft), [data, id, draft]);
   const ev = view.events.find((e) => e.id === id);
@@ -49,11 +60,18 @@ function SheetBody({ id }: { id: string }) {
     if (settled.current) return;
     settled.current = true;
     const d = draftRef.current;
-    if (!isDirty(d)) return;
     const store = getStore();
     const live = store.getState().data;
-    const next = commitDraft(live, id, d);
-    commitUndoable(next, sheetLabel(base, applyDraft(live, id, d), id, d), 'edit');
+    if (isDirty(d)) {
+      const next = commitDraft(live, id, d);
+      commitUndoable(next, sheetLabel(base, applyDraft(live, id, d), id, d), 'edit');
+    }
+    // targets are saved after the event itself (the RPC needs the event row), even when only they changed
+    const t = targetsRef.current;
+    if (t) {
+      const isSeries = !!live.events.find((e) => e.id === id)?.seriesId;
+      persistChoice({ eventId: id, before: t.before, after: t.after, isSeries });
+    }
   }, [id, base]);
   useEffect(() => () => flush(), [flush]);
 
@@ -67,7 +85,7 @@ function SheetBody({ id }: { id: string }) {
       </View>
     );
   }
-  if (ev.isMine === false) return <ReadOnly ev={ev} close={close} />;
+  if (ev.isMine === false || ev.source === 'google') return <ReadOnly ev={ev} close={close} />;
 
   return (
     <EditBody
@@ -75,6 +93,7 @@ function SheetBody({ id }: { id: string }) {
       view={view}
       patch={patch}
       catOp={catOp}
+      onTargets={onTargets}
       onClose={() => { flush(); close(); }}
       onDelete={() => {
         settled.current = true;
@@ -93,12 +112,13 @@ interface EditProps {
   view: CalendarData;
   patch: (p: Partial<ProtoEvent>) => void;
   catOp: (op: (x: CalendarData) => CalendarData) => void;
+  onTargets: (after: PickerState, before: PickerState) => void;
   onClose: () => void;
   onDelete: () => void;
   onTimer: () => void;
 }
 
-function EditBody({ ev, view, patch, catOp, onDelete, onTimer }: EditProps) {
+function EditBody({ ev, view, patch, catOp, onTargets, onDelete, onTimer }: EditProps) {
   const timer = useTimer();
   const series = useSeries();
   const [startTxt, setStartTxt] = useState(timeText(ev.start));
@@ -282,7 +302,17 @@ function EditBody({ ev, view, patch, catOp, onDelete, onTimer }: EditProps) {
         </View>
       ) : null}
 
-      <VisibilityRow value={ev.visibility ?? 'private'} onChange={(v) => patch({ visibility: v })} series={!!ev.seriesId} />
+      <VisibilityRow
+        eventId={ev.id}
+        eventTitle={ev.title}
+        when={dnum(ev.day).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }) + ', ' + timeText(ev.start)}
+        visibility={ev.visibility ?? 'private'}
+        isSeries={!!ev.seriesId}
+        onApply={(after, before) => {
+          patch({ visibility: after.visibility });
+          onTargets(after, before);
+        }}
+      />
 
       {canTime ? (
         <Pressable onPress={onTimer} accessibilityRole="button" style={[styles.timerBtn, { backgroundColor: P.fill, borderColor: P.line }]}>
@@ -308,36 +338,6 @@ function EditBody({ ev, view, patch, catOp, onDelete, onTimer }: EditProps) {
   }
 }
 
-/**
- * Visibility row (EV 01). Placeholder: Private / Public wired to the event's
- * `visibility`; the full picker and publish targets come with phase 5.
- */
-function VisibilityRow({ value, onChange, series }: { value: Visibility; onChange: (v: Visibility) => void; series: boolean }) {
-  // TODO(phase 5): EV 02 picker: "Public · 3 calendars", per-target status, "Nowhere to publish yet".
-  return (
-    <View style={{ marginTop: 14 }}>
-      <View style={styles.rowLine}>
-        <AppText style={styles.rowLbl}>Visibility</AppText>
-        <View style={styles.seg}>
-          {(['private', 'public'] as Visibility[]).map((v) => (
-            <Pressable
-              key={v}
-              onPress={() => onChange(v)}
-              accessibilityRole="radio"
-              accessibilityState={{ selected: value === v }}
-              style={[styles.segBtn, value === v && styles.segOn]}
-            >
-              <Icon name={v === 'private' ? 'lock' : 'globe'} size={12} color={value === v ? '#f3efe8' : text(0.42)} />
-              <AppText style={[styles.segTxt, value === v && { color: '#f3efe8' }]}>{v === 'private' ? 'Private' : 'Public'}</AppText>
-            </Pressable>
-          ))}
-        </View>
-      </View>
-      {series ? <AppText style={styles.note}>Applies to this and all future events in the series.</AppText> : null}
-    </View>
-  );
-}
-
 /** Copy someone else's event to My calendar as a private app event. */
 export function copyToMyCalendar(ev: ProtoEvent): void {
   const store = getStore();
@@ -348,43 +348,73 @@ export function copyToMyCalendar(ev: ProtoEvent): void {
   commitUndoable({ ...d, events: d.events.concat([copyEv]) }, 'Copied \u00b7 ' + ev.title, 'edit');
 }
 
-/** Someone else's event (EV 05): read-only, with Copy to my calendar and a quiet Remove. */
+/**
+ * Someone else's event (EV 05), or any event imported from Google: read-only, with Copy to my calendar and a
+ * quiet Remove that hides it in this app only (hidden_items), with an Undo toast.
+ */
 function ReadOnly({ ev, close }: { ev: ProtoEvent; close: () => void }) {
   const store = getStore();
+  const meta = useGoogleEventMeta(ev.id);
+  const { calendars } = useGoogleAccounts();
+  const cal = meta?.calendarId ? calendars.find((c) => c.id === meta.calendarId) : undefined;
+  const color = cal ? calendarColor(cal) : text(0.4);
+  const owner = ev.isMine === false ? meta?.organizerEmail ?? null : null;
   const copy = () => {
     copyToMyCalendar(ev);
     close();
   };
   const remove = () => {
-    // TODO(phase 5): insert into hidden_items (source + external_key) so it stays hidden after sync;
-    // restored from Settings > Calendars > Hidden events. Locally this removes it, and Undo puts it back.
-    const d = store.getState().data;
-    commitUndoable(deleteEvent(d, ev.id), 'Removed · ' + ev.title, 'delete');
+    void removeSomeoneElsesEvent(ev);
     close();
   };
   const P = paint(hueFor(store.getState().data.cats, ev.cat ?? ''));
+  const first = owner ? initials(owner) : null;
   return (
     <View testID="readonly-sheet">
       <View style={styles.head}>
-        <View style={[styles.swatch, { backgroundColor: text(0.4) }]} />
+        <View style={[styles.swatch, { backgroundColor: color }]} />
         <View style={{ flex: 1, gap: 4 }}>
           <AppText style={styles.titleInput}>{ev.title}</AppText>
-          <AppText style={styles.meta}>{hm(ev.start)} {'–'} {hm(ev.end)} {'·'} {dayName(ev)}</AppText>
-          <AppText style={[styles.meta, { color: text(0.38) }]}>On a shared calendar {'·'} read-only</AppText>
+          <AppText style={styles.meta}>{hm(ev.start)} {'\u2013'} {hm(ev.end)} {'\u00b7'} {dayName(ev)}</AppText>
+        </View>
+        <View style={styles.viewOnly}>
+          <Icon name="eye" size={12} color={text(0.6)} />
+          <AppText style={{ fontSize: 11.5, color: text(0.6) }}>View only</AppText>
         </View>
       </View>
-      <Pressable onPress={copy} accessibilityRole="button" style={[styles.timerBtn, { backgroundColor: P.fill, borderColor: P.line }]}>
-        <Icon name="copy" size={14} color={P.ink} />
-        <AppText style={{ fontSize: 14, fontWeight: '600', color: P.ink }}>Copy to my calendar</AppText>
+      <View style={styles.ownerCard}>
+        {first ? (
+          <View style={styles.ownerAvatar}><AppText style={{ fontSize: 13, fontWeight: '700', color: '#171615' }}>{first}</AppText></View>
+        ) : null}
+        <View style={{ flex: 1, minWidth: 0, gap: 2 }}>
+          <AppText style={{ fontSize: 14, fontWeight: '600' }} numberOfLines={1}>{owner ?? (ev.isMine === false ? 'Someone else' : 'You')}</AppText>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: color }} />
+            <AppText style={styles.meta} numberOfLines={1}>On {cal ? cal.name : 'a calendar'} {'\u00b7'} Google</AppText>
+          </View>
+        </View>
+      </View>
+      <AppText style={[styles.note, { lineHeight: 17, marginTop: 12 }]}>
+        {owner ? 'Only the owner can change this event. ' : 'This event comes from Google and can\u2019t be changed here. '}
+        A copy is yours to edit, and stays private until you publish it.
+      </AppText>
+      <Pressable onPress={copy} accessibilityRole="button" style={[styles.timerBtn, { backgroundColor: '#f3efe8', borderColor: '#f3efe8', marginTop: 14 }]}>
+        <Icon name="copy" size={14} color="#171615" />
+        <AppText style={{ fontSize: 14, fontWeight: '600', color: '#171615' }}>Copy to my calendar</AppText>
       </Pressable>
-      <Pressable onPress={remove} accessibilityRole="button" style={{ alignSelf: 'center', padding: 14 }}>
-        <AppText style={{ fontSize: 12.5, color: text(0.45) }}>Remove</AppText>
+      <Pressable onPress={remove} accessibilityRole="button" accessibilityLabel="Remove" style={styles.removeBtn}>
+        <AppText style={{ fontSize: 13, color: text(0.7) }}>Remove</AppText>
       </Pressable>
+      <AppText style={[styles.note, { textAlign: 'center', marginTop: 0 }]}>Hides it in this app only. The calendar it comes from doesn{'\u2019'}t change.</AppText>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  viewOnly: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 6, paddingHorizontal: 10, borderRadius: 99, backgroundColor: white(0.06) },
+  ownerCard: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 16, padding: 12, borderRadius: 12, backgroundColor: white(0.04), borderWidth: 1, borderColor: white(0.08) },
+  ownerAvatar: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center', backgroundColor: '#c4758a' },
+  removeBtn: { alignSelf: 'center', marginTop: 10, paddingVertical: 8, paddingHorizontal: 22, borderRadius: 10, backgroundColor: white(0.06), borderWidth: 1, borderColor: white(0.1) },
   head: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, paddingTop: 4 },
   swatch: { width: 10, height: 38, borderRadius: 5, marginTop: 2 },
   swatchOn: { shadowColor: '#fff', shadowOpacity: 0.16, shadowRadius: 0, shadowOffset: { width: 0, height: 0 }, borderWidth: 3, borderColor: white(0.16) },
