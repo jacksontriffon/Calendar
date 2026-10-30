@@ -3,14 +3,15 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
 import Svg, { Circle } from 'react-native-svg';
 import {
-  ACCENT, DANGER, PICKER, RING, goalStats, paceOf, paint, removeGoal, ringDash, snapHue, text, white,
+  ACCENT, DANGER, PICKER, RING, adjustModeFor, goalRate, goalStats, paceOf, paint, removeGoal, ringDash, snapHue, text, white,
   type NowCtx, type ProtoGoal,
 } from '@calendar/core';
 
 import { AppInput, AppText } from '@/components/AppText';
 import { Sheet, useSheetClose } from '@/components/Sheet';
-import { getStore, useCalendarData } from '@/store';
+import { getStore, useCalendarData, usePrefs } from '@/store';
 import { useNow } from '../calendar/useNow';
+import { composer } from '../composer/instance';
 import { commitUndoable } from '../history/commit';
 import { useTimer } from '../timer/store';
 import { applyGoalDraft, draftOf, draftPatch, goalLines, parseDeadline, splitDeadline, type GoalDraft } from './model';
@@ -33,6 +34,7 @@ function Body({ id }: { id: string }) {
   const data = useCalendarData();
   const now = useNow();
   const timer = useTimer();
+  const aiOn = usePrefs().ai.on;
   const g = data.goals.find((x) => x.id === id);
   const [draft, setDraft] = useState<GoalDraft | null>(null);
   const draftRef = useRef<GoalDraft | null>(null);
@@ -72,6 +74,19 @@ function Body({ id }: { id: string }) {
   const cur = snapHue(draft.hue);
   const dash = ringDash(s.pct);
   const exp = view.hours ? Math.min(1, s.expected / view.hours) : 0;
+
+  /* Reduce scope when behind, Add stretch goal otherwise (none without hours or outside the span) */
+  const adjMode = adjustModeFor(s.delta, goalRate(view, now.today).target, s.active);
+  const adjust = () => {
+    if (!adjMode) return;
+    if (!aiOn) {
+      composer.startGoalAdjust(id, adjMode); // explains that Claude is off, and keeps the sheet open
+      return;
+    }
+    flush();
+    close();
+    setTimeout(() => composer.startGoalAdjust(id, adjMode), 280);
+  };
 
   const commitDate = (f: { d: string; m: string; y: string }) => {
     const k = parseDeadline(f.d, f.m, f.y, now.today);
@@ -183,7 +198,16 @@ function Body({ id }: { id: string }) {
           />
         ))}
       </View>
-      {/* TODO(phase 4): Reduce scope / Add stretch goal buttons (goal-adjust via ai-schedule). */}
+      {adjMode ? (
+        <Pressable
+          onPress={adjust}
+          accessibilityRole="button"
+          testID="goal-adjust"
+          style={({ pressed }) => [styles.adjust, pressed && { backgroundColor: white(0.05), transform: [{ scale: 0.99 }] }]}
+        >
+          <AppText style={styles.adjustTxt}>{adjMode === 'reduce' ? 'Reduce scope' : 'Add stretch goal'}</AppText>
+        </Pressable>
+      ) : null}
     </ScrollView>
   );
 }
@@ -215,4 +239,9 @@ const styles = StyleSheet.create({
   swatches: { flexDirection: 'row', gap: 6, marginTop: 10, marginBottom: 6 },
   dot: { flex: 1, maxWidth: 28, aspectRatio: 1, borderRadius: 14 },
   dotOn: { borderWidth: 2, borderColor: ACCENT },
+  adjust: {
+    minHeight: 42, marginTop: 14, marginBottom: 6, alignItems: 'center', justifyContent: 'center', borderRadius: 12,
+    borderWidth: 1, borderColor: white(0.09),
+  },
+  adjustTxt: { fontSize: 13, fontWeight: '600', color: text(0.62) },
 });
