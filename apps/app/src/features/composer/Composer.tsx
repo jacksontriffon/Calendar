@@ -41,6 +41,15 @@ export function Composer({ hint = 'Summarise your day…', focusToken }: Props) 
     if (focusToken) ref.current?.focus();
   }, [focusToken]);
 
+  /* web: grow the textarea to its content (a fixed height would feed back into its content size) */
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    const el = ref.current as unknown as { style?: CSSStyleDeclaration; scrollHeight?: number } | null;
+    if (!el?.style) return;
+    el.style.height = 'auto';
+    el.style.height = Math.min(MAX_INPUT_H, Math.max(31, el.scrollHeight ?? 31)) + 'px';
+  }, [c.draft]);
+
   const thinking = c.phase === 'thinking';
   const asking = !!c.ask;
   const ready = !!c.draft.trim() && !thinking;
@@ -91,7 +100,8 @@ export function Composer({ hint = 'Summarise your day…', focusToken }: Props) 
           returnKeyType="send"
           autoCapitalize="sentences"
           autoCorrect={false}
-          style={[styles.input, h ? { height: Math.max(31, h + 10) } : null]}
+          style={[styles.input, Platform.OS === 'web' ? null : { height: Math.min(MAX_INPUT_H, Math.max(31, h + 10)) }]}
+          numberOfLines={Platform.OS === 'web' ? 1 : undefined}
           accessibilityLabel="Composer"
           testID="composer-input"
         />
