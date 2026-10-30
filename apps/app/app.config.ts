@@ -9,6 +9,14 @@ import type { ExpoConfig } from 'expo/config';
  */
 const APP_ID = 'com.claudecalendar.app';
 
+/**
+ * Google sign-in (native): the iOS OAuth client's REVERSED id, which becomes an
+ * Info.plist URL scheme. Set GOOGLE_IOS_URL_SCHEME (see .env.example). The
+ * placeholder lets prebuild / export / doctor run without it, but iOS Google
+ * sign-in will not work until the real value is set.
+ */
+const GOOGLE_IOS_URL_SCHEME = process.env.GOOGLE_IOS_URL_SCHEME || 'com.googleusercontent.apps.REPLACE_ME';
+
 const config: ExpoConfig = {
   name: 'Calendar',
   slug: 'calendar',
@@ -25,6 +33,9 @@ const config: ExpoConfig = {
   },
   android: {
     package: APP_ID,
+    // OA 07: Android 14+ predictive back (the screen scales as the gesture runs).
+    // Edge-to-edge is the default in this SDK; screens read insets from safe-area-context.
+    predictiveBackGestureEnabled: true,
     adaptiveIcon: {
       backgroundColor: '#171615',
       foregroundImage: './assets/android-icon-foreground.png',
@@ -54,8 +65,10 @@ const config: ExpoConfig = {
       },
     ],
     // Native modules that need config-plugin entries (usage strings,
-    // entitlements). Their features are not wired up yet.
+    // entitlements, URL schemes).
     'expo-apple-authentication',
+    ['@react-native-google-signin/google-signin', { iosUrlScheme: GOOGLE_IOS_URL_SCHEME }],
+    'expo-localization',
     [
       'expo-calendar',
       {

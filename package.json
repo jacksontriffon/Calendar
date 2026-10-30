@@ -6,6 +6,7 @@
   "scripts": {
     "test": "pnpm -r --if-present test",
     "typecheck": "pnpm -r --if-present typecheck",
-    "lint": "pnpm -r --if-present lint"
+    "lint": "pnpm -r --if-present lint",
+    "test:functions": "bash supabase/functions/sync-core.sh && cd supabase/functions && npx -y deno@2 check */index.ts ai-schedule/upload-skills.ts && npx -y deno@2 test --allow-read"
   }
 }

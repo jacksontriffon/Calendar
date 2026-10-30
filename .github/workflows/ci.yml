@@ -24,6 +24,12 @@ jobs:
           deno-version: v2.x
       - name: Deno can import packages/core (edge functions depend on it)
         run: deno check packages/core/src/index.ts
+      - name: Edge functions (type-check and tests)
+        run: |
+          bash supabase/functions/sync-core.sh
+          cd supabase/functions
+          deno check */index.ts ai-schedule/upload-skills.ts
+          deno test --allow-read
       - name: Expo web export
         run: pnpm --filter @calendar/app export:web
 

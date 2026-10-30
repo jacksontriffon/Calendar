@@ -404,6 +404,49 @@ deno_version = 2
 # [edge_runtime.secrets]
 # secret_key = "env(SECRET_VALUE)"
 
+# Edge functions. All import "@calendar/core" through supabase/functions/deno.json, which points at
+# _shared/core (a copy made by `supabase/functions/sync-core.sh`; run it before serve/deploy).
+# The functions below verify the caller's JWT (the platform checks the signature; each handler then
+# asks Auth who the caller is).
+[functions.ai-schedule]
+enabled = true
+verify_jwt = true
+import_map = "./functions/deno.json"
+entrypoint = "./functions/ai-schedule/index.ts"
+
+[functions.account-delete]
+enabled = true
+verify_jwt = true
+import_map = "./functions/deno.json"
+entrypoint = "./functions/account-delete/index.ts"
+
+[functions.legacy-import]
+enabled = true
+verify_jwt = true
+import_map = "./functions/deno.json"
+entrypoint = "./functions/legacy-import/index.ts"
+
+# The Google functions check credentials themselves: google-connect's OAuth callback validates its
+# state nonce (its other actions verify the user's JWT in the handler), google-webhook validates the
+# channel token, and google-sync accepts only the service-role key or, for sync_now, a user JWT.
+[functions.google-connect]
+enabled = true
+verify_jwt = false
+import_map = "./functions/deno.json"
+entrypoint = "./functions/google-connect/index.ts"
+
+[functions.google-sync]
+enabled = true
+verify_jwt = false
+import_map = "./functions/deno.json"
+entrypoint = "./functions/google-sync/index.ts"
+
+[functions.google-webhook]
+enabled = true
+verify_jwt = false
+import_map = "./functions/deno.json"
+entrypoint = "./functions/google-webhook/index.ts"
+
 [analytics]
 enabled = true
 port = 54327

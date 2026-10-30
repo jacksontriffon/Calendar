@@ -1,12 +1,21 @@
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { DarkTheme, Stack, ThemeProvider } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { SessionExpiredSheet } from '@/features/auth/SessionExpiredSheet';
+import { SessionProvider, useSession, useSessionExpired } from '@/features/auth/session';
+import { decideEntryStage } from '@/features/onboarding/entry';
+import { useAppFonts } from '@/lib/fonts';
+import { useSessionExpired as useSyncSessionExpired } from '@/store';
+import { SyncProvider, useSyncLoading } from '@/sync';
 import { colors } from '@/theme/tokens';
 
-// TODO(phase 2): load fonts with expo-font (Serif / Sans / Mono) and hold the
-// splash screen until they and the Supabase session are ready.
+// Hold the splash until fonts and the stored session are read.
+void SplashScreen.preventAutoHideAsync().catch(() => undefined);
 
 const theme = {
   ...DarkTheme,
@@ -21,23 +30,94 @@ const theme = {
 };
 
 export default function RootLayout() {
-  // TODO(phase 2): gate on the Supabase session. Signed out -> (auth)/welcome,
-  // signed in -> (app). Use <Stack.Protected guard={...}> once auth lands.
+  const fontsReady = useAppFonts();
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.background }}>
-      <ThemeProvider value={theme}>
-        <BottomSheetModalProvider>
-          <StatusBar style="light" />
-          <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }}>
-            <Stack.Screen name="(auth)/welcome" />
-            <Stack.Screen name="(app)" />
-            {/* TODO(phase 3): the event sheet may become a bottom sheet instead of a modal route. */}
-            <Stack.Screen name="event/[id]" options={{ presentation: 'modal' }} />
-            <Stack.Screen name="goal/[id]" options={{ presentation: 'modal' }} />
-            <Stack.Screen name="settings/index" />
-          </Stack>
-        </BottomSheetModalProvider>
-      </ThemeProvider>
+      <SafeAreaProvider>
+        <ThemeProvider value={theme}>
+          <BottomSheetModalProvider>
+            <StatusBar style="light" />
+            <SessionProvider>
+              <SyncProvider>
+                <SyncExpiryBridge />
+                <Gate fontsReady={fontsReady} />
+                <SessionExpiredSheet />
+              </SyncProvider>
+            </SessionProvider>
+          </BottomSheetModalProvider>
+        </ThemeProvider>
+      </SafeAreaProvider>
     </GestureHandlerRootView>
+  );
+}
+
+/** The sync layer also notices expiry (a 401 mid-sync); show the same re-sign-in sheet. */
+function SyncExpiryBridge() {
+  const syncExpired = useSyncSessionExpired();
+  const { expired, report } = useSessionExpired();
+  useEffect(() => {
+    if (syncExpired && !expired) report();
+  }, [syncExpired, expired, report]);
+  return null;
+}
+
+/**
+ * Auth gating. Which routes exist depends on where the user is:
+ *
+ *   signed out            (auth)/welcome, goodbye
+ *   signed in, import     import          (OA 3, silent unless there is an old web calendar)
+ *   signed in, setup      onboarding      (OA 2)
+ *   signed in, ready      the calendar and everything under it
+ *
+ * `Stack.Protected` removes a screen the user may not see and redirects away
+ * if they are on it, so signing in or out moves them without any imperative
+ * navigation. A session that expires mid-use stays on the calendar (status
+ * `expired`) with the re-sign-in sheet over it.
+ *
+ * Routes not listed here (new settings screens, say) are not guarded by this
+ * file; list them under the "ready" group when they land.
+ */
+function Gate({ fontsReady }: { fontsReady: boolean }) {
+  const { status, profile, profileState } = useSession();
+  const stage = decideEntryStage({ status, profileState, profile });
+
+  // Also wait for the local cache, so the calendar never flashes empty.
+  const syncLoading = useSyncLoading();
+  const ready = fontsReady && status !== 'loading' && !syncLoading;
+  useEffect(() => {
+    if (ready) void SplashScreen.hideAsync().catch(() => undefined);
+  }, [ready]);
+  if (!ready) return null;
+
+  const signedIn = status === 'signedIn' || status === 'expired';
+  const inApp = signedIn && stage === 'app';
+
+  return (
+    <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }}>
+      <Stack.Protected guard={status === 'signedOut'}>
+        <Stack.Screen name="(auth)" />
+      </Stack.Protected>
+
+      <Stack.Protected guard={signedIn && stage === 'import'}>
+        <Stack.Screen name="import" options={{ animation: 'fade' }} />
+      </Stack.Protected>
+
+      <Stack.Protected guard={signedIn && (stage === 'loading' || stage === 'error' || stage === 'onboarding')}>
+        <Stack.Screen name="onboarding/index" options={{ animation: 'fade' }} />
+      </Stack.Protected>
+
+      <Stack.Protected guard={inApp}>
+        <Stack.Screen name="(app)" />
+        {/* TODO(phase 3): the event sheet may become a bottom sheet instead of a modal route. */}
+        <Stack.Screen name="event/[id]" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="goal/[id]" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="settings/index" />
+        <Stack.Screen name="settings/account" />
+        <Stack.Screen name="settings/account-delete" />
+      </Stack.Protected>
+
+      {/* Reachable signed in or out: the session is cleared right after navigating here. */}
+      <Stack.Screen name="goodbye" options={{ gestureEnabled: false, animation: 'fade' }} />
+    </Stack>
   );
 }
