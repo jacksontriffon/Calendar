@@ -1,15 +1,23 @@
 import { useEffect } from 'react';
 import { Platform, Pressable, ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
 import Animated, { Easing, Keyframe, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ACCENT, goalRate, hrs, niceDate, text, white } from '@calendar/core';
 
 import { AppText } from '@/components/AppText';
+import { maxAboveKeyboard } from '@/lib/keyboard-math';
+import { useKeyboardLift } from '@/lib/useKeyboardLift';
 import { useCalendarData } from '@/store';
 import { modelLabel, useUsageState } from '../ai/usage';
 import { useNow } from '../calendar/useNow';
+import { useComposerHeight } from '../composer/layout';
 import type { AskState } from './model';
 
 const EASE = Easing.bezier(0.2, 0.8, 0.2, 1);
+/* what stacks with the question list above the keyboard besides the composer bar: the goal chips row,
+   the column padding, the sheet's own header and padding (and the goal strip when there is one) */
+const CHROME = 150;
+const GOAL_STRIP = 40;
 
 interface Props {
   ask: AskState;
@@ -33,6 +41,11 @@ export function AskSheet({ ask, onPick, onBack, onSkip, onHover, onKey }: Props)
   const { model } = useUsageState();
   const q = ask.qs[ask.idx];
   const goal = ask.goalId ? data.goals.find((g) => g.id === ask.goalId) : null;
+  /* with the keyboard up the column sits on top of it: keep the question list from running off the top */
+  const { height: kb } = useKeyboardLift();
+  const insetTop = useSafeAreaInsets().top;
+  const composerH = useComposerHeight();
+  const listMax = maxAboveKeyboard(winH, 0.52, kb, insetTop, composerH + CHROME + (goal ? GOAL_STRIP : 0));
 
   /* askIn (0.34 s) / askOut (0.2 s) */
   const p = useSharedValue(0);
@@ -90,7 +103,7 @@ export function AskSheet({ ask, onPick, onBack, onSkip, onHover, onKey }: Props)
           </View>
         ) : null}
 
-        <ScrollView style={{ maxHeight: winH * 0.52 }} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+        <ScrollView style={{ maxHeight: listMax }} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
           <Animated.View key={ask.idx} entering={paneIn}>
             <AppText style={styles.q} testID="ask-question">{q.q}</AppText>
             <View style={{ gap: 3 }}>

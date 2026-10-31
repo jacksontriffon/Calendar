@@ -8,6 +8,7 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 
+import { useKeyboardLift } from '@/lib/useKeyboardLift';
 import { useSyncStatus } from '@/store';
 import { useOnline } from '@/lib/useOnline';
 import { useRouteExists } from '@/lib/useRouteExists';
@@ -46,6 +47,8 @@ export function AccountScreen() {
   const sync = useSyncStatus();
   const online = useOnline();
   const kind = useFontKind();
+  /* the edit-name card is centred in a modal: centre it above the keyboard instead of behind it */
+  const { height: kbHeight } = useKeyboardLift();
 
   const [confirmSignOut, setConfirmSignOut] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -189,7 +192,7 @@ export function AccountScreen() {
       />
 
       <Modal visible={editing} transparent animationType="fade" onRequestClose={() => setEditing(false)} statusBarTranslucent>
-        <View style={styles.editBackdrop}>
+        <View style={[styles.editBackdrop, { paddingBottom: 24 + kbHeight }]}>
           <View style={styles.editSheet}>
             <AppText size={17} weight={600} accessibilityRole="header">
               Edit name

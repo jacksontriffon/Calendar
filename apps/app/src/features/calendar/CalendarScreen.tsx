@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Pressable, StyleSheet, View, useWindowDimensions } from 'react-native';
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { Pressable, StyleSheet, View, useWindowDimensions, type ViewStyle } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { Easing, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, { Easing, useSharedValue, withTiming, type AnimatedStyle } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 import {
@@ -12,6 +12,8 @@ import {
 import { AppText } from '@/components/AppText';
 import { Icon } from '@/components/Icon';
 import { ToastHost } from '@/components/Toast';
+import { columnPaddingBottom } from '@/lib/keyboard-math';
+import { useKeyboardLift, useKeyboardRise } from '@/lib/useKeyboardLift';
 import { getStore, useCalendarData, usePrefs, useSyncStatus } from '@/store';
 import { useVisibleData } from '../calendars/overlay';
 import { stampSeen } from '../checkin/state';
@@ -55,6 +57,10 @@ export function CalendarScreen() {
   const [bottomH, setBottomH] = useState(110);
   const sync = useSyncStatus();
   const params = useLocalSearchParams<{ day?: string; compose?: string }>();
+
+  /* the soft keyboard: the bottom column (and what is anchored to it) rises with it */
+  const { lift } = useKeyboardLift();
+  const rise = useKeyboardRise(lift);
 
   const tx = useSharedValue(0);
   const navOp = useSharedValue(1);
@@ -241,8 +247,8 @@ export function CalendarScreen() {
           />
         )}
 
-        <View
-          style={[styles.bottom, { paddingBottom: insets.bottom + 14 }]}
+        <Animated.View
+          style={[styles.bottom, { paddingBottom: columnPaddingBottom(insets.bottom) }, rise]}
           pointerEvents="box-none"
           onLayout={(e) => setBottomH(e.nativeEvent.layout.height)}
         >
@@ -269,9 +275,12 @@ export function CalendarScreen() {
             {hasTimerPill ? <TimerPill onPress={openTimer} /> : null}
           </View>
           <ComposerSlot focusToken={params.compose} />
-        </View>
+        </Animated.View>
 
-        <ToastHost bottom={bottomH + 4} />
+        {/* toasts and the check-in card are anchored above the column, so they rise by the same amount */}
+        <RiseLayer rise={rise} zIndex={70}>
+          <ToastHost bottom={bottomH + 4} />
+        </RiseLayer>
         <TimerOverlay />
         {goalsOpen ? (
           <GoalsSheet
@@ -282,10 +291,21 @@ export function CalendarScreen() {
             }}
           />
         ) : null}
-        <CheckInHost busy={goalsOpen} />
+        <RiseLayer rise={rise} zIndex={66}>
+          <CheckInHost busy={goalsOpen} />
+        </RiseLayer>
         <StoryHost />
       </View>
     </View>
+  );
+}
+
+/** A full-size, touch-through layer that moves with the keyboard (see `useKeyboardRise`). */
+function RiseLayer({ rise, zIndex, children }: { rise: AnimatedStyle<ViewStyle>; zIndex: number; children: ReactNode }) {
+  return (
+    <Animated.View pointerEvents="box-none" style={[StyleSheet.absoluteFill, { zIndex }, rise]}>
+      {children}
+    </Animated.View>
   );
 }
 

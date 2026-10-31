@@ -6,6 +6,7 @@ import { ACCENT, text, white } from '@calendar/core';
 
 import { AppInput, AppText } from '@/components/AppText';
 import { Icon } from '@/components/Icon';
+import { columnPaddingBottom } from '@/lib/keyboard-math';
 import { showToast } from '@/components/toast';
 import { getStore, usePrefs } from '@/store';
 import { ThinkingPill } from '../ai/ThinkingPill';
@@ -125,7 +126,8 @@ export function CheckInHost({ busy }: { busy?: boolean }) {
     close(r.flow);
   }, [flow, close]);
 
-  const above = insets.bottom + 14 + composerH + 8;
+  /* sits on the bottom column's padding and the composer; the calendar raises this whole layer with the keyboard */
+  const above = columnPaddingBottom(insets.bottom) + composerH + 8;
   if (loading) {
     return (
       <View pointerEvents="none" style={[styles.wrap, { bottom: above }]}>
