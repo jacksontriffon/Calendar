@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
 
-import { getGoodbyeInfo } from './goodbyeInfo';
+import { clearGoodbyeInfo, getGoodbyeInfo } from './goodbyeInfo';
 import { Icon } from './icons';
 import { AppText, Body, Button, Caption, Card, Footer, Hero, Page, Title, ui } from './ui';
 
@@ -34,7 +34,10 @@ export function GoodbyeScreen() {
         </Caption>
       </View>
       <Footer>
-        <Button label="Done" variant="light" testID="goodbye-done" onPress={() => router.replace('/welcome')} />
+        <Button label="Done" variant="light" testID="goodbye-done" onPress={() => {
+          router.replace('/welcome');
+          clearGoodbyeInfo();
+        }} />
       </Footer>
     </Page>
   );

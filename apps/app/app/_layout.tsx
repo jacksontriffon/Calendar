@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { useGoodbyePending } from '@/features/auth/goodbyeInfo';
 import { SessionExpiredSheet } from '@/features/auth/SessionExpiredSheet';
 import { SessionProvider, useSession, useSessionExpired } from '@/features/auth/session';
 import { decideEntryStage } from '@/features/onboarding/entry';
@@ -82,6 +83,7 @@ function SyncExpiryBridge() {
 function Gate({ fontsReady }: { fontsReady: boolean }) {
   const { status, profile, profileState } = useSession();
   const stage = decideEntryStage({ status, profileState, profile });
+  const goodbyePending = useGoodbyePending();
 
   // Also wait for the local cache, so the calendar never flashes empty.
   const syncLoading = useSyncLoading();
@@ -123,8 +125,14 @@ function Gate({ fontsReady }: { fontsReady: boolean }) {
         <Stack.Screen name="settings/calendars/choose/[id]" />
       </Stack.Protected>
 
-      {/* Reachable signed in or out: the session is cleared right after navigating here. */}
-      <Stack.Screen name="goodbye" options={{ gestureEnabled: false, animation: 'fade' }} />
+      {/*
+        Signed out, or just after a delete (the session is cleared right after navigating here).
+        Not registered otherwise: an always-available route is where the router lands a signed-in
+        user whose own routes are hidden, e.g. while the profile fails to load.
+      */}
+      <Stack.Protected guard={status === 'signedOut' || goodbyePending}>
+        <Stack.Screen name="goodbye" options={{ gestureEnabled: false, animation: 'fade' }} />
+      </Stack.Protected>
     </Stack>
   );
 }
