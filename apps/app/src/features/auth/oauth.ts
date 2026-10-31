@@ -33,6 +33,7 @@ export const cancelled = (): SignInResult => ({ ok: false, reason: 'cancelled' }
 
 /** Map a thrown / returned error to a failure. Retryable fetch errors mean no connection. */
 export function failureFrom(error: unknown): SignInResult {
+  console.warn('[auth] sign-in failed:', error);
   const message = error instanceof Error ? error.message : typeof error === 'string' ? error : undefined;
   if (isAuthRetryableFetchError(error) || (message && /network request failed|failed to fetch|offline/i.test(message))) {
     return { ok: false, reason: 'offline', message };

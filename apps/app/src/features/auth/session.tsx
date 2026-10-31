@@ -167,7 +167,10 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         setProfile(row);
         setProfileState('ready');
       })
-      .catch(() => live && setProfileState('error'));
+      .catch((e) => {
+        console.warn('[auth] profile load failed:', e);
+        if (live) setProfileState('error');
+      });
     return () => {
       live = false;
     };
