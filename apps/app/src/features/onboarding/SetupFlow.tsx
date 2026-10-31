@@ -4,7 +4,6 @@
  * `profiles.prefs.onboarded`, which is what sends the user on to the calendar.
  */
 import { ACCENT, white } from '@calendar/core';
-import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import {
   FlatList,
@@ -40,9 +39,11 @@ import {
   ui,
   useFontKind,
 } from '@/features/auth/ui';
+import { connectGoogle } from '@/features/calendars/actions';
 import { detectTimeZone, cityName, listTimeZones, zoneDetail } from '@/lib/tz';
-import { useRouteExists } from '@/lib/useRouteExists';
+import { createDeviceApi } from '@/sync/deviceApi';
 
+import { applyCalendarsOutcome, runGoogleStep, runPhoneStep, type CalendarsOutcome } from './calendarsStep';
 import { requestNotificationPermission } from './notifications';
 import {
   advance,
@@ -59,13 +60,8 @@ import {
   type SetupState,
 } from './steps';
 
-export const GOOGLE_CONNECT_ROUTE = '/settings/calendars/google/connect';
-export const PHONE_CALENDARS_ROUTE = '/settings/calendars/phone';
-
 export function SetupFlow() {
-  const router = useRouter();
   const insets = useSafeAreaInsets();
-  const routeExists = useRouteExists();
   const { displayName, email, profile, saveProfile, saveEntryPrefs } = useSession();
 
   const [detectedTz] = useState(detectTimeZone);
@@ -76,18 +72,13 @@ export function SetupFlow() {
   const [error, setError] = useState<string | null>(null);
   const [notifDenied, setNotifDenied] = useState(false);
   const [tzOpen, setTzOpen] = useState(false);
+  /** Which calendars button is running, and what the step last said went wrong. */
+  const [connecting, setConnecting] = useState<'google' | 'phone' | null>(null);
+  const [calendarsNote, setCalendarsNote] = useState<string | null>(null);
 
-  // Connect Google / Use phone calendars open screens from a later phase; when
-  // they return, setup moves on (all three choices advance to step 3).
-  const awaitingReturn = useRef(false);
-  useFocusEffect(
-    useCallback(() => {
-      if (awaitingReturn.current) {
-        awaitingReturn.current = false;
-        setState((s) => advance(s));
-      }
-    }, []),
-  );
+  // The latest state, for results that arrive after an await (the browser sheet can sit open a while).
+  const stateRef = useRef(state);
+  stateRef.current = state;
 
   const step = currentStep(state);
 
@@ -105,9 +96,11 @@ export function SetupFlow() {
 
   // Every move goes through here so leaving the last step persists completion.
   const move = (fn: (s: SetupState) => SetupState) => {
-    const next = fn(state);
+    const cur = stateRef.current;
+    const next = fn(cur);
+    stateRef.current = next;
     setState(next);
-    if (next.finished && !state.finished) void finish();
+    if (next.finished && !cur.finished) void finish();
   };
 
   const saveYou = async (ignoreErrors: boolean): Promise<boolean> => {
@@ -136,16 +129,21 @@ export function SetupFlow() {
     move(skip);
   };
 
-  const goTo = (route: string, choice: 'google' | 'phone') => {
-    if (!routeExists(route)) {
-      // The screen isn't built yet (a later phase): treat it as "Not now".
-      move((s) => advance(chooseCalendars(s, 'skipped')));
-      return;
-    }
-    awaitingReturn.current = true;
-    setState((s) => chooseCalendars(s, choice));
-    router.push(route as never);
+  // Connect / Use run their connect logic right here: setup can't push to the Settings screens, which
+  // only exist once setup is done. Choosing which calendars to show happens later, in Settings.
+  const runCalendars = async (which: 'google' | 'phone', run: () => Promise<CalendarsOutcome>) => {
+    if (connecting) return;
+    setConnecting(which);
+    setCalendarsNote(null);
+    const outcome = await run();
+    // Web leaves the page for Google; keep the busy state until it goes.
+    if (outcome.kind !== 'redirecting') setConnecting(null);
+    if (outcome.kind === 'stay' && currentStep(stateRef.current) === 'calendars') setCalendarsNote(outcome.message);
+    if (outcome.kind === 'advance') move((s) => applyCalendarsOutcome(s, outcome));
   };
+
+  const onGoogle = () => void runCalendars('google', () => runGoogleStep(() => connectGoogle()));
+  const onPhone = () => void runCalendars('phone', () => runPhoneStep(async () => (await createDeviceApi().requestPermission()).status));
 
   const onTurnOnNotifications = async () => {
     setSaving(true);
@@ -189,11 +187,12 @@ export function SetupFlow() {
             onOpenTz={() => setTzOpen(true)}
           />
         ) : step === 'calendars' ? (
-          <CalendarsStep onGoogle={() => goTo(GOOGLE_CONNECT_ROUTE, 'google')} onPhone={() => goTo(PHONE_CALENDARS_ROUTE, 'phone')} />
+          <CalendarsStep connecting={connecting} onGoogle={onGoogle} onPhone={onPhone} />
         ) : (
           <NotificationsStep denied={notifDenied} />
         )}
 
+        {step === 'calendars' && calendarsNote ? <View style={{ marginTop: 16 }}><InlineError testID="setup-calendars-error">{calendarsNote}</InlineError></View> : null}
         {error ? <View style={{ marginTop: 16 }}><InlineError testID="setup-error">{error}</InlineError></View> : null}
       </ScrollView>
 
@@ -306,7 +305,7 @@ function YouStep({
 
 /* ---------- step 2: Calendars ---------- */
 
-function CalendarsStep({ onGoogle, onPhone }: { onGoogle: () => void; onPhone: () => void }) {
+function CalendarsStep({ connecting, onGoogle, onPhone }: { connecting: 'google' | 'phone' | null; onGoogle: () => void; onPhone: () => void }) {
   return (
     <>
       <View style={{ marginTop: 10 }}>
@@ -323,14 +322,14 @@ function CalendarsStep({ onGoogle, onPhone }: { onGoogle: () => void; onPhone: (
                 <GoogleMark size={17} />
               </View>
             }
-            right={<SmallButton label="Connect" testID="setup-connect-google" onPress={onGoogle} />}
+            right={<SmallButton label={connecting === 'google' ? 'Connecting…' : 'Connect'} testID="setup-connect-google" onPress={onGoogle} disabled={!!connecting} />}
           />
           {Platform.OS !== 'web' ? (
             <Row
               title="Phone calendars"
               subtitle="Show events from iCloud and other calendars on this phone."
               icon="phone"
-              right={<SmallButton label="Use" testID="setup-use-phone" onPress={onPhone} />}
+              right={<SmallButton label={connecting === 'phone' ? 'Asking…' : 'Use'} testID="setup-use-phone" onPress={onPhone} disabled={!!connecting} />}
             />
           ) : null}
         </Card>
