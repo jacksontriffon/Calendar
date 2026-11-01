@@ -36,13 +36,14 @@ describe('deadline fields', () => {
 });
 
 describe('goal lines and creation', () => {
-  it('summarises pace and what is left', () => {
+  it('summarises what is done and where the pace stands', () => {
     const s = goalStats(goal, [], { today, nowMin: 600 });
     const L = goalLines(goal, s, today);
-    expect(L.plan).toMatch(/a (day|week)/);
-    expect(L.left).toMatch(/to go/);
-    expect(L.due).toBe('by 19th Nov');
-    expect(L.daysLeft).toBe('21 days left');
+    expect(L.done).toBe('0h');
+    expect(L.expected).toMatch(/h expected by now/);
+    const ended = goalStats({ ...goal, deadline: '2026-10-25' }, [], { today, nowMin: 600 });
+    expect(goalLines({ ...goal, deadline: '2026-10-25' }, ended, today).expected).toBe('Ended 25th Oct');
+    expect(goalLines({ ...goal, hours: 0 }, goalStats({ ...goal, hours: 0 }, [], { today, nowMin: 600 }), today).expected).toBe('');
   });
 
   it('creates a goal with a unique title and its category', () => {

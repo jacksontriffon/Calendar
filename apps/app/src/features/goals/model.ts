@@ -1,6 +1,6 @@
-/** Pure helpers for goal detail: the editable draft, date field validation and the stats lines. */
+/** Pure helpers for the goals sheet's detail view: the editable draft, date field validation and the stats lines. */
 import {
-  addDays, createGoal, goalPace, goalRate, hrs, key, niceDate, patchGoal, toGoLabel,
+  addDays, createGoal, goalRate, hrs, key, niceDate, patchGoal,
   type CalendarData, type GoalStats, type ProtoGoal,
 } from '@calendar/core';
 
@@ -49,36 +49,23 @@ export function applyGoalDraft(data: CalendarData, g: ProtoGoal, d: GoalDraft): 
 }
 
 export interface GoalLines {
-  rate: string;
-  daysLeft: string;
+  /** "3h" */
   done: string;
-  donePct: string;
-  pace: string;
+  /** "Ahead of goal pace" / "Keeping goal pace" / "2h expected by now" / "Ended 6 Dec" ('' without hours) */
   expected: string;
-  plan: string;
-  left: string;
-  due: string;
 }
 
-/** The detail screen's text lines (the prototype's `gd` object). */
+/** The goal detail's text lines (the prototype's `gd.done` and `gd.expected`). */
 export function goalLines(g: ProtoGoal, s: GoalStats, today: Date): GoalLines {
   const R = goalRate(g, today);
-  const ended = !s.active && today.getTime() >= s.s1.getTime();
   return {
-    rate: R.target ? R.label : 'No hours set',
-    daysLeft: ended ? 'Ended' : s.daysLeft + (s.daysLeft === 1 ? ' day left' : ' days left'),
     done: hrs(s.done) + 'h',
-    donePct: R.target ? Math.round(s.pct * 100) + '% of target' : '—',
-    pace: goalPace(g, s),
     expected: R.target
       ? s.active
         ? s.done - s.expected > Math.max(0.5, s.expected * 0.1) ? 'Ahead of goal pace'
           : s.done - s.expected >= -1 / 60 ? 'Keeping goal pace' : hrs(s.expected) + 'h expected by now'
         : 'Ended ' + niceDate(g.deadline)
       : '',
-    plan: R.target ? R.label : 'Set target hours',
-    left: toGoLabel(s),
-    due: g.deadline ? 'by ' + niceDate(g.deadline) : 'Set a date',
   };
 }
 

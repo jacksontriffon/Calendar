@@ -283,13 +283,7 @@ export function CalendarScreen() {
         </RiseLayer>
         <TimerOverlay />
         {goalsOpen ? (
-          <GoalsSheet
-            onClosed={() => setGoalsOpen(false)}
-            onOpenGoal={(id) => {
-              setGoalsOpen(false);
-              router.push({ pathname: '/goal/[id]', params: { id } });
-            }}
-          />
+          <GoalsSheet onClosed={() => setGoalsOpen(false)} />
         ) : null}
         <RiseLayer rise={rise} zIndex={66}>
           <CheckInHost busy={goalsOpen} />
