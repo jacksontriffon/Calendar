@@ -12,3 +12,4 @@ export * from './prompts.ts';
 export * from './parse.ts';
 export * from './recurrence.ts';
 export * from './regions.ts';
+export * from './goalChart.ts';
