@@ -54,6 +54,19 @@ export interface BuildInput {
   hidePrivate?: boolean;
   /** Initials for someone else's event. The default reads `ownerName` / `organizer` / `creator` if the event carries one. */
   ownerOf?: (e: ProtoEvent) => string | null;
+  /**
+   * The phone's own calendars ("On this phone"). Those events live in the device bridge's memory and
+   * never enter the store, so the caller passes them here. They only add rows: they never count toward
+   * a goal and never get a check button. The snapshot is written to on-device storage, so this does not
+   * break the rule that phone events are never uploaded.
+   */
+  phone?: PhoneEvents | null;
+}
+
+/** Phone-calendar events in the calendar view's shape, with the hue of each phone calendar. */
+export interface PhoneEvents {
+  events: readonly ProtoEvent[];
+  cats: Readonly<Record<string, number>>;
 }
 
 /** Someone else's event: imported from Google, or flagged `isMine === false`. */
@@ -88,14 +101,17 @@ export function buildEvents(input: BuildInput, today: Date): SnapshotEvent[] {
   const from = key(addDays(today, -WINDOW_BACK));
   const to = key(addDays(today, WINDOW_AHEAD));
   const ownerOf = input.ownerOf ?? defaultOwner;
-  const cats = data.cats ?? {};
+  const phone = input.phone?.events.length ? input.phone : null;
+  const cats = phone ? { ...(data.cats ?? {}), ...phone.cats } : data.cats ?? {};
+  const events = phone ? data.events.concat(phone.events) : data.events;
 
-  const rows = data.events
+  const rows = events
     .filter((e) => !e.allDay && e.day >= from && e.day <= to)
     .map((e) => {
       const s = at(e.day, e.start);
       const en = at(e.day, e.end);
-      const goal = goalOf(e, data.goals);
+      // A phone event is never a goal session, even if its title happens to match a goal.
+      const goal = e.source === 'device' ? null : goalOf(e, data.goals);
       const others = isOthers(e);
       const row: SnapshotEvent = {
         id: e.id,

@@ -10,6 +10,7 @@ import type { CalendarData, Prefs } from '@calendar/core';
 import type { DeviceKv } from '@/lib/deviceKv';
 
 import { drainDoneOps, type DrainResult, type DrainStore } from './queue';
+import type { PhoneEvents } from './snapshot';
 import type { SnapshotWriter } from './writer';
 import type { Clock, WidgetStorage } from './types';
 
@@ -22,6 +23,8 @@ export interface Source {
   };
   /** Pull from the server (and push local writes) before the snapshot is written. */
   sync?: () => Promise<void>;
+  /** The phone's calendar events, read at refresh time (null: none, or not available here). */
+  phone?: () => Promise<PhoneEvents | null> | PhoneEvents | null;
   /** Release anything the source opened (the headless engine). */
   finish?: () => Promise<void>;
 }
@@ -56,9 +59,15 @@ export async function refreshWidgetSnapshot(deps: RefreshDeps): Promise<RefreshO
     } catch {
       // offline: write what we have; the snapshot ages and the widget shows "Updated 3h ago"
     }
+    let phone: PhoneEvents | null = null;
+    try {
+      phone = (await src.phone?.()) ?? null;
+    } catch {
+      // no phone calendars this time: the widget still shows everything else
+    }
     const { data, prefs } = src.store.getState();
     // Forced: a refresh is what moves `writtenAt`, which the stale state counts from.
-    const wrote = deps.writer.writeNow({ data, prefs, user: src.user, clock: deps.clock(), hidePrivate: deps.hidePrivate() }, true);
+    const wrote = deps.writer.writeNow({ data, prefs, user: src.user, clock: deps.clock(), hidePrivate: deps.hidePrivate(), phone }, true);
     return { via: live ? 'live' : 'headless', wrote, drained };
   } finally {
     await src.finish?.();
