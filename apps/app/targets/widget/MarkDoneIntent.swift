@@ -1,4 +1,6 @@
-// The check button on a task or goal session (Design Spec WG 5a, pin 2).
+// The check button on a task or goal session (Design Spec WG 5a, pin 2). Only the iPad
+// layout draws it now: iPhone Large and Medium have no check buttons (issue 5), and Android
+// keeps its own MARK_DONE until it follows the new designs.
 // Marks the event done without opening the app: the event id goes on the queue
 // in the App Group, the row redraws dimmed and the goal ring moves at once, and
 // the app applies the change through its store (so it syncs) the next time it

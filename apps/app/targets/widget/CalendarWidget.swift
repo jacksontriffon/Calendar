@@ -1,9 +1,13 @@
 // The widget, its timeline and the bundle entry point.
 //
 // Timeline, not live (Design Spec WG, iOS): one entry at each event start and
-// end, at midnight, and at the stale thresholds (30 min, then hourly for a day)
-// so "Updated 3h ago" appears without the app running. "Ends in 25 min" and the
-// progress bar use system timers, so they tick between entries.
+// end, at midnight, at the stale thresholds (30 min, then hourly for a day)
+// so "Updated 3h ago" appears without the app running, and 5 minutes after each
+// carousel tap so Large and Medium go back to Today and the first goal.
+// "Ends in 25 min" and the progress bar use system timers, so they tick between entries.
+//
+// The carousel taps are read here, when the timeline is built, not in the view: WidgetKit
+// draws every entry ahead of time, and each entry resolves the taps as of its own date.
 //
 // NOTE: this file has not been compiled (no Xcode in the build environment).
 
@@ -13,6 +17,8 @@ import WidgetKit
 struct CalendarEntry: TimelineEntry {
     let date: Date
     let snapshot: Snapshot?
+    /// The stored carousel taps (day and goal pages); the view resolves them as of `date`.
+    var carousel: CarouselState?
     /// The widget gallery and the moment before the first timeline loads (WG 6d).
     var isPlaceholder = false
 }
@@ -26,14 +32,17 @@ struct CalendarProvider: TimelineProvider {
         if context.isPreview {
             completion(CalendarEntry(date: Date(), snapshot: Sample.snapshot(now: Date())))
         } else {
-            completion(CalendarEntry(date: Date(), snapshot: Store.loadSnapshot()))
+            completion(CalendarEntry(date: Date(), snapshot: Store.loadSnapshot(), carousel: CarouselStore.load()))
         }
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<CalendarEntry>) -> Void) {
         let now = Date()
         let snap = Store.loadSnapshot()
+        let carousel = CarouselStore.load()
         var dates: Set<Date> = [now]
+        // Carousel taps expire after 5 minutes: redraw at home then.
+        for d in CarouselStore.expiries(carousel, now: now) { dates.insert(d) }
 
         if let snap = snap {
             let horizon = now.addingTimeInterval(36 * 3600)
@@ -57,7 +66,7 @@ struct CalendarProvider: TimelineProvider {
 
         // WidgetKit allows a limited number of entries; keep the nearest ones.
         let ordered = dates.sorted().prefix(60)
-        let entries = ordered.map { CalendarEntry(date: $0, snapshot: snap) }
+        let entries = ordered.map { CalendarEntry(date: $0, snapshot: snap, carousel: carousel) }
         // Ask for a new timeline after the last entry. The app also reloads on every snapshot write.
         completion(Timeline(entries: entries, policy: .atEnd))
     }
@@ -69,7 +78,7 @@ struct CalendarWidget: Widget {
             CalendarEntryView(entry: entry)
         }
         .configurationDisplayName("Calendar")
-        .description("Your agenda and goals, with a check for each session.")
+        .description("Your agenda and goals, with a field to add or change events.")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge])
         // The views set their own padding (14 pt, 12 pt on Medium, 18 pt on iPad) as in the spec.
         .contentMarginsDisabled()

@@ -15,6 +15,8 @@ enum Shared {
     static let snapshotKey = "widget.snapshot.v1"
     static let opsKey = "widget.ops.v1"
     static let ackKey = "widget.opsAck.v1"
+    /// Carousel taps (src/features/widget/carousel.ts). Written here, by the App Intents.
+    static let carouselKey = "widget.carousel.v1"
     /// Must match IOS_WIDGET_KIND in types.ts.
     static let widgetKind = "CalendarWidget"
     static let opMaxAge: TimeInterval = 7 * 86400
@@ -53,6 +55,8 @@ struct Snapshot: Codable {
 struct SnapshotPrefs: Codable {
     var clock: String
     var hidePrivate: Bool?
+    /// The now line and the send button on Large and Medium. Absent in snapshots from before the pager.
+    var accent: String?
 }
 
 struct SnapshotEvent: Codable {
@@ -91,9 +95,12 @@ struct Palette: Codable {
     var checkRing: Double
     var subtle: Double
     var button: Double
+    /// Solid fill of the message field and the glyph on the send button (absent in older snapshots).
+    var field: String?
+    var accentInk: String?
 
-    static let dark = Palette(bg: "#1b1a18", ink: "#ffffff", secondary: 0.62, tertiary: 0.42, hairline: 0.12, track: 0.10, checkRing: 0.5, subtle: 0.07, button: 0.14)
-    static let light = Palette(bg: "#f6f3ee", ink: "#000000", secondary: 0.62, tertiary: 0.46, hairline: 0.12, track: 0.09, checkRing: 0.45, subtle: 0.05, button: 0.10)
+    static let dark = Palette(bg: "#1b1a18", ink: "#ffffff", secondary: 0.62, tertiary: 0.42, hairline: 0.12, track: 0.10, checkRing: 0.5, subtle: 0.07, button: 0.14, field: "#34312e", accentInk: "#17120f")
+    static let light = Palette(bg: "#f6f3ee", ink: "#000000", secondary: 0.62, tertiary: 0.46, hairline: 0.12, track: 0.09, checkRing: 0.45, subtle: 0.05, button: 0.10, field: "#ffffff", accentInk: "#17120f")
 }
 
 struct Tokens: Codable {
@@ -172,6 +179,82 @@ enum Store {
             }
         }
         return out
+    }
+}
+
+// MARK: - Carousel (src/features/widget/carousel.ts)
+
+/// What the widget draws from: the day Large shows (-1 Yesterday, 0 Today, 1 Tomorrow) and the goal page
+/// on Large (two goals a page) and Medium (one).
+struct Carousel {
+    var day = 0
+    var large = 0
+    var medium = 0
+
+    static let home = Carousel()
+}
+
+/// What is stored: each piece with the time of its last tap (ISO, UTC).
+struct CarouselState: Codable {
+    var day = 0
+    var dayAt = ""
+    var large = 0
+    var largeAt = ""
+    var medium = 0
+    var mediumAt = ""
+}
+
+enum CarouselStore {
+    /// A tap this old no longer counts: each piece goes home 5 minutes after its last tap, and at midnight.
+    static let timeout: TimeInterval = 5 * 60
+
+    static func load() -> CarouselState? {
+        guard let raw = Shared.defaults?.string(forKey: Shared.carouselKey),
+              let data = raw.data(using: .utf8)
+        else { return nil }
+        return try? JSONDecoder().decode(CarouselState.self, from: data)
+    }
+
+    private static func save(_ state: CarouselState) {
+        if let data = try? JSONEncoder().encode(state), let s = String(data: data, encoding: .utf8) {
+            Shared.defaults?.set(s, forKey: Shared.carouselKey)
+        }
+    }
+
+    /// Set on the same local day as `now` and no more than the timeout ago (a future stamp, from a clock change, is expired).
+    private static func live(_ at: String, _ now: Date) -> Bool {
+        guard let t = Time.iso(at) else { return false }
+        let age = now.timeIntervalSince(t)
+        return age >= 0 && age <= timeout && Time.cal.isDate(t, inSameDayAs: now)
+    }
+
+    /// The carousels as they read at `now`: stored values that have not expired, home for the rest.
+    static func resolve(_ state: CarouselState?, now: Date) -> Carousel {
+        guard let s = state else { return .home }
+        return Carousel(
+            day: live(s.dayAt, now) && (s.day == -1 || s.day == 1) ? s.day : 0,
+            large: live(s.largeAt, now) && s.large > 0 ? s.large : 0,
+            medium: live(s.mediumAt, now) && s.medium > 0 ? s.medium : 0
+        )
+    }
+
+    /// A tap: set the pieces given, stamping them `now`; the others keep their stamps.
+    static func tap(day: Int? = nil, large: Int? = nil, medium: Int? = nil, now: Date = Date()) {
+        var s = load() ?? CarouselState()
+        let at = Time.isoString(now)
+        if let d = day { s.day = d; s.dayAt = at }
+        if let l = large { s.large = l; s.largeAt = at }
+        if let m = medium { s.medium = m; s.mediumAt = at }
+        save(s)
+    }
+
+    /// When the pieces of `state` expire after `now` (plus a second), so the timeline can redraw at home.
+    static func expiries(_ state: CarouselState?, now: Date) -> [Date] {
+        guard let s = state else { return [] }
+        return [s.dayAt, s.largeAt, s.mediumAt]
+            .compactMap { Time.iso($0) }
+            .map { $0.addingTimeInterval(timeout + 1) }
+            .filter { $0 > now }
     }
 }
 
@@ -254,6 +337,19 @@ enum Time {
         return "\(dow[(c.weekday ?? 1) - 1]) \(c.day ?? 1) \(mon[(c.month ?? 1) - 1])"
     }
 
+    static let monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+
+    /// "Fri 30": the weekday and date in the Large and Medium header, with the month under it.
+    static func dayShort(_ d: Date) -> String {
+        let c = cal.dateComponents([.weekday, .day], from: d)
+        return "\(dow[(c.weekday ?? 1) - 1]) \(c.day ?? 1)"
+    }
+
+    /// "October".
+    static func monthName(_ d: Date) -> String {
+        monthNames[(cal.dateComponents([.month], from: d).month ?? 1) - 1]
+    }
+
     /// "Mon 9am".
     static func whenLabel(_ d: Date, h24: Bool) -> String {
         let c = cal.dateComponents([.weekday], from: d)
@@ -298,6 +394,17 @@ enum Labels {
         if isDoneToday(need: need, done: done) { return "Done today" }
         return fmtDur(Int((max(0, need - done) * 60).rounded())) + " left today"
     }
+
+    /// The time left inside a goal ring: "45m" / "1h 15m", empty once today's share is done.
+    static func ringLeft(need: Double, done: Double) -> String {
+        isDoneToday(need: need, done: done) ? "" : fmtDur(Int((max(0, need - done) * 60).rounded()))
+    }
+
+    /// Yesterday's summary: "2 of 3 done".
+    static func doneOf(_ done: Int, _ total: Int) -> String { "\(done) of \(total) done" }
+
+    /// Tomorrow's summary: "4h 55m planned".
+    static func planned(_ minutes: Double) -> String { "\(fmtDur(Int(minutes.rounded()))) planned" }
 
     /// "73h left".
     static func totalLeft(_ g: SnapshotGoal) -> String { dur(max(0, g.hours - g.done)) + " left" }

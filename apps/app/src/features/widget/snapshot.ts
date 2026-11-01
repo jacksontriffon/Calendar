@@ -4,8 +4,10 @@
  * same in the app, in a background task and in tests.
  *
  * Window: yesterday to 7 days ahead, at most 60 events and 6 goals (about 25 KB).
- * That is wider than the next ~24 h on purpose: the iPad widget shows today and
- * tomorrow, and the empty-day card says "Next: Mon 9am · ..." which can be days away.
+ * That is wider than the next ~24 h on purpose: the iPhone Large carousel shows
+ * Yesterday, Today and Tomorrow, the iPad widget shows today and tomorrow, and the
+ * empty-day line says "Next: Mon 9am · ..." which can be days away. Goals are
+ * written up to MAX_GOALS, in pages of two (Large) or one (Medium) on the iPhone.
  */
 import {
   addDays,
@@ -61,7 +63,10 @@ export const isOthers = (e: Pick<ProtoEvent, 'source' | 'isMine'>): boolean => e
  * Whether a row gets a check button (open question 5). Only goal sessions, and
  * never someone else's event ("marking done is the owner's call"). The data has
  * no separate "task" kind, so the answer to "tasks or every event?" is goal
- * sessions only; change it here if that is decided differently.
+ * sessions only; change it here if that is decided differently. Only the iPad and
+ * Android layouts draw the button now; the iPhone Large and Medium have none
+ * (issue 5), and a done session there is just struck through. The Large
+ * "2 of 3 done" summary counts these sessions.
  */
 export const showsCheck = (e: ProtoEvent, goal: ProtoGoal | null): boolean => !!goal && !isOthers(e) && !e.allDay;
 

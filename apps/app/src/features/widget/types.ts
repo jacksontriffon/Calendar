@@ -31,6 +31,8 @@ export const KEYS = {
   ops: 'widget.ops.v1',
   /** JSON string[] of {@link opKey}s the app has applied. Written by the app only. */
   ack: 'widget.opsAck.v1',
+  /** JSON {@link CarouselState}. Written by the widget only (iOS App Intents). Absent means every carousel is home. */
+  carousel: 'widget.carousel.v1',
 } as const;
 
 /** Device-KV keys that are only for the app side. */
@@ -107,6 +109,10 @@ export interface Palette {
   subtle: number;
   /** button fill (Add a note, Retry) */
   button: number;
+  /** solid fill of the message field (not translucent), hex */
+  field: string;
+  /** glyph on the accent-filled send button, hex */
+  accentInk: string;
 }
 
 export interface WidgetTokens {

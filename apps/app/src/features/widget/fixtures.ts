@@ -40,6 +40,21 @@ export const dataWithDinner: CalendarData = { events: [...events, dinner], cats,
 
 export const data: CalendarData = { events, cats, goals };
 
+/**
+ * The extra days the Large carousel shows (WG 1h, 1i): Thu 29 with three goal sessions, two of them
+ * done ("2 of 3 done"), and Sat 31 filled out to 4h 55m. Invented, like the sample days in the spec.
+ */
+export const extraDays: ProtoEvent[] = [
+  ev('y1', '2026-10-29', 'Deep work', 'Sync layer, part one', 540, 690, { done: true }),
+  ev('y2', '2026-10-29', 'Food', 'Lunch', 750, 795),
+  ev('y3', '2026-10-29', 'Marathon training', 'Easy 5k', 1110, 1170, { done: true }),
+  ev('y4', '2026-10-29', 'Reading', 'Reading', 1260, 1305),
+  ev('t3', '2026-10-31', 'Pets', 'Dog walk', 1050, 1090),
+  ev('t4', '2026-10-31', 'Reading', 'Reading', 1260, 1305),
+];
+
+export const dataWide: CalendarData = { events: [...events, ...extraDays], cats, goals };
+
 export const user = { id: 'u_8f3c', name: 'Sam' };
 
 export function snapshotAt(now: Date = NOW, over: Partial<{ data: CalendarData; clock: '12h' | '24h'; hidePrivate: boolean }> = {}): WidgetSnapshot {

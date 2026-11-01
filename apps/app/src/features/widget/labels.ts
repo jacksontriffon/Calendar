@@ -78,6 +78,14 @@ export function fmtRange(s: Date, e: Date, clock: Clock): string {
 /** "Fri 30 Oct". */
 export const dayLabel = (d: Date): string => `${DOW[d.getDay()]} ${d.getDate()} ${MON[d.getMonth()]}`;
 
+/** "Fri 30": the weekday and date in the iPhone Large and Medium header, with the month under it. */
+export const dayShort = (d: Date): string => `${DOW[d.getDay()]} ${d.getDate()}`;
+
+const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+/** "October". */
+export const monthName = (d: Date): string => MONTH_NAMES[d.getMonth()];
+
 /** "Mon 9am" for the empty day's "Next:" line: weekday and start time. */
 export const nextWhenLabel = (d: Date, clock: Clock): string => `${DOW[d.getDay()]} ${fmtTime(d, clock)}`;
 
@@ -97,6 +105,10 @@ export function leftTodayLabel(todayNeed: number, todayDone: number): string {
   if (doneToday(todayNeed, todayDone)) return 'Done today';
   return fmtDur(Math.round(Math.max(0, todayNeed - todayDone) * 60)) + ' left today';
 }
+
+/** The time left inside a goal ring: "45m" / "1h 15m", empty once today's share is done. */
+export const ringLeftLabel = (todayNeed: number, todayDone: number): string =>
+  doneToday(todayNeed, todayDone) ? '' : fmtDur(Math.round(Math.max(0, todayNeed - todayDone) * 60));
 
 /** "73h left" / "10.5h left" / "45m left" (core `dur` of hours minus done). */
 export const totalLeftLabel = (g: Pick<SnapshotGoal, 'hours' | 'done'>): string => dur(Math.max(0, g.hours - g.done)) + ' left';
@@ -138,6 +150,12 @@ export const endsInLabel = (mins: number): string => 'Ends in ' + (mins < 60 ? M
 
 /** The number in "25 min left" (Small, running event). */
 export const leftMinLabel = (mins: number): string => (mins < 60 ? Math.max(1, Math.round(mins)) + ' min' : fmtDur(Math.round(mins)));
+
+/** Yesterday's summary: "2 of 3 done" (goal sessions that were done). */
+export const doneOfLabel = (done: number, total: number): string => `${done} of ${total} done`;
+
+/** Tomorrow's summary: "4h 55m planned". */
+export const plannedLabel = (mins: number): string => `${fmtDur(Math.round(mins))} planned`;
 
 /* ---------- stale ---------- */
 

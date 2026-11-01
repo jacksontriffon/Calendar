@@ -84,6 +84,7 @@ export function createSnapshotWriter(opts: WriterOptions): SnapshotWriter {
     storage.remove(KEYS.snapshot);
     storage.remove(KEYS.ops);
     storage.remove(KEYS.ack);
+    storage.remove(KEYS.carousel);
     void storage.reload();
   };
 

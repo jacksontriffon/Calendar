@@ -17,6 +17,8 @@ export const DARK: Palette = {
   checkRing: 0.5,
   subtle: 0.07,
   button: 0.14,
+  field: '#34312e',
+  accentInk: '#17120f',
 };
 
 export const LIGHT: Palette = {
@@ -29,9 +31,15 @@ export const LIGHT: Palette = {
   checkRing: 0.45,
   subtle: 0.05,
   button: 0.1,
+  field: '#ffffff',
+  accentInk: '#17120f',
 };
 
-/** The accent is in the snapshot's prefs for completeness; the widget keeps it off the "+" and the now line (open question 7). */
+/**
+ * The accent is in the snapshot's prefs. The iPhone Large and Medium widgets (WG 1g, 2i) draw the now
+ * line and the send button with it (open question 7, answered by the new frames); text is never accent.
+ * Small, iPad and the Android layouts keep a neutral now line.
+ */
 export const WIDGET_ACCENT = ACCENT;
 
 export function widgetTokens(): WidgetTokens {

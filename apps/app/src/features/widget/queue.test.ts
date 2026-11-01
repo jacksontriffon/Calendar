@@ -100,14 +100,16 @@ describe('snapshot writer', () => {
     expect(w.writeNow(input, true)).toBe(true);
   });
 
-  it('sign-out clears the snapshot and the queue', () => {
+  it('sign-out clears the snapshot, the queue and the carousel taps', () => {
     const storage = createMemoryWidgetStorage();
     const w = createSnapshotWriter({ storage, now: () => NOW });
     w.writeNow(input);
     appendDoneOp(storage, 'e4', NOW);
+    storage.set(KEYS.carousel, '{"day":1}');
     w.writeNow({ ...input, user: null });
     expect(storage.get(KEYS.snapshot)).toBeNull();
     expect(storage.get(KEYS.ops)).toBeNull();
+    expect(storage.get(KEYS.carousel)).toBeNull();
     expect(loadForDraw(storage)).toEqual({ snapshot: null, ops: [] });
   });
 });
