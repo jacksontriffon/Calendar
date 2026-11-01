@@ -155,7 +155,7 @@ export function GoalDetailPane({ view, draft, ctx, onDraft, onDelete, onAdjust }
               value={draft.hours}
               onChangeText={(v) => onDraft({ hours: v.replace(/[^\d.]/g, '') })}
               keyboardType="decimal-pad"
-              style={styles.hours}
+              style={[styles.hours, { width: Math.max(26, draft.hours.length * 8 + 10) }]}
               accessibilityLabel="Target hours"
             />
             <AppText style={styles.of}>hours</AppText>
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
   doneLeft: { flex: 1, minWidth: 0, flexDirection: 'row', alignItems: 'baseline', gap: 5 },
   done: { fontSize: 24, lineHeight: 28, fontWeight: '650' as never, letterSpacing: -0.5, color: '#f6f2ec', fontVariant: ['tabular-nums'] },
   of: { fontSize: 13, color: text(0.5) },
-  hours: { minWidth: 26, maxWidth: 64, fontSize: 13, fontWeight: '600', color: '#f3efe8', paddingHorizontal: 3, borderRadius: 6, fontVariant: ['tabular-nums'] },
+  hours: { fontSize: 13, fontWeight: '600', color: '#f3efe8', paddingHorizontal: 3, borderRadius: 6, fontVariant: ['tabular-nums'] },
   pct: { fontSize: 15, fontWeight: '650' as never, letterSpacing: -0.2, color: '#f3efe8', fontVariant: ['tabular-nums'] },
   track: { height: 8, borderRadius: 4, backgroundColor: white(0.08), overflow: 'hidden' },
   fill: { position: 'absolute', left: 0, top: 0, bottom: 0, borderRadius: 4 },

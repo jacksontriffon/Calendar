@@ -50,18 +50,25 @@ function Body({ initialGoalId }: { initialGoalId: string | null }) {
   const { height: winH } = useWindowDimensions();
   const [width, setWidth] = useState(0);
   const [unit, setUnit] = useState<ChartUnit>('week');
-  /* opened from a link: start drilled into that goal (an unknown id just shows the list) */
-  const [boot] = useState(() => {
-    const g = initialGoalId ? getStore().getState().data.goals.find((x) => x.id === initialGoalId) : undefined;
-    return g ? { id: g.id, d: draftOf(g) } : null;
-  });
-  const [focusId, setFocusId] = useState<string | null>(boot?.id ?? null);
+  const [focusId, setFocusId] = useState<string | null>(null);
   /** bumps on each drill in/out so the graph replays its animations */
   const [seq, setSeq] = useState(0);
 
-  /* the edit draft for the focused goal: kept in a ref too so closing the sheet can flush it */
-  const [draft, setDraftState] = useState<GoalDraft | null>(boot?.d ?? null);
-  const draftRef = useRef<{ id: string; d: GoalDraft } | null>(boot);
+  /* the edit draft for the focused goal; `draftRef` mirrors it so closing the sheet can flush it */
+  const [draft, setDraftState] = useState<GoalDraft | null>(null);
+  const draftRef = useRef<{ id: string; d: GoalDraft } | null>(null);
+  useEffect(() => {
+    draftRef.current = focusId && draft ? { id: focusId, d: draft } : null;
+  }, [focusId, draft]);
+
+  /* opened from a link: drill into that goal as soon as it is in the store (an unknown id leaves the list) */
+  const [pending, setPending] = useState(initialGoalId);
+  const linked = pending ? data.goals.find((x) => x.id === pending) : undefined;
+  if (linked) {
+    setPending(null);
+    setFocusId(linked.id);
+    setDraftState(draftOf(linked));
+  }
 
   const ctx: NowCtx = useMemo(
     () => ({ today: now.today, nowMin: now.nowMin, nowMs: now.nowMs, timer }),
@@ -83,9 +90,7 @@ function Body({ initialGoalId }: { initialGoalId: string | null }) {
   useEffect(() => () => flush(), [flush]);
 
   const focus = useCallback((g: ProtoGoal) => {
-    const d = draftOf(g);
-    draftRef.current = { id: g.id, d };
-    setDraftState(d);
+    setDraftState(draftOf(g));
     setFocusId(g.id);
     setSeq((n) => n + 1);
   }, []);
@@ -98,11 +103,7 @@ function Body({ initialGoalId }: { initialGoalId: string | null }) {
   }, [flush]);
 
   const setDraft = (p: Partial<GoalDraft>) => {
-    const cur = draftRef.current;
-    if (!cur) return;
-    const d = { ...cur.d, ...p };
-    draftRef.current = { id: cur.id, d };
-    setDraftState(d);
+    setDraftState((d) => (d ? { ...d, ...p } : d));
   };
 
   const add = () => {
