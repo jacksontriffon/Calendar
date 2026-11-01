@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
 import {
   PICKER, SURFACE, addCat, deleteCat, deleteEvent, fmtDur, hm, hueFor, key, minsIn, paint, renameCat, text, white, workedMins,
@@ -7,6 +7,7 @@ import {
 } from '@calendar/core';
 
 import { AppInput, AppText } from '@/components/AppText';
+import { KeyboardScrollView } from '@/components/KeyboardScrollView';
 import { Icon } from '@/components/Icon';
 import { Sheet, useSheetClose } from '@/components/Sheet';
 import { getStore, useCalendarData, useSeries } from '@/store';
@@ -161,7 +162,7 @@ function EditBody({ ev, view, patch, catOp, onTargets, onDelete, onTimer }: Edit
   };
 
   return (
-    <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} style={{ maxHeight: 640 }}>
+    <KeyboardScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} style={{ maxHeight: 640 }}>
       <View style={styles.head}>
         <Pressable
           onPress={() => ev.cat && setHueOpen((o) => !o)}
@@ -325,7 +326,7 @@ function EditBody({ ev, view, patch, catOp, onTargets, onDelete, onTimer }: Edit
           </AppText>
         </Pressable>
       ) : null}
-    </ScrollView>
+    </KeyboardScrollView>
   );
 
   function addNew() {

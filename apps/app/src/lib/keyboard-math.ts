@@ -69,3 +69,39 @@ export function maxAboveKeyboard(winH: number, fraction: number, lift: number, i
   if (lift <= 0) return normal;
   return Math.max(0, Math.min(normal, winH - lift - insetTop - reserved));
 }
+
+/**
+ * Height cap for a bottom sheet that rises with the keyboard (`keyboardShift`): its top stays
+ * below the status bar, with a little air. Without the keyboard it is the usual share of the window.
+ */
+export function maxSheetHeight(winH: number, fraction: number, lift: number, insetBottom: number, insetTop: number): number {
+  const normal = winH * fraction;
+  if (lift <= 0) return normal;
+  return Math.max(0, Math.min(normal, winH - keyboardShift(lift, insetBottom) - insetTop - 8));
+}
+
+interface RevealInput {
+  /** the field's top, in the scroll content's coordinates */
+  fieldY: number;
+  fieldH: number;
+  /** current scroll offset */
+  offset: number;
+  /** the part of the scroll view that is not under the keyboard */
+  viewportH: number;
+  /** air to leave around the field */
+  pad: number;
+}
+
+/**
+ * Where to scroll so a focused field is fully visible, or null when it already is. A field taller
+ * than the viewport (a long note) is aligned to its top.
+ */
+export function revealOffset({ fieldY, fieldH, offset, viewportH, pad }: RevealInput): number | null {
+  if (!(viewportH > 0)) return null;
+  const top = Math.max(0, fieldY - pad);
+  const bottom = fieldY + fieldH + pad;
+  let target = offset;
+  if (fieldY - pad < offset || bottom - top > viewportH) target = top;
+  else if (bottom > offset + viewportH) target = bottom - viewportH;
+  return Math.abs(target - offset) < 1 ? null : target;
+}

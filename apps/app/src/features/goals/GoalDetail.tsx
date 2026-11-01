@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
 import Svg, { Circle } from 'react-native-svg';
 import {
@@ -8,6 +8,7 @@ import {
 } from '@calendar/core';
 
 import { AppInput, AppText } from '@/components/AppText';
+import { KeyboardScrollView } from '@/components/KeyboardScrollView';
 import { Sheet, useSheetClose } from '@/components/Sheet';
 import { getStore, useCalendarData, usePrefs } from '@/store';
 import { useNow } from '../calendar/useNow';
@@ -95,7 +96,7 @@ function Body({ id }: { id: string }) {
   };
 
   return (
-    <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} style={{ maxHeight: 700 }}>
+    <KeyboardScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} style={{ maxHeight: 700 }}>
       <View style={styles.head}>
         <View style={[styles.swatch, { backgroundColor: P.edge }]} />
         <View style={{ flex: 1, gap: 4 }}>
@@ -208,7 +209,7 @@ function Body({ id }: { id: string }) {
           <AppText style={styles.adjustTxt}>{adjMode === 'reduce' ? 'Reduce scope' : 'Add stretch goal'}</AppText>
         </Pressable>
       ) : null}
-    </ScrollView>
+    </KeyboardScrollView>
   );
 }
 

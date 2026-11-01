@@ -4,6 +4,7 @@ import { TEXT, text } from '@calendar/core';
 
 import { useStoreState } from '@/store';
 import { typeface } from './fonts';
+import { useRevealOnFocus } from './KeyboardScrollView';
 
 /** The `prefs.font` value (serif / sans / mono). */
 export const useFontPref = (): string => useStoreState((s) => s.prefs.font);
@@ -24,11 +25,16 @@ export function AppText({ style, display, ...rest }: AppTextProps) {
 export function AppInput({ style, ref, ...rest }: TextInputProps & { ref?: Ref<ComponentRef<typeof TextInput>> }) {
   const font = useFontPref();
   const flat = StyleSheet.flatten(style) as TextStyle | undefined;
+  const reveal = useRevealOnFocus();
   return (
     <TextInput
       placeholderTextColor={text(0.3)}
       selectionColor="#cf7b58"
       {...rest}
+      onFocus={(e) => {
+        reveal();
+        rest.onFocus?.(e);
+      }}
       ref={ref}
       style={[{ color: TEXT, padding: 0 }, style, typeface(font, flat)]}
     />

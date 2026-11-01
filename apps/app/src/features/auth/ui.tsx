@@ -33,6 +33,7 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { asFontKind, fontFamily, type FontKind } from '@/lib/fonts';
+import { useKeyboardLift } from '@/lib/useKeyboardLift';
 import { usePrefs } from '@/store';
 
 import { Icon, type IconName } from './icons';
@@ -353,8 +354,11 @@ export function ScreenHeader({ title, onBack, right }: { title?: string; onBack?
 /** Full-screen container with safe-area padding. */
 export function Page({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
   const insets = useSafeAreaInsets();
+  /* with the soft keyboard up the page ends at its top edge (so a Footer sits above it), in step with it */
+  const { lift } = useKeyboardLift();
+  const bottom = useAnimatedStyle(() => ({ paddingBottom: Math.max(insets.bottom, lift.value) }));
   return (
-    <View style={[{ flex: 1, backgroundColor: ui.bg, paddingTop: insets.top, paddingBottom: insets.bottom }, style]}>{children}</View>
+    <Animated.View style={[{ flex: 1, backgroundColor: ui.bg, paddingTop: insets.top }, style, bottom]}>{children}</Animated.View>
   );
 }
 

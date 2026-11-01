@@ -1,4 +1,6 @@
-import { COMPOSER_GAP, columnPaddingBottom, keyboardLift, keyboardShift, maxAboveKeyboard } from './keyboard-math';
+import {
+  COMPOSER_GAP, columnPaddingBottom, keyboardLift, keyboardShift, maxAboveKeyboard, maxSheetHeight, revealOffset,
+} from './keyboard-math';
 
 const SCREEN = 852;
 
@@ -87,5 +89,54 @@ describe('maxAboveKeyboard', () => {
   it('never grows past the normal share, and never goes negative', () => {
     expect(maxAboveKeyboard(852, 0.52, 100, 59, 100)).toBeCloseTo(443.04);
     expect(maxAboveKeyboard(400, 0.52, 380, 59, 200)).toBe(0);
+  });
+});
+
+describe('maxSheetHeight', () => {
+  it('is the usual share of the window with the keyboard closed', () => {
+    expect(maxSheetHeight(852, 0.9, 0, 34, 59)).toBeCloseTo(766.8);
+  });
+
+  it('keeps the raised sheet below the status bar', () => {
+    // shift = 336 - 34 = 302; 852 - 302 - 59 - 8
+    expect(maxSheetHeight(852, 0.9, 336, 34, 59)).toBe(483);
+    const top = 852 - keyboardShift(336, 34) - maxSheetHeight(852, 0.9, 336, 34, 59);
+    expect(top).toBe(59 + 8);
+  });
+
+  it('a short sheet is not stretched', () => {
+    expect(maxSheetHeight(852, 0.3, 336, 34, 59)).toBeCloseTo(255.6);
+  });
+
+  it('never goes negative', () => {
+    expect(maxSheetHeight(300, 0.9, 400, 0, 59)).toBe(0);
+  });
+});
+
+describe('revealOffset', () => {
+  const base = { fieldH: 40, viewportH: 300, pad: 16 };
+
+  it('does nothing when the field is already in view', () => {
+    expect(revealOffset({ ...base, fieldY: 100, offset: 0 })).toBeNull();
+    expect(revealOffset({ ...base, fieldY: 500, offset: 400 })).toBeNull();
+  });
+
+  it('scrolls down just enough to show a field under the keyboard', () => {
+    // field spans 400..440, plus 16 of air = 456; the viewport shows 0..300
+    expect(revealOffset({ ...base, fieldY: 400, offset: 0 })).toBe(156);
+  });
+
+  it('scrolls up to a field above the viewport', () => {
+    expect(revealOffset({ ...base, fieldY: 100, offset: 200 })).toBe(84);
+    expect(revealOffset({ ...base, fieldY: 5, offset: 200 })).toBe(0);
+  });
+
+  it('aligns a field taller than the viewport to its top', () => {
+    expect(revealOffset({ ...base, fieldY: 200, fieldH: 400, offset: 0 })).toBe(184);
+  });
+
+  it('ignores an unmeasured viewport and sub-point moves', () => {
+    expect(revealOffset({ ...base, fieldY: 400, offset: 0, viewportH: 0 })).toBeNull();
+    expect(revealOffset({ ...base, fieldY: 100.4, offset: 84 })).toBeNull();
   });
 });

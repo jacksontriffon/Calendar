@@ -1,10 +1,11 @@
 import { useState, type ReactNode } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ACCENT, SURFACE, text, white } from '@calendar/core';
 
 import { AppInput, AppText } from '@/components/AppText';
+import { KeyboardScrollView } from '@/components/KeyboardScrollView';
 import { FONT_LABELS, asFontKey, fontFamilyFor, type FontKey } from '@/components/fonts';
 import { UserAvatar } from '@/features/auth';
 import { Icon, type IconName } from '@/components/Icon';
@@ -60,7 +61,7 @@ export function SettingsScreen() {
           <AppText style={styles.barTitle} accessibilityRole="header">Settings</AppText>
           <View style={{ width: 40 }} />
         </View>
-        <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom + 40 }} showsVerticalScrollIndicator={false}>
+        <KeyboardScrollView underKeyboard contentContainerStyle={{ paddingBottom: insets.bottom + 40 }} showsVerticalScrollIndicator={false}>
           {/* Account first (CA 5.1). The Account screen is owned by the auth work. */}
           <Group>
             <Pressable onPress={() => router.push('/settings/account' as never)} accessibilityRole="button" style={styles.accountRow} testID="account-row">
@@ -197,7 +198,7 @@ export function SettingsScreen() {
               </View>
             ))}
           </Group>
-        </ScrollView>
+        </KeyboardScrollView>
         <ToastHost bottom={insets.bottom + 16} />
       </View>
     </View>

@@ -8,6 +8,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { scheduleOnRN } from 'react-native-worklets';
 import { SURFACE, white } from '@calendar/core';
 
+import { keyboardShift, maxSheetHeight } from '@/lib/keyboard-math';
+import { useKeyboardLift } from '@/lib/useKeyboardLift';
+
 const OPEN_EASE = Easing.bezier(0.2, 0.86, 0.24, 1);
 const CLOSE_EASE = Easing.bezier(0.4, 0, 1, 1);
 
@@ -32,6 +35,8 @@ export function Sheet({ onClosed, children, maxHeightFraction = 0.9, testID }: P
   const insets = useSafeAreaInsets();
   const { height: winH } = useWindowDimensions();
   const [panelH, setPanelH] = useState(Math.round(winH * 0.7));
+  /* the soft keyboard: the panel rises above it (its bottom inset dropped) and is capped to fit under the status bar */
+  const { lift, height: kb } = useKeyboardLift();
   const p = useSharedValue(0);
   const drag = useSharedValue(0);
   const closing = useSharedValue(false);
@@ -71,7 +76,7 @@ export function Sheet({ onClosed, children, maxHeightFraction = 0.9, testID }: P
 
   const backdrop = useAnimatedStyle(() => ({ opacity: p.value }));
   const panel = useAnimatedStyle(() => ({
-    transform: [{ translateY: (1 - p.value) * panelH + drag.value }],
+    transform: [{ translateY: (1 - p.value) * panelH + drag.value - keyboardShift(lift.value, insets.bottom) }],
   }));
   const ctx = useMemo(() => ({ close }), [close]);
 
@@ -86,7 +91,7 @@ export function Sheet({ onClosed, children, maxHeightFraction = 0.9, testID }: P
             onLayout={(e) => setPanelH(e.nativeEvent.layout.height)}
             style={[
               styles.panel,
-              { maxHeight: winH * maxHeightFraction, paddingBottom: insets.bottom + 22 },
+              { maxHeight: maxSheetHeight(winH, maxHeightFraction, kb, insets.bottom, insets.top), paddingBottom: insets.bottom + 22 },
               panel,
             ]}
           >
