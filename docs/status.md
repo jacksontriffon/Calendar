@@ -9,7 +9,7 @@ Where the Expo + Supabase rebuild stands against `expo-plan.md` §7. Update this
 | 0 Foundations | Done. pnpm workspace, `packages/core` (port of the prototype logic, differential-tested against it), Expo SDK 58 app, CI. |
 | 1 Schema & RLS | Done. Migrations, RLS, Vault/pgmq/pg_cron wiring, `legacy-import`. Tests run on plain Postgres with shimmed extensions. |
 | 2 Auth & entry | Done in code. Welcome animation, Apple/Google sign-in, setup, import, Account, delete, deep links. |
-| 3 Calendar core | Done in code. Views, drag/resize/pinch, event sheet, goals, timer, check-ins, History/Undo. Local-first sync is a hand-written outbox + pull sync (`apps/app/src/sync/SPIKE.md` explains why not Legend-State). |
+| 3 Calendar core | Done in code. Views, drag/resize/pinch, event sheet, goals (the goals sheet follows the prototype: unit toggle, cumulative progress graph, goal grid, in-sheet detail; issue 6), timer, check-ins, History/Undo. Local-first sync is a hand-written outbox + pull sync (`apps/app/src/sync/SPIKE.md` explains why not Legend-State). |
 | 4 AI | Done in code. `ai-schedule` (two-pass with verifier, usage limits), composer, ask flow, goal-adjust, AI check-ins, `evals --target ai-schedule`. |
 | 5 Visibility & Google | Done in code. `google-connect/sync/webhook`, queue consumer, visibility picker, Connect Google, Choose calendars, Remove/Hidden events, category default visibility. |
 | 6 Phone calendars | Done in code. `expo-calendar` bridge (read, publish, duplicate hiding); a test enforces that phone events never reach Supabase. |
@@ -61,3 +61,7 @@ Not verified: none of the Swift has been compiled, and the carousel taps have ne
 - Timer, check-in state and AI usage persist on web only; move them to `apps/app/src/lib/deviceKv.ts`.
 - No Settings switch yet for the widget's "Hide private titles".
 - Month view isn't persisted (`prefs.view` only knows `day3`/`week`).
+
+## Goals sheet (issue 6): what is verified
+
+Built to the prototype's current design (see `expo-plan.md`, Calendar). The chart maths (`packages/core/src/goalChart.ts`) is unit-tested and checked against the prototype's own graph code (`goalChart.golden.test.ts`, regenerate with `scripts/gen-golden-chart.mjs`). The look, spacing, animations and scrolling have **not** been run on iOS, Android or web: nothing has been compared side by side with the artifact yet, and animation cost with long ranges (up to 400 day columns) is unmeasured on a low-end Android. The sheet does not animate its height between the list and a goal. The end-label widths use a per-character estimate, not measured text. The pulse that lights a goal when its progress changes (`gPulse`) is not built.

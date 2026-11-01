@@ -9,6 +9,7 @@ Planned (see `docs/expo-plan.md` §3 and §6):
 - `composer/` note input, ask flow, history/undo
 - `event-sheet/` event editor, visibility row and picker
 - `settings/` account, calendars, region, typeface, Claude parsing
-- `goals/`, `timer/`, `auth/`
+- `goals/` the goals sheet: `GoalsSheet` (toggle, graph, card grid), `GoalChart` (SVG bars, pace line, dots; maths in `packages/core/src/goalChart.ts`), `GoalDetailPane` (in-sheet detail), `GoalUnitToggle`, `PacePill`, `GoalChips` (calendar chips), `model.ts` (draft and date helpers)
+- `timer/`, `auth/`
 
-Nothing here is implemented yet.
+Most of these exist now; the list above is the original plan.
