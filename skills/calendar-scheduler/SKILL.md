@@ -27,6 +27,7 @@ Open only the references the note needs:
 - Use `delete` when the user cancels, drops, or removes something. Match it to an existing id.
 - Imported, read-only events can't be changed: never `update` one (not its title, time, day or category). The user may remove it, so `delete` is fine when they ask. If they ask to change one, explain that and offer choices with one `ask`; `references/asking.md` says how.
 - Only touch events the user actually refers to. If the note is ambiguous, prefer creating over destroying.
+- If the note gives no day or date for something, it means today (`dayOffset` 0), the date in `<calendar>`. Don't ask which day; don't guess a later one. A time already past today is still today.
 - Keep titles short and in the user's own words, capitalised.
 - Reuse an existing category whenever it fits; only invent a new short category when nothing fits.
 - If the note ends with an instruction not to ask questions, return no `ask` operations. Make your best assumption.
