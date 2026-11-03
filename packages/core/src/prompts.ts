@@ -4,6 +4,7 @@
  * contract with skills/*, so it is reproduced exactly.
  */
 import { addDays, DOWL, hm, hrs, key, MONL } from './time.ts';
+import { isReadOnlyEvent } from './model.ts';
 import type { CalendarData, ProtoEvent } from './model.ts';
 import { goalPace, goalStats, weeklyLoad } from './goals.ts';
 import type { NowCtx } from './goals.ts';
@@ -14,7 +15,10 @@ import { NOASK } from './ops.ts';
 /** How the goal-adjust skill is invoked: the button tapped. */
 export type AdjustMode = 'reduce' | 'stretch' | 'scope';
 
-/** `<calendar>` block: today, the time, categories, nearby events (day -7..+21, max 90) and goals. */
+/**
+ * `<calendar>` block: today, the time, categories, nearby events (day -7..+21, max 90) and goals.
+ * Imported events (Google, phone, someone else's) end with `| imported, read-only`.
+ */
 export const calBlock = (data: CalendarData, ctx: NowCtx): string => {
   const d = ctx.today;
   const today = DOWL[d.getDay()] + ', ' + MONL[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
@@ -23,7 +27,7 @@ export const calBlock = (data: CalendarData, ctx: NowCtx): string => {
     .filter((e) => e.day >= lo && e.day <= hi)
     .sort((a, b) => (a.day === b.day ? a.start - b.start : a.day < b.day ? -1 : 1))
     .slice(0, 90)
-    .map((e) => '  ' + e.id + ' | ' + e.day + ' | ' + (e.allDay ? 'all-day, ' + (e.days || 1) + ((e.days || 0) > 1 ? ' days' : ' day') : hm(e.start) + '-' + hm(e.end)) + ' | ' + e.cat + ' | ' + e.title);
+    .map((e) => '  ' + e.id + ' | ' + e.day + ' | ' + (e.allDay ? 'all-day, ' + (e.days || 1) + ((e.days || 0) > 1 ? ' days' : ' day') : hm(e.start) + '-' + hm(e.end)) + ' | ' + (e.cat ?? 'none') + ' | ' + e.title + (isReadOnlyEvent(e) ? ' | imported, read-only' : ''));
   const gRows = (data.goals || []).map((g) => {
     const gs = goalStats(g, data.events, ctx), R = gs.rate;
     return '  ' + g.id + ' | ' + g.title + ' | outcome: ' + (g.outcome || '(not set)') + ' | deadline ' + (g.deadline || '?') + ' (' + gs.daysLeft + ' days left) | ' + hrs(R.target) + 'h estimate = ' + R.label

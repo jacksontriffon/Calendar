@@ -17,6 +17,7 @@ Days and times (`time-rules.md`)
 Existing events
 - Every `update` and `delete` id exists in `<calendar>` and is the event the user meant.
 - Moves and renames use `update`, never delete plus create.
+- No `update` targets an event marked `imported, read-only`; those can only be deleted. If a reply updates one, drop that operation.
 - `update` carries only the fields that change.
 - Categories reuse existing ones when they fit.
 

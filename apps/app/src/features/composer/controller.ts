@@ -9,9 +9,9 @@
  * ones.
  */
 import {
-  adjustNote, applyResolved, interpretReply, isEmptyResolved, key, normCheckIn, parseNote,
+  adjustNote, applyResolved, interpretReply, isEmptyResolved, isReadOnlyEvent, key, normCheckIn, parseNote,
   type AdjustMode, type ApplyResult, type ApplySource, type CalendarData, type CheckInQuestion, type OpsCtx,
-  type Prefs, type Resolved,
+  type Prefs, type ProtoEvent, type Resolved,
 } from '@calendar/core';
 
 import { AiError, type AiRequest, type AiSuccess } from '../ai/client';
@@ -34,6 +34,11 @@ export interface ComposerDeps {
   call(req: AiRequest): Promise<AiSuccess>;
   toast(t: { label: string; undoId?: string | null }): void;
   recordUsage(usage: Usage | null | undefined, model?: string | null): void;
+  /**
+   * Remove an imported (read-only) event from the views: it is hidden in this app, never deleted, so the
+   * AI's `delete` of one goes here instead of through `applyResolved`.
+   */
+  hideImported(ev: ProtoEvent): void;
   /** created/updated ids and the minute to scroll to */
   highlight(ids: string[], focusMin: number | null): void;
   openRecap(): void;
@@ -131,7 +136,23 @@ export function createComposer(deps: ComposerDeps): Composer {
     set({ phase: 'idle' });
   };
 
-  const applyResolvedNow = (r: Resolved, src: ApplySource) => {
+  /** Imported events can't be deleted, only hidden: hide them and keep the rest of the change set. */
+  const hideImportedDeletes = (r: Resolved): Resolved => {
+    if (!r.deletes.length) return r;
+    const data = deps.getData();
+    const imported = r.deletes.map((id) => data.events.find((e) => e.id === id)).filter((e): e is ProtoEvent => !!e && isReadOnlyEvent(e));
+    if (!imported.length) return r;
+    imported.forEach((e) => deps.hideImported(e));
+    const gone = new Set(imported.map((e) => e.id));
+    return { ...r, deletes: r.deletes.filter((id) => !gone.has(id)) };
+  };
+
+  const applyResolvedNow = (resolved: Resolved, src: ApplySource) => {
+    const r = hideImportedDeletes(resolved);
+    if (r !== resolved && isEmptyResolved(r)) {
+      set({ phase: 'idle' });
+      return;
+    }
     const c = ctx();
     const res = applyResolved(deps.getData(), r, c, src);
     finishApply(res, src === 'fallback' ? res.message.replace(/ · offline parse$/, '') + ' · using offline parsing' : undefined);

@@ -63,6 +63,13 @@ export interface ProtoEvent {
   isMine?: boolean;
 }
 
+/**
+ * An event the user can't edit: imported from Google, from the phone, or created by someone else.
+ * The AI may only remove (hide) these, never change them.
+ */
+export const isReadOnlyEvent = (e: Pick<ProtoEvent, 'source' | 'isMine'>): boolean =>
+  e.source === 'google' || e.source === 'device' || e.isMine === false;
+
 export interface ProtoGoal {
   id: string;
   title: string;

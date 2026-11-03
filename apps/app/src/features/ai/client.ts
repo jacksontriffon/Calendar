@@ -10,7 +10,7 @@
  * switches on: `limit` and `rate_limit` have their own states, the rest fall back to the offline
  * parser.
  */
-import type { AdjustMode, CalendarData, ProtoEvent } from '@calendar/core';
+import { isReadOnlyEvent, type AdjustMode, type CalendarData, type ProtoEvent } from '@calendar/core';
 
 import { parseUsage, type Usage } from './usage';
 
@@ -89,7 +89,8 @@ export const MAX_EVENTS = 4500;
 
 /**
  * The snapshot the function needs: only the fields its validator whitelists (the app's own
- * visibility / source / series fields stay home), and at most `MAX_EVENTS` events, newest days first.
+ * visibility / series fields stay home; `source` and `isMine` go along only on read-only events, so the
+ * model knows they are imported), and at most `MAX_EVENTS` events, newest days first.
  */
 export function slimData(data: CalendarData): CalendarData {
   const evs = data.events.length > MAX_EVENTS
@@ -108,6 +109,10 @@ export function slimData(data: CalendarData): CalendarData {
       if (e.winAsked) o.winAsked = true;
       if (e.at != null) o.at = e.at;
       if (e.goalId) o.goalId = e.goalId;
+      if (isReadOnlyEvent(e)) {
+        if (e.source === 'google' || e.source === 'device') o.source = e.source;
+        if (e.isMine === false) o.isMine = false;
+      }
       return o;
     }),
   };

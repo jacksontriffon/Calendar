@@ -545,3 +545,24 @@ describe('misc', () => {
     expect(nowCtx().today).toBe(TODAY);
   });
 });
+
+describe('imported (read-only) events', () => {
+  const d = (): CalendarData => ({
+    ...base(),
+    events: base().events.concat([
+      ev('g1', TODAY_KEY, null, 'Dentist', 600, 660, { source: 'google', isMine: false }),
+      ev('g2', TODAY_KEY, null, 'Lunch', 720, 780, { source: 'google' }),
+    ]),
+  });
+  it('checkOps refuses to update them but allows delete', () => {
+    expect(checkOps([{ op: 'update', id: 'g1', title: 'Renamed' }], d(), TODAY).join('\n')).toMatch(/#1 update id "g1" is an imported read-only event/);
+    expect(checkOps([{ op: 'update', id: 'g2', start: 700, end: 760 }], d(), TODAY)).toHaveLength(1);
+    expect(checkOps([{ op: 'delete', id: 'g1' }, { op: 'update', id: 'e1', title: 'Fine' }], d(), TODAY)).toEqual([]);
+  });
+  it('fromModel drops updates to them and keeps deletes', () => {
+    const data = d();
+    const r = fromModel([{ op: 'update', id: 'g1', title: 'Renamed' }, { op: 'update', id: 'e1', title: 'Renamed' }, { op: 'delete', id: 'g2' }], data, opsCtx(data));
+    expect(r.updates.map((u) => u.id)).toEqual(['e1']);
+    expect(r.deletes).toEqual(['g2']);
+  });
+});

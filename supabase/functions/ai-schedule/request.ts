@@ -75,6 +75,9 @@ const parseEvent = (raw: unknown, i: number): ProtoEvent => {
   if (raw.winAsked) e.winAsked = true;
   if (num(raw.at)) e.at = raw.at;
   if (typeof raw.goalId === 'string') e.goalId = raw.goalId;
+  /* imported events: the prompt marks them read-only and the validator refuses to update them */
+  if (raw.source === 'google' || raw.source === 'device') e.source = raw.source;
+  if (raw.isMine === false) e.isMine = false;
   return e;
 };
 

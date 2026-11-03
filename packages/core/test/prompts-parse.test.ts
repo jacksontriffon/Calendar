@@ -41,6 +41,18 @@ describe('<calendar> block', () => {
     expect(text).toMatch(/\n {2}g1 \| Deep work \| outcome: Ship it \| deadline \d{4}-\d\d-\d\d \(\d+ days left\) \| 70h estimate = 11h a week \| done 0h, booked \(not yet marked done\) 0h \| \d+h behind \| category "Deep work"\n/);
     expect(text).toMatch(/total pace across active goals: 11h a week\n/);
   });
+  it('marks imported events read-only (and prints a missing category as none)', () => {
+    const d = data();
+    d.events = [
+      ev('e1', TODAY_KEY, 'Work', 'Standup', 570, 585),
+      ev('e7', TODAY_KEY, null, 'Dentist', 600, 660, { source: 'google', isMine: false }),
+      ev('e8', TODAY_KEY, 'Work', 'Phone call', 700, 760, { source: 'device' }),
+    ];
+    const rows = calBlock(d, ctx).split('\n').filter((l) => /^ {2}e\d /.test(l));
+    expect(rows[0]).toMatch(/\| Standup$/);
+    expect(rows[1]).toMatch(/\| none \| Dentist \| imported, read-only$/);
+    expect(rows[2]).toMatch(/\| Phone call \| imported, read-only$/);
+  });
   it('(none) for an empty calendar', () => {
     const t = calBlock({ events: [], cats: {}, goals: [] }, ctx);
     expect(t).toContain('Events already on the calendar:\n  (none)\nGoals already set:');

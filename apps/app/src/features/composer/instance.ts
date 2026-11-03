@@ -11,6 +11,8 @@ import { callAi } from '../ai/client';
 import { setAiHighlight } from '../ai/highlight';
 import { supabaseInvoker } from '../ai/invoker';
 import { recordUsage } from '../ai/usage';
+import { removeSomeoneElsesEvent } from '../calendars/actions';
+import { hideDeviceEvent } from '../calendars/device';
 import { openRecap } from '../story/StoryHost';
 import { createComposer, fetchCheckInQuestions, type ComposerDeps, type ComposerState } from './controller';
 
@@ -37,6 +39,10 @@ export const realDeps: ComposerDeps = {
     showToast(t);
   },
   recordUsage,
+  hideImported: (ev) => {
+    if (ev.source === 'device') hideDeviceEvent(ev.id, 'this');
+    else void removeSomeoneElsesEvent(ev);
+  },
   highlight: setAiHighlight,
   openRecap,
   sleep: (ms) => new Promise((r) => setTimeout(r, ms)),

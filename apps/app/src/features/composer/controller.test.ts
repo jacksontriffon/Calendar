@@ -1,4 +1,4 @@
-import { DEFAULT_PREFS, type ApplyResult, type CalendarData, type Prefs } from '@calendar/core';
+import { DEFAULT_PREFS, type ApplyResult, type CalendarData, type Prefs, type ProtoEvent } from '@calendar/core';
 
 import { createMemoryStore } from '@/store';
 import { AiError, type AiRequest, type AiSuccess } from '../ai/client';
@@ -22,15 +22,16 @@ interface Rig {
   call: jest.Mock<Promise<AiSuccess>, [AiRequest]>;
   toasts: { label: string; undoId?: string | null }[];
   applied: ApplyResult[];
+  hidden: ProtoEvent[];
   highlights: [string[], number | null][];
   usages: (Usage | null | undefined)[];
   sleeps: number[];
   prefs: Prefs;
 }
 
-const rig = (o: { ai?: Partial<Prefs['ai']>; replies?: (AiSuccess | AiError)[] } = {}): Rig => {
+const rig = (o: { ai?: Partial<Prefs['ai']>; replies?: (AiSuccess | AiError)[]; data?: CalendarData } = {}): Rig => {
   const prefs: Prefs = { ...DEFAULT_PREFS, ai: { ...DEFAULT_PREFS.ai, ...o.ai } };
-  const store = createMemoryStore({ data: seed(), prefs });
+  const store = createMemoryStore({ data: o.data ?? seed(), prefs });
   const replies = (o.replies ?? []).slice();
   const call = jest.fn<Promise<AiSuccess>, [AiRequest]>(async () => {
     const r = replies.shift();
@@ -39,7 +40,7 @@ const rig = (o: { ai?: Partial<Prefs['ai']>; replies?: (AiSuccess | AiError)[] }
     return r;
   });
   let n = 0;
-  const toasts: Rig['toasts'] = [], applied: ApplyResult[] = [], highlights: Rig['highlights'] = [], usages: Rig['usages'] = [], sleeps: number[] = [];
+  const toasts: Rig['toasts'] = [], applied: ApplyResult[] = [], hidden: ProtoEvent[] = [], highlights: Rig['highlights'] = [], usages: Rig['usages'] = [], sleeps: number[] = [];
   const deps: ComposerDeps = {
     getData: () => store.getState().data,
     getPrefs: () => store.getState().prefs,
@@ -49,13 +50,14 @@ const rig = (o: { ai?: Partial<Prefs['ai']>; replies?: (AiSuccess | AiError)[] }
     tz: () => 'Europe/London',
     call,
     toast: (t) => { toasts.push(t); },
+    hideImported: (e) => { hidden.push(e); },
     recordUsage: (u) => { usages.push(u); },
     highlight: (ids, min) => { highlights.push([ids, min]); },
     openRecap: jest.fn(),
     sleep: async (ms) => { sleeps.push(ms); },
     random: () => 0.5,
   };
-  return { c: createComposer(deps), deps, store, call, toasts, applied, highlights, usages, sleeps, prefs };
+  return { c: createComposer(deps), deps, store, call, toasts, applied, hidden, highlights, usages, sleeps, prefs };
 };
 
 /** Let the controller's promise chains run until `cond` holds. */
@@ -153,6 +155,45 @@ describe('sending a note', () => {
     r.c.send();
     await idle(r);
     expect(r.call.mock.calls[0][0].noAsk).toBe(true);
+  });
+});
+
+describe('imported events', () => {
+  const imported = (): CalendarData => {
+    const d = seed();
+    d.events.push({ id: 'g1', day: '2026-10-30', cat: null, title: 'Dentist', start: 600, end: 660, source: 'google', isMine: false });
+    return d;
+  };
+  const reply = (...ops: object[]): AiSuccess => ({ ops, usage: usage(7), model: 'claude-haiku-4-5' });
+
+  it('a delete hides the event instead of deleting it, and the rest of the reply still applies', async () => {
+    const r = rig({ data: imported(), replies: [reply({ op: 'delete', id: 'g1' }, { op: 'update', id: 'e1', title: 'Standup 2' })] });
+    r.c.setDraft('drop the dentist and rename standup');
+    r.c.send();
+    await idle(r);
+    expect(r.hidden.map((e) => e.id)).toEqual(['g1']);
+    expect(r.applied).toHaveLength(1);
+    expect(r.applied[0].changes.map((c) => c.type)).toEqual(['event-updated']);
+    expect(r.store.getState().data.events.map((e) => e.id)).toEqual(['e1', 'g1']);
+  });
+
+  it('a reply that only removes imported events changes nothing else and shows no "nothing to schedule"', async () => {
+    const r = rig({ data: imported(), replies: [reply({ op: 'delete', id: 'g1' })] });
+    r.c.setDraft('cancel the dentist');
+    r.c.send();
+    await idle(r);
+    expect(r.hidden.map((e) => e.id)).toEqual(['g1']);
+    expect(r.applied).toHaveLength(0);
+    expect(r.toasts).toHaveLength(0);
+  });
+
+  it('an update to one is ignored', async () => {
+    const r = rig({ data: imported(), replies: [reply({ op: 'update', id: 'g1', title: 'Renamed' })] });
+    r.c.setDraft('rename the dentist');
+    r.c.send();
+    await idle(r);
+    expect(r.hidden).toHaveLength(0);
+    expect(r.store.getState().data.events.find((e) => e.id === 'g1')!.title).toBe('Dentist');
   });
 });
 

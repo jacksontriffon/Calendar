@@ -1,20 +1,17 @@
 import { useCallback } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
-import { hm, paint, text, white } from '@calendar/core';
+import { hm, text, white } from '@calendar/core';
 
 import { AppText } from '@/components/AppText';
 import { Icon } from '@/components/Icon';
 import { Sheet, useSheetClose } from '@/components/Sheet';
 import { showToast } from '@/components/toast';
 import { hiddenToastLabel, type HideScope } from '@/lib/hideScope';
-import { getStore } from '@/store';
-import { hueOfColor, toProtoEvent } from '@/sync/deviceMap';
-import { copyToMyCalendar } from '../../event-sheet/EventSheet';
 import { RemoveScopeChooser } from '../RemoveScope';
 import { hideDeviceEvent, unhideDeviceEvent, useDeviceEvent } from './index';
 
-/** A phone-calendar event opened from the calendar view (`/event/dev_…`): read-only, with Copy to my calendar and a quiet Remove. */
+/** A phone-calendar event opened from the calendar view (`/event/dev_…`): read-only, with a quiet Remove. */
 export function DeviceEventSheet({ id }: { id: string }) {
   const goBack = useCallback(() => {
     if (router.canGoBack()) router.back();
@@ -45,13 +42,6 @@ function Body({ id }: { id: string }) {
       </View>
     );
   }
-  const P = paint(hueOfColor(ev.color));
-  const copy = () => {
-    // A private copy in the user's own calendar, in their first category.
-    const cats = Object.keys(getStore().getState().data.cats);
-    copyToMyCalendar({ ...toProtoEvent(ev), cat: cats[0] ?? null });
-    close();
-  };
   const remove = (scope: HideScope) => {
     const hidden = hideDeviceEvent(ev.id, scope);
     close();
@@ -79,10 +69,6 @@ function Body({ id }: { id: string }) {
           </View>
         </View>
       </View>
-      <Pressable onPress={copy} accessibilityRole="button" style={[styles.copyBtn, { backgroundColor: P.fill, borderColor: P.line }]}>
-        <Icon name="copy" size={14} color={P.ink} />
-        <AppText style={{ fontSize: 14, fontWeight: '600', color: P.ink }}>Copy to my calendar</AppText>
-      </Pressable>
       <RemoveScopeChooser
         repeating={ev.recurring}
         onRemove={remove}
@@ -104,9 +90,5 @@ const styles = StyleSheet.create({
   meta: { fontSize: 12.5, lineHeight: 17, color: text(0.5), fontVariant: ['tabular-nums'] },
   source: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 2 },
   sourceTxt: { fontSize: 12, color: text(0.42) },
-  copyBtn: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 18, paddingVertical: 13, paddingHorizontal: 16,
-    borderRadius: 13, borderWidth: 1,
-  },
   note: { fontSize: 11.5, lineHeight: 16, color: white(0.34), textAlign: 'center', paddingHorizontal: 12 },
 });

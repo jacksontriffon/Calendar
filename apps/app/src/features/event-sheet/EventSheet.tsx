@@ -345,18 +345,8 @@ function EditBody({ ev, view, patch, catOp, onTargets, onDelete, onTimer }: Edit
   }
 }
 
-/** Copy someone else's event to My calendar as a private app event. */
-export function copyToMyCalendar(ev: ProtoEvent): void {
-  const store = getStore();
-  const d = store.getState().data;
-  const copyEv: ProtoEvent = {
-    ...ev, id: store.newId(), source: 'app', isMine: true, visibility: 'private', seriesId: null, done: false, at: Date.now(),
-  };
-  commitUndoable({ ...d, events: d.events.concat([copyEv]) }, 'Copied \u00b7 ' + ev.title, 'edit');
-}
-
 /**
- * Someone else's event (EV 05), or any event imported from Google: read-only, with Copy to my calendar and a
+ * Someone else's event (EV 05), or any event imported from Google: read-only, with a
  * quiet Remove that hides it in this app only (hidden_items), with an Undo toast.
  */
 function ReadOnly({ ev, close }: { ev: ProtoEvent; close: () => void }) {
@@ -365,10 +355,6 @@ function ReadOnly({ ev, close }: { ev: ProtoEvent; close: () => void }) {
   const cal = meta?.calendarId ? calendars.find((c) => c.id === meta.calendarId) : undefined;
   const color = cal ? calendarColor(cal) : text(0.4);
   const owner = ev.isMine === false ? meta?.organizerEmail ?? null : null;
-  const copy = () => {
-    copyToMyCalendar(ev);
-    close();
-  };
   const remove = (scope: HideScope) => {
     void removeSomeoneElsesEvent(ev, scope);
     close();
@@ -400,13 +386,8 @@ function ReadOnly({ ev, close }: { ev: ProtoEvent; close: () => void }) {
         </View>
       </View>
       <AppText style={[styles.note, { lineHeight: 17, marginTop: 12 }]}>
-        {owner ? 'Only the owner can change this event. ' : 'This event comes from Google and can\u2019t be changed here. '}
-        A copy is yours to edit, and stays private until you publish it.
+        {owner ? 'Only the owner can change this event.' : 'This event comes from Google and can\u2019t be changed here.'}
       </AppText>
-      <Pressable onPress={copy} accessibilityRole="button" style={[styles.timerBtn, { backgroundColor: '#f3efe8', borderColor: '#f3efe8', marginTop: 14 }]}>
-        <Icon name="copy" size={14} color="#171615" />
-        <AppText style={{ fontSize: 14, fontWeight: '600', color: '#171615' }}>Copy to my calendar</AppText>
-      </Pressable>
       <RemoveScopeChooser
         repeating={isRepeating(meta?.googleEventId)}
         onRemove={remove}

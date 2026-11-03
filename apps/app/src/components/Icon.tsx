@@ -2,7 +2,7 @@ import Svg, { Circle, Path, Rect } from 'react-native-svg';
 
 export type IconName =
   | 'check' | 'close' | 'trash' | 'lock' | 'globe' | 'chevronLeft' | 'chevronRight' | 'chevronDown'
-  | 'plus' | 'pause' | 'play' | 'timer' | 'copy' | 'eye' | 'phone' | 'google' | 'undo' | 'clock' | 'cloud' | 'back';
+  | 'plus' | 'pause' | 'play' | 'timer' | 'eye' | 'phone' | 'google' | 'undo' | 'clock' | 'cloud' | 'back';
 
 interface Props { name: IconName; size?: number; color?: string; strokeWidth?: number }
 
@@ -55,12 +55,6 @@ export function Icon({ name, size = 16, color = '#f3efe8', strokeWidth = 1.8 }: 
         <>
           <Circle cx="12" cy="12" r="8.5" {...p} />
           <Path d="M12 7.5V12l3 2" {...p} />
-        </>
-      )}
-      {name === 'copy' && (
-        <>
-          <Rect x="8.5" y="8.5" width="11" height="11" rx="2" {...p} />
-          <Path d="M15.5 8.5V6.5a2 2 0 0 0-2-2h-7a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h2" {...p} />
         </>
       )}
       {name === 'eye' && (

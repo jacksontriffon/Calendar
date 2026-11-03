@@ -131,7 +131,8 @@ describe('toBody', () => {
 describe('slimData', () => {
   it('keeps only the fields the function reads', () => {
     const s = slimData(data);
-    expect(s.events[0]).toEqual({ id: 'e1', day: '2026-10-30', cat: 'Work', title: 'Standup', start: 570, end: 585 });
+    // read-only events keep `source` / `isMine`, so the model can tell they are imported
+    expect(s.events[0]).toEqual({ id: 'e1', day: '2026-10-30', cat: 'Work', title: 'Standup', start: 570, end: 585, source: 'google', isMine: false });
     expect(s.events[1]).toEqual({ id: 'e2', day: '2026-10-30', cat: 'Health', title: 'Run', start: 420, end: 480, done: true });
     expect(s.cats).toBe(data.cats);
   });

@@ -17,7 +17,7 @@
 import { addDays, cap, clamp, dnum, key, snap, weekKey } from './time.ts';
 import { builtinHue, catHue, defaultDur, normCat, spareHue } from './categories.ts';
 import type { CatMap } from './categories.ts';
-import { dataSnap } from './model.ts';
+import { dataSnap, isReadOnlyEvent } from './model.ts';
 import type { CalendarData, HistoryEntry, HistoryKind, ProtoEvent, ProtoGoal } from './model.ts';
 import { goalOf, newGoalSeed } from './goals.ts';
 import type { GoalPatch } from './goals.ts';
@@ -117,16 +117,18 @@ export const verdictFix = (v: ReturnType<typeof parseVerdict>): unknown[] | null
  * ===================================================================== */
 
 type Idish = { id: string };
+type EventIdish = Idish & Pick<ProtoEvent, 'source' | 'isMine'>;
 
 /**
  * Problems with a scheduler / goal-adjust reply, as human sentences. Empty
  * means it passed. `noAsk` is true when the note told the model not to ask.
  */
 export const checkOps = (
-  arr: ReadonlyArray<unknown>, state: { events: ReadonlyArray<Idish>; goals: ReadonlyArray<Idish> }, today: Date, noAsk?: boolean,
+  arr: ReadonlyArray<unknown>, state: { events: ReadonlyArray<EventIdish>; goals: ReadonlyArray<Idish> }, today: Date, noAsk?: boolean,
 ): string[] => {
   const out: string[] = [];
   const ids = new Set(state.events.map((e) => e.id));
+  const readOnly = new Set(state.events.filter(isReadOnlyEvent).map((e) => e.id));
   const gids = new Set((state.goals || []).map((g) => g.id));
   const todayKey = key(today);
   let asks = 0, edits = 0;
@@ -154,7 +156,10 @@ export const checkOps = (
     } else if (op === 'update' || op === 'delete') {
       edits++;
       if (!ids.has(r.id as string)) out.push(n + op + ' id "' + r.id + '" is not on the calendar');
-      if (op === 'update') span(r, n);
+      if (op === 'update') {
+        if (readOnly.has(r.id as string)) out.push(n + 'update id "' + r.id + '" is an imported read-only event: it can only be deleted (hidden), never changed');
+        span(r, n);
+      }
     } else if (op === 'goal') {
       if (r.id) { if (!gids.has(r.id as string)) out.push(n + 'goal id "' + r.id + '" does not exist'); }
       else ['title', 'outcome', 'deadline', 'hours'].forEach((f) => { if (r[f] == null || r[f] === '') out.push(n + 'new goal is missing ' + f); });
@@ -264,7 +269,8 @@ const isObj = (r: unknown): r is RawOp => !!r && typeof r === 'object';
  * Resolve loose model ops against the current data. Offsets are clamped
  * (days +-60, weeks +-26), times are rounded and clamped (start 0..1425, end
  * at least 15 minutes after and at most 24 h after the start), unknown
- * categories are created with a spare hue, and unknown ids are ignored.
+ * categories are created with a spare hue, and unknown ids are ignored, as are
+ * updates to read-only (imported) events: those can only be deleted.
  * Non-object entries are skipped.
  */
 export const fromModel = (arr: ReadonlyArray<unknown>, data: CalendarData, ctx: OpsCtx): Resolved => {
@@ -312,7 +318,7 @@ export const fromModel = (arr: ReadonlyArray<unknown>, data: CalendarData, ctx: 
     }
     if (op === 'update' || op === 'edit' || op === 'move') {
       const cur = byId.get(r.id as string);
-      if (!cur) return;
+      if (!cur || isReadOnlyEvent(cur)) return; /* imported events can only be removed */
       const patch: Partial<ProtoEvent> = {};
       if (r.title != null && String(r.title).trim()) patch.title = cap(String(r.title).trim());
       if (r.cat != null || r.category != null) patch.cat = resolveCat(r.cat != null ? r.cat : r.category);
