@@ -10,8 +10,11 @@ import { AppInput, AppText } from '@/components/AppText';
 import { KeyboardScrollView } from '@/components/KeyboardScrollView';
 import { Icon } from '@/components/Icon';
 import { Sheet, useSheetClose } from '@/components/Sheet';
+import type { HideScope } from '@/lib/hideScope';
 import { getStore, useCalendarData, useSeries } from '@/store';
 import { removeSomeoneElsesEvent } from '../calendars/actions';
+import { isRepeating } from '../calendars/hidden';
+import { RemoveScopeChooser } from '../calendars/RemoveScope';
 import { useGoogleEventMeta, useGoogleAccounts } from '../calendars/data';
 import { calendarColor } from '../calendars/view';
 import { initials } from '@/features/auth/initials';
@@ -366,8 +369,8 @@ function ReadOnly({ ev, close }: { ev: ProtoEvent; close: () => void }) {
     copyToMyCalendar(ev);
     close();
   };
-  const remove = () => {
-    void removeSomeoneElsesEvent(ev);
+  const remove = (scope: HideScope) => {
+    void removeSomeoneElsesEvent(ev, scope);
     close();
   };
   const first = owner ? initials(owner) : null;
@@ -404,9 +407,15 @@ function ReadOnly({ ev, close }: { ev: ProtoEvent; close: () => void }) {
         <Icon name="copy" size={14} color="#171615" />
         <AppText style={{ fontSize: 14, fontWeight: '600', color: '#171615' }}>Copy to my calendar</AppText>
       </Pressable>
-      <Pressable onPress={remove} accessibilityRole="button" accessibilityLabel="Remove" style={styles.removeBtn}>
-        <AppText style={{ fontSize: 13, color: text(0.7) }}>Remove</AppText>
-      </Pressable>
+      <RemoveScopeChooser
+        repeating={isRepeating(meta?.googleEventId)}
+        onRemove={remove}
+        renderTrigger={(press) => (
+          <Pressable onPress={press} accessibilityRole="button" accessibilityLabel="Remove" style={styles.removeBtn}>
+            <AppText style={{ fontSize: 13, color: text(0.7) }}>Remove</AppText>
+          </Pressable>
+        )}
+      />
       <AppText style={[styles.note, { textAlign: 'center', marginTop: 8 }]}>Hides it in this app only. The calendar it comes from doesn{'\u2019'}t change.</AppText>
     </View>
   );

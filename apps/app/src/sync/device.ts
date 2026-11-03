@@ -16,7 +16,9 @@
  */
 import { addDays, type ProtoEvent } from '@calendar/core';
 
-import { DEFAULT_FLAGS, buildCalendars, findDuplicates, fingerprintOf, isOwnCopy, isPublishable, isUuid, mapEvent, sameWindow, targetKey, toWrite, windowFor, type ReadWindow } from './deviceMap';
+import type { HideScope } from '@/lib/hideScope';
+
+import { DEFAULT_FLAGS, buildCalendars, findDuplicates, fingerprintOf, hideKeyFor, hiddenMatcher, isOwnCopy, isPublishable, isUuid, mapEvent, sameWindow, scopeOfKey, targetKey, toWrite, windowFor, type ReadWindow } from './deviceMap';
 import { loadInstallId, loadPersisted, savePersisted, userStore, type PersistedDevice } from './deviceSettings';
 import {
   EMPTY_DEVICE_STATE,
@@ -24,6 +26,8 @@ import {
   type DeviceCalendarFlags,
   type DeviceCalendarInfo,
   type DeviceEvent,
+  type DeviceHidden,
+  type DeviceHiddenItem,
   type DevicePermission,
   type DeviceRemote,
   type DeviceState,
@@ -121,7 +125,22 @@ export class DeviceBridge {
   private emit(): void {
     const permission = this.state.permission;
     const available = this.state.supported && permission === 'granted';
-    const hidden = this.hiddenKeys;
+    const hiddenBy = hiddenMatcher(this.hiddenKeys);
+    const shown: DeviceEvent[] = [];
+    const hidden: DeviceEvent[] = [];
+    const hiddenItems = new Map<string, DeviceHiddenItem>();
+    if (available) {
+      this.rawEvents.forEach((e) => {
+        const key = hiddenBy(e);
+        if (!key) {
+          shown.push(e);
+          return;
+        }
+        hidden.push(e);
+        // rawEvents are sorted by day, so the first occurrence seen is the earliest one
+        if (!hiddenItems.has(key)) hiddenItems.set(key, { key, scope: scopeOfKey(e, key), event: e });
+      });
+    }
     const targets: Record<string, TargetView[]> = {};
     Object.values(this.targets).forEach((t) => {
       if (t.removing) return;
@@ -137,8 +156,9 @@ export class DeviceBridge {
       available,
       calendars: available ? this.cals : [],
       duplicateAccounts: available ? this.duplicateAccounts : [],
-      events: available ? this.rawEvents.filter((e) => !hidden.has(e.hiddenKey)) : [],
-      hidden: available ? this.rawEvents.filter((e) => hidden.has(e.hiddenKey)) : [],
+      events: shown,
+      hidden,
+      hiddenItems: [...hiddenItems.values()],
       targets,
     });
   }
@@ -330,6 +350,12 @@ export class DeviceBridge {
       seen.add(ev.id);
       out.push(ev);
     });
+    // Several occurrences in the window share a hiddenKey: it repeats, even if the OS didn't say so.
+    const count = new Map<string, number>();
+    out.forEach((e) => count.set(e.hiddenKey, (count.get(e.hiddenKey) ?? 0) + 1));
+    out.forEach((e) => {
+      if (!e.recurring && (count.get(e.hiddenKey) ?? 0) > 1) e.recurring = true;
+    });
     out.sort((a, b) => (a.day < b.day ? -1 : a.day > b.day ? 1 : a.start - b.start || (a.title < b.title ? -1 : 1)));
     this.rawEvents = out;
     this.loaded = win;
@@ -386,22 +412,28 @@ export class DeviceBridge {
 
   /* ----------------------------------------------------------------- hide */
 
-  /** "Remove" on someone else's phone event: hide it in this app only (`hidden_items`, opaque key). Returns it, for the Undo toast. */
-  hideEvent(id: string): DeviceEvent | null {
+  /**
+   * "Remove" on someone else's phone event: hide it in this app only (`hidden_items`, opaque key).
+   * `scope` picks how much of a repeating event goes: this occurrence, this and the following ones, or
+   * all of them (the default, and the only thing a one-off event has). Returns the event and the key
+   * that was written, for the Undo toast.
+   */
+  hideEvent(id: string, scope: HideScope = 'all'): DeviceHidden | null {
     const ev = this.getEvent(id);
     if (!ev) return null;
-    this.hiddenKeys.add(ev.hiddenKey);
-    this.hiddenRemove.delete(ev.hiddenKey);
-    this.hiddenAdd.add(ev.hiddenKey);
+    const key = hideKeyFor(ev, scope);
+    this.hiddenKeys.add(key);
+    this.hiddenRemove.delete(key);
+    this.hiddenAdd.add(key);
     this.emit();
     void this.enqueue(async () => {
       await this.persist();
       await this.flushHidden();
     });
-    return ev;
+    return { ...ev, key };
   }
 
-  /** Undo / "Unhide": show a removed phone event again. */
+  /** Undo / "Unhide": show a removed phone event again (`DeviceHidden.key` / `DeviceHiddenItem.key`). */
   unhideEvent(hiddenKeyValue: string): void {
     this.hiddenKeys.delete(hiddenKeyValue);
     this.hiddenAdd.delete(hiddenKeyValue);

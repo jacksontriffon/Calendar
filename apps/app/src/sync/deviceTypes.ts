@@ -5,6 +5,8 @@
  */
 import type { TargetStatus } from '@calendar/db';
 
+import type { HideScope } from '@/lib/hideScope';
+
 /* ---------- the OS calendar, as the bridge sees it ---------- */
 
 export type DevicePlatform = 'ios' | 'android' | 'web';
@@ -38,6 +40,8 @@ export interface RawEvent {
   endDate: string | Date;
   allDay: boolean;
   location?: string | null;
+  /** the OS says this occurrence belongs to a repeating event */
+  recurring?: boolean;
   /** iOS: false when somebody else organises the event */
   organizerIsCurrentUser?: boolean;
   /** Android: the organizer's address */
@@ -98,8 +102,12 @@ export interface DeviceCalendarFlags {
 export interface DeviceEvent {
   /** `dev_…`: the id this occurrence has in the calendar view */
   id: string;
-  /** `hidden_items.external_key` (all occurrences of a repeating event) */
+  /** `hidden_items.external_key` of the whole event (every occurrence of a repeating one: "All events") */
   hiddenKey: string;
+  /** `hidden_items.external_key` of this occurrence alone ("This event") */
+  occurrenceKey: string;
+  /** part of a repeating event (the OS says so, or the window holds several occurrences of it) */
+  recurring: boolean;
   calendarKey: string;
   calendarName: string;
   color: string;
@@ -117,6 +125,16 @@ export interface DeviceEvent {
   isMine: boolean;
   readOnlyCalendar: boolean;
   location: string | null;
+}
+
+/** `DeviceEvent` + the `hidden_items` key that was written, for the Undo toast. */
+export type DeviceHidden = DeviceEvent & { key: string };
+
+/** One row of Hidden events for the phone: a hidden key and the first loaded occurrence it covers. */
+export interface DeviceHiddenItem {
+  key: string;
+  scope: HideScope;
+  event: DeviceEvent;
 }
 
 /* ---------- publishing our events to a phone calendar ---------- */
@@ -214,6 +232,8 @@ export interface DeviceState {
   events: DeviceEvent[];
   /** phone events in the window the user removed (for Hidden events) */
   hidden: DeviceEvent[];
+  /** the same, one row per hidden key (a removed series is one row, not one per occurrence) */
+  hiddenItems: DeviceHiddenItem[];
   /** per event id: where it is published, and how that stands */
   targets: Record<string, TargetView[]>;
   loading: boolean;
@@ -229,6 +249,7 @@ export const EMPTY_DEVICE_STATE: DeviceState = {
   duplicateAccounts: [],
   events: [],
   hidden: [],
+  hiddenItems: [],
   targets: {},
   loading: false,
 };

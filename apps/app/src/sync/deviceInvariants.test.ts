@@ -127,7 +127,7 @@ describe('privacy invariant: phone events never reach Supabase', () => {
     calls.filter((c) => c.table === 'hidden_items' && c.op === 'upsert').forEach((c) => {
       const p = c.payload as { source: string; external_key: string };
       expect(p.source).toBe('device');
-      expect(p.external_key).toMatch(/^[0-9a-f]{40}$/);
+      expect(p.external_key).toMatch(/^[0-9a-f]{40}(@\d{4}-\d{2}-\d{2})?$/);
     });
   });
 

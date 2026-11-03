@@ -5,7 +5,9 @@
  */
 import { addDays, dnum, hexToOklab, key as dayKey, type ProtoEvent } from '@calendar/core';
 
-import { calendarKey, digest, hiddenKey, itemId } from './deviceHash';
+import type { HideScope } from '@/lib/hideScope';
+
+import { calendarKey, digest, followingKey, hiddenKey, itemId, occurrenceKey, parseFollowingKey } from './deviceHash';
 import type {
   DeviceCalendarFlags,
   DeviceCalendarInfo,
@@ -166,6 +168,8 @@ export function mapEvent(raw: RawEvent, cal: DeviceCalendarInfo, platform: Devic
   return {
     id: itemId(cal.id, raw.id, s.toISOString()),
     hiddenKey: hiddenKey(cal.id, raw.id),
+    occurrenceKey: occurrenceKey(cal.id, raw.id, s.toISOString()),
+    recurring: !!raw.recurring,
     calendarKey: cal.key,
     calendarName: cal.name,
     color: cal.color,
@@ -181,6 +185,37 @@ export function mapEvent(raw: RawEvent, cal: DeviceCalendarInfo, platform: Devic
     location: raw.location ? String(raw.location) : null,
   };
 }
+
+/**
+ * The `hidden_items` key that removes `ev` with `scope`. A one-off event has one occurrence, so every
+ * scope is the whole-event key there.
+ */
+export function hideKeyFor(ev: Pick<DeviceEvent, 'hiddenKey' | 'occurrenceKey' | 'day' | 'recurring'>, scope: HideScope): string {
+  if (!ev.recurring || scope === 'all') return ev.hiddenKey;
+  return scope === 'this' ? ev.occurrenceKey : followingKey(ev.hiddenKey, ev.day);
+}
+
+/**
+ * Which of the hidden `keys` hides an event (null: none). Checks the whole-event key, then the
+ * occurrence key, then the earliest "this and following" cutoff at or before the event's day.
+ */
+export function hiddenMatcher(keys: ReadonlySet<string>): (ev: Pick<DeviceEvent, 'hiddenKey' | 'occurrenceKey' | 'day'>) => string | null {
+  const cutoffs = new Map<string, string>(); // series key -> earliest hidden day
+  keys.forEach((k) => {
+    const f = parseFollowingKey(k);
+    if (f && (!cutoffs.has(f.series) || f.day < cutoffs.get(f.series)!)) cutoffs.set(f.series, f.day);
+  });
+  return (ev) => {
+    if (keys.has(ev.hiddenKey)) return ev.hiddenKey;
+    if (keys.has(ev.occurrenceKey)) return ev.occurrenceKey;
+    const from = cutoffs.get(ev.hiddenKey);
+    return from !== undefined && ev.day >= from ? followingKey(ev.hiddenKey, from) : null;
+  };
+}
+
+/** The scope a hidden key was written with, as seen from one event it covers. */
+export const scopeOfKey = (ev: Pick<DeviceEvent, 'hiddenKey' | 'occurrenceKey'>, key: string): HideScope =>
+  key === ev.hiddenKey ? 'all' : key === ev.occurrenceKey ? 'this' : 'following';
 
 /** The category name a phone event carries in the calendar view; the view resolves its colour through `deviceCats`. */
 export const deviceCatName = (calendarKeyValue: string): string => 'phone:' + calendarKeyValue;

@@ -110,6 +110,83 @@ describe('hiding someone else’s event', () => {
     expect(bridge.getState().events).toHaveLength(1);
   });
 
+  describe('a repeating event', () => {
+    // Three weekly occurrences share one OS event id (the FakeApi map is keyed by something unique).
+    const weekly = () => {
+      const api = new FakeApi();
+      api.calendars = [cal('c1', 'Calendar')];
+      [4, 11, 18].forEach((d, i) => api.events.set('w' + i, raw('weekly', 'c1', 'Standup', new Date(2026, 10, d, 9), new Date(2026, 10, d, 10), { organizerIsCurrentUser: false })));
+      api.events.set('one', raw('single', 'c1', 'Dentist', new Date(2026, 10, 5, 9), new Date(2026, 10, 5, 10), { organizerIsCurrentUser: false }));
+      return api;
+    };
+    const days = (bridge: DeviceBridge) => bridge.getState().events.map((e) => e.day.slice(5) + ' ' + e.title);
+
+    it('marks the occurrences of a series as repeating, and one-off events as not', async () => {
+      const { bridge } = await setup({ api: weekly() });
+      expect(bridge.getState().events.map((e) => [e.title, e.recurring])).toEqual([['Standup', true], ['Dentist', false], ['Standup', true], ['Standup', true]]);
+    });
+
+    it('this event hides one occurrence, with its own key', async () => {
+      const { bridge, remote } = await setup({ api: weekly() });
+      const second = bridge.getState().events.filter((e) => e.title === 'Standup')[1];
+      const h = bridge.hideEvent(second.id, 'this')!;
+      await bridge.idle();
+      expect(h.key).toBe(second.occurrenceKey);
+      expect(h.key).not.toBe(second.hiddenKey);
+      expect(days(bridge)).toEqual(['11-04 Standup', '11-05 Dentist', '11-18 Standup']);
+      expect(remote.hidden).toEqual([second.occurrenceKey]);
+      expect(remote.hidden[0]).toMatch(/^[0-9a-f]{40}$/);
+      expect(bridge.getState().hiddenItems.map((i) => [i.scope, i.event.day])).toEqual([['this', '2026-11-11']]);
+      bridge.unhideEvent(h.key);
+      await bridge.idle();
+      expect(days(bridge)).toHaveLength(4);
+    });
+
+    it('this and following hides that occurrence and every later one, only', async () => {
+      const { bridge, remote } = await setup({ api: weekly() });
+      const second = bridge.getState().events.filter((e) => e.title === 'Standup')[1];
+      const h = bridge.hideEvent(second.id, 'following')!;
+      await bridge.idle();
+      expect(h.key).toBe(second.hiddenKey + '@2026-11-11');
+      expect(days(bridge)).toEqual(['11-04 Standup', '11-05 Dentist']);
+      expect(remote.hidden).toEqual([h.key]);
+      // one row for the whole run, not one per occurrence
+      expect(bridge.getState().hiddenItems.map((i) => [i.scope, i.key])).toEqual([['following', h.key]]);
+      expect(bridge.getState().hidden).toHaveLength(2);
+      bridge.unhideEvent(h.key);
+      await bridge.idle();
+      expect(days(bridge)).toHaveLength(4);
+    });
+
+    it('all events hides every occurrence as one row, and leaves other events alone', async () => {
+      const { bridge } = await setup({ api: weekly() });
+      const first = bridge.getState().events.find((e) => e.title === 'Standup')!;
+      const h = bridge.hideEvent(first.id, 'all')!;
+      await bridge.idle();
+      expect(h.key).toBe(first.hiddenKey);
+      expect(days(bridge)).toEqual(['11-05 Dentist']);
+      expect(bridge.getState().hiddenItems.map((i) => i.scope)).toEqual(['all']);
+    });
+
+    it('a one-off event has one key whatever the scope, and Remove defaults to the whole event', async () => {
+      const { bridge } = await setup({ api: weekly() });
+      const one = bridge.getState().events.find((e) => e.title === 'Dentist')!;
+      expect(bridge.hideEvent(one.id, 'following')!.key).toBe(one.hiddenKey);
+      const a = bridge.getState().events.find((e) => e.title === 'Standup')!;
+      expect(bridge.hideEvent(a.id)!.key).toBe(a.hiddenKey);
+    });
+
+    it('keeps the choices made on another device (keys from the server)', async () => {
+      const api = weekly();
+      const remote = new FakeRemote();
+      const probe = await setup({ api });
+      const second = probe.bridge.getState().events.filter((e) => e.title === 'Standup')[1];
+      remote.hidden = [second.hiddenKey + '@2026-11-11'];
+      const { bridge } = await setup({ api, remote });
+      expect(days(bridge)).toEqual(['11-04 Standup', '11-05 Dentist']);
+    });
+  });
+
   it('keeps hidden keys from the server, and reports ones made offline later', async () => {
     const api = new FakeApi();
     api.calendars = [cal('c1', 'Calendar')];

@@ -14,12 +14,13 @@ import { useEffect, useMemo } from 'react';
 import { addDays, type CatMap, type CalendarData, type ProtoEvent } from '@calendar/core';
 
 import { deviceCats, toProtoEvent } from '@/sync/deviceMap';
-import type { DeviceCalendarFlags, DeviceEvent, PermissionState, TargetView } from '@/sync/deviceTypes';
+import type { HideScope } from '@/lib/hideScope';
+import type { DeviceCalendarFlags, DeviceEvent, DeviceHidden, DeviceHiddenItem, PermissionState, TargetView } from '@/sync/deviceTypes';
 import { getDeviceBridge, useDeviceBridgeHost, useDeviceState } from './host';
 
 export { deviceSupported, useDeviceBridgeHost } from './host';
 export { isItemId as isDeviceEventId } from '@/sync/deviceHash';
-export type { DeviceEvent, DeviceCalendarFlags, PermissionState, TargetView } from '@/sync/deviceTypes';
+export type { DeviceEvent, DeviceCalendarFlags, DeviceHidden, DeviceHiddenItem, PermissionState, TargetView } from '@/sync/deviceTypes';
 export type { TargetStatus } from '@calendar/db';
 
 /** Route of the phone-calendar flow (CA 4): priming, permission, Choose calendars. */
@@ -144,14 +145,19 @@ export function useHiddenDeviceEvents(): DeviceEvent[] {
   return useDeviceState().hidden;
 }
 
-/** Show a removed phone event again (`DeviceEvent.hiddenKey`). */
+/** The same, one row per hidden key (a removed series is one row). */
+export function useHiddenDeviceItems(): DeviceHiddenItem[] {
+  return useDeviceState().hiddenItems;
+}
+
+/** Show a removed phone event again (`DeviceHidden.key` / `DeviceHiddenItem.key`). */
 export function unhideDeviceEvent(hiddenKey: string): void {
   getDeviceBridge()?.unhideEvent(hiddenKey);
 }
 
-/** Remove (hide) a phone event in this app only. Returns it for the Undo toast; null when it is gone. */
-export function hideDeviceEvent(id: string): DeviceEvent | null {
-  return getDeviceBridge()?.hideEvent(id) ?? null;
+/** Remove (hide) a phone event in this app only, with `scope` for a repeating one. Returns it and the key written (for Undo); null when it is gone. */
+export function hideDeviceEvent(id: string, scope: HideScope = 'all'): DeviceHidden | null {
+  return getDeviceBridge()?.hideEvent(id, scope) ?? null;
 }
 
 /** One phone event by its calendar-view id (`dev_…`), hidden ones included. */

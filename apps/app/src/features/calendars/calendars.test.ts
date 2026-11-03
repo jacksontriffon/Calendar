@@ -1,5 +1,5 @@
 import { NATIVE_RETURN_URL, parseConnectReturn, returnUrlFor, runConnect, type ConnectDeps } from './connect';
-import { filterHidden, hiddenKey, hiddenKeySet } from './hidden';
+import { filterHidden, googleHideKey, googleSeriesId, hiddenKey, hiddenKeySet, isRepeating, parseGoogleHideKey } from './hidden';
 import { normalizeHex, paintFromHex } from './colors';
 import { deriveOverlay } from './overlayModel';
 import { buildAccountViews, publishableCalendars, syncedLabel } from './view';
@@ -8,9 +8,9 @@ import { CalendarsStore, applyChange, type CalendarsClient } from './store';
 describe('hidden events', () => {
   const meta = { e1: { calendarId: 'c', googleEventId: 'g1', organizerEmail: null }, e2: { calendarId: 'c', googleEventId: 'g2', organizerEmail: null } };
   const events = [
-    { id: 'e1', source: 'google' as const },
-    { id: 'e2', source: 'google' as const },
-    { id: 'e3', source: 'app' as const },
+    { id: 'e1', source: 'google' as const, day: '2026-11-03' },
+    { id: 'e2', source: 'google' as const, day: '2026-11-03' },
+    { id: 'e3', source: 'app' as const, day: '2026-11-03' },
   ];
 
   it('filters hidden Google events out, and only those', () => {
@@ -23,6 +23,60 @@ describe('hidden events', () => {
     expect(filterHidden(events, meta, new Set())).toBe(events);
     // a device key with the same text is a different source
     expect(filterHidden(events, meta, new Set([hiddenKey('device', 'g1')]))).toBe(events);
+  });
+});
+
+describe('hiding a repeating Google event', () => {
+  const ids = ['abc_20261103T170000Z', 'abc_20261110T170000Z', 'abc_20261117T170000Z'];
+  const days = ['2026-11-03', '2026-11-10', '2026-11-17'];
+  const meta: Record<string, { calendarId: string; googleEventId: string; organizerEmail: null }> = {};
+  const events = ids.map((g, i) => {
+    meta['r' + i] = { calendarId: 'c', googleEventId: g, organizerEmail: null };
+    return { id: 'r' + i, source: 'google' as const, day: days[i] };
+  });
+  // another series, and a one-off event
+  meta.o1 = { calendarId: 'c', googleEventId: 'other_20261110T170000Z', organizerEmail: null };
+  meta.s1 = { calendarId: 'c', googleEventId: 'single1', organizerEmail: null };
+  const all = [...events, { id: 'o1', source: 'google' as const, day: '2026-11-10' }, { id: 's1', source: 'google' as const, day: '2026-11-10' }];
+  const shown = (key: string) => filterHidden(all, meta, hiddenKeySet([{ source: 'google', external_key: key }])).map((e) => e.id);
+
+  it('tells repeating instances from one-off events', () => {
+    expect(googleSeriesId('abc_20261103T170000Z')).toBe('abc');
+    expect(googleSeriesId('abc_20261103')).toBe('abc'); // all-day instance
+    expect(googleSeriesId('single1')).toBeNull();
+    expect(isRepeating('abc_20261103T170000Z')).toBe(true);
+    expect(isRepeating(null)).toBe(false);
+  });
+
+  it('builds a key per scope, and a one-off event only ever has its own id', () => {
+    expect(googleHideKey('this', ids[1], days[1])).toBe(ids[1]);
+    expect(googleHideKey('all', ids[1], days[1])).toBe('series:abc');
+    expect(googleHideKey('following', ids[1], days[1])).toBe('from:abc:2026-11-10');
+    expect(googleHideKey('all', 'single1', days[0])).toBe('single1');
+    expect(googleHideKey('following', 'single1', days[0])).toBe('single1');
+    expect(parseGoogleHideKey('series:abc')).toEqual({ scope: 'all', id: 'abc' });
+    expect(parseGoogleHideKey('from:abc:2026-11-10')).toEqual({ scope: 'following', id: 'abc', from: '2026-11-10' });
+    expect(parseGoogleHideKey(ids[0])).toEqual({ scope: 'this', id: ids[0] });
+  });
+
+  it('this event hides one occurrence', () => {
+    expect(shown(ids[1])).toEqual(['r0', 'r2', 'o1', 's1']);
+  });
+
+  it('this and following hides that day and later, not earlier ones, not other events', () => {
+    expect(shown('from:abc:2026-11-10')).toEqual(['r0', 'o1', 's1']);
+  });
+
+  it('all events hides every occurrence of the series, not other events', () => {
+    expect(shown('series:abc')).toEqual(['o1', 's1']);
+  });
+
+  it('the earliest of several cutoffs wins', () => {
+    const set = hiddenKeySet([
+      { source: 'google', external_key: 'from:abc:2026-11-17' },
+      { source: 'google', external_key: 'from:abc:2026-11-10' },
+    ]);
+    expect(filterHidden(all, meta, set).map((e) => e.id)).toEqual(['r0', 'o1', 's1']);
   });
 });
 

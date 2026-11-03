@@ -14,7 +14,7 @@ import { createSnapshotWriter } from './writer';
 
 const cal = { key: 'dc_work', name: 'Work', color: '#3366cc', account: 'iCloud', showInApp: true, canPublish: false, readOnly: true } as unknown as DeviceCalendarInfo;
 const dev = (over: Partial<DeviceEvent> = {}): DeviceEvent => ({
-  id: 'dev_1', hiddenKey: 'k1', calendarKey: 'dc_work', calendarName: 'Work', color: '#3366cc', account: 'iCloud',
+  id: 'dev_1', hiddenKey: 'k1', occurrenceKey: 'o1', recurring: false, calendarKey: 'dc_work', calendarName: 'Work', color: '#3366cc', account: 'iCloud',
   title: 'Dentist', day: '2026-10-30', start: 840, end: 900, allDay: false, days: 1, isMine: true, readOnlyCalendar: true, location: null, ...over,
 });
 const state = (events: DeviceEvent[], available = true) => ({ ...EMPTY_DEVICE_STATE, available, events, calendars: [cal] });

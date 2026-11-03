@@ -42,6 +42,7 @@ const toRawEvent = (e: Calendar.Event): RawEvent => ({
   startDate: e.startDate,
   endDate: e.endDate,
   allDay: !!e.allDay,
+  recurring: !!e.recurrenceRule,
   location: e.location ?? null,
   organizerIsCurrentUser: e.organizer ? e.organizer.isCurrentUser : undefined,
   organizerEmail: e.organizerEmail ?? null,

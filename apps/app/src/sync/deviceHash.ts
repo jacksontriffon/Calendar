@@ -91,6 +91,28 @@ export const digest = (scope: string, ...parts: string[]): string =>
  */
 export const hiddenKey = (calendarId: string, eventId: string): string => digest('hidden', calendarId, eventId).slice(0, 40);
 
+/**
+ * `hidden_items.external_key` of ONE occurrence of a repeating event ("Remove this event"). Another
+ * digest, so it can never equal a series key.
+ */
+export const occurrenceKey = (calendarId: string, eventId: string, startIso: string): string =>
+  digest('hidden-occurrence', calendarId, eventId, startIso).slice(0, 40);
+
+/**
+ * `hidden_items.external_key` of "this and following events": the series key plus the first hidden day
+ * (`YYYY-MM-DD`). A cutoff can't be a digest (it has to be compared), so the server learns that
+ * something was hidden from that day on, never which event, calendar or title.
+ */
+export const followingKey = (seriesKey: string, day: string): string => seriesKey + '@' + day;
+
+const FOLLOWING_RE = /^([0-9a-f]{40})@(\d{4}-\d{2}-\d{2})$/;
+
+/** `{ series, day }` of a `followingKey`, or null for any other key. */
+export function parseFollowingKey(key: string): { series: string; day: string } | null {
+  const m = FOLLOWING_RE.exec(key);
+  return m ? { series: m[1], day: m[2] } : null;
+}
+
 /** Id of one occurrence in the calendar view (`dev_…`). Stable across reads, safe in a route. */
 export const itemId = (calendarId: string, eventId: string, startIso: string): string =>
   'dev_' + digest('item', calendarId, eventId, startIso).slice(0, 20);

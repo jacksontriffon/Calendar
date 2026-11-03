@@ -3,12 +3,15 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { DOWL, dnum, hm, text, white, type ProtoEvent } from '@calendar/core';
 import type { GoogleCalendar, HiddenItem } from '@calendar/db';
 
+import type { HideScope } from '@/lib/hideScope';
+
 import { AppText } from '@/components/AppText';
 import { Icon } from '@/components/Icon';
 import { showToast } from '@/components/toast';
 import { useCalendarData } from '@/store';
-import { unhideDeviceEvent, useHiddenDeviceEvents, type DeviceEvent } from './device';
+import { unhideDeviceEvent, useHiddenDeviceItems, type DeviceHiddenItem } from './device';
 import { Spinner } from '../visibility/glyphs';
+import { googleSeriesId, parseGoogleHideKey } from './hidden';
 import { getCalendarsStore, useCalendarsSelector, useGoogleAccounts, useHiddenItems } from './data';
 import { FALLBACK_CALENDAR_COLOR } from './colors';
 import { calendarColor } from './view';
@@ -16,10 +19,23 @@ import { Card, ColorBar, Divider, Label, Screen } from './ui';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
+const dayLabel = (day: string): string => {
+  const d = dnum(day);
+  return DOWL[d.getDay()].slice(0, 3) + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()];
+};
+
+/** The "when" line of a hidden row: the occurrence, or how much of a repeating event is hidden. */
+export function hiddenWhen(scope: HideScope, day: string, time: string, from?: string): string {
+  if (scope === 'all') return 'All events';
+  if (scope === 'following') return 'From ' + dayLabel(from ?? day) + ' on';
+  return dayLabel(day) + ' · ' + time;
+}
+
 export interface HiddenRow {
   /** a `hidden_items` row, or a phone event the bridge hid (`device`) */
   item: HiddenItem;
-  device?: DeviceEvent;
+  /** the phone's `hidden_items` key, when `item` stands for a phone event */
+  deviceKey?: string;
   title: string;
   when: string;
   from: string;
@@ -34,9 +50,14 @@ export function hiddenRows(
   calendars: readonly GoogleCalendar[],
 ): HiddenRow[] {
   const byGoogleId = new Map<string, ProtoEvent>();
+  const bySeries = new Map<string, ProtoEvent>(); // earliest loaded instance of each repeating series
   events.forEach((e) => {
     const g = meta[e.id]?.googleEventId;
-    if (g) byGoogleId.set(g, e);
+    if (!g) return;
+    byGoogleId.set(g, e);
+    const series = googleSeriesId(g);
+    const first = series ? bySeries.get(series) : undefined;
+    if (series && (!first || e.day < first.day)) bySeries.set(series, e);
   });
   const seen = new Set<string>();
   return items
@@ -45,16 +66,15 @@ export function hiddenRows(
     .slice()
     .sort((a, b) => b.hidden_at.localeCompare(a.hidden_at))
     .map((item) => {
-      const ev = item.source === 'google' ? byGoogleId.get(item.external_key) : undefined;
+      const key = parseGoogleHideKey(item.external_key);
+      const ev = key.scope === 'this' ? byGoogleId.get(key.id) : bySeries.get(key.id);
       if (!ev) {
-        return { item, title: item.source === 'device' ? 'Phone event' : 'Event from Google', when: 'Hidden ' + item.hidden_at.slice(0, 10), from: '', color: FALLBACK_CALENDAR_COLOR };
+        const when = key.scope === 'all' ? 'All events' : key.scope === 'following' && key.from ? 'From ' + dayLabel(key.from) + ' on' : 'Hidden ' + item.hidden_at.slice(0, 10);
+        return { item, title: 'Event from Google', when, from: '', color: FALLBACK_CALENDAR_COLOR };
       }
       const m = meta[ev.id];
       const cal = m?.calendarId ? calendars.find((c) => c.id === m.calendarId) : undefined;
-      const d = dnum(ev.day);
-      const when = ev.allDay
-        ? DOWL[d.getDay()].slice(0, 3) + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()] + ' · All day'
-        : DOWL[d.getDay()].slice(0, 3) + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()] + ' · ' + hm(ev.start) + '–' + hm(ev.end);
+      const when = hiddenWhen(key.scope, ev.day, ev.allDay ? 'All day' : hm(ev.start) + '–' + hm(ev.end), key.from);
       const from = [m?.organizerEmail, cal?.name].filter(Boolean).join(' · ');
       return { item, title: ev.title, when, from, color: cal ? calendarColor(cal) : FALLBACK_CALENDAR_COLOR };
     });
@@ -67,26 +87,23 @@ export function HiddenEventsScreen() {
   const meta = useCalendarsSelector((s) => s.meta);
   const load = useCalendarsSelector((s) => s.load);
   const { calendars } = useGoogleAccounts();
-  const phone = useHiddenDeviceEvents();
+  const phone = useHiddenDeviceItems();
   const rows = useMemo(() => {
     const google = hiddenRows(items, data.events, meta, calendars);
-    const seenKeys = new Set<string>();
-    const device: HiddenRow[] = phone
-      .filter((e) => (seenKeys.has(e.hiddenKey) ? false : (seenKeys.add(e.hiddenKey), true)))
-      .map((e) => {
-        const d = dnum(e.day);
-        const when = DOWL[d.getDay()].slice(0, 3) + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()] + ' \u00b7 ' + (e.allDay ? 'All day' : hm(e.start) + '\u2013' + hm(e.end));
-        return {
-          item: { id: 'device:' + e.hiddenKey, user_id: '', source: 'device', external_key: e.hiddenKey, hidden_at: '' },
-          device: e, title: e.title, when, from: e.calendarName + (e.account ? ' \u00b7 ' + e.account : ''), color: e.color,
-        };
-      });
+    const device: HiddenRow[] = phone.map(({ key, scope, event: e }: DeviceHiddenItem) => ({
+      item: { id: 'device:' + key, user_id: '', source: 'device', external_key: key, hidden_at: '' },
+      deviceKey: key,
+      title: e.title,
+      when: hiddenWhen(scope, e.day, e.allDay ? 'All day' : hm(e.start) + '\u2013' + hm(e.end), scope === 'following' ? e.day : undefined),
+      from: e.calendarName + (e.account ? ' \u00b7 ' + e.account : ''),
+      color: e.color,
+    }));
     return [...google, ...device];
   }, [items, data.events, meta, calendars, phone]);
 
-  const unhide = (item: HiddenItem, device?: DeviceEvent) => {
-    if (device) {
-      unhideDeviceEvent(device.hiddenKey);
+  const unhide = (item: HiddenItem, deviceKey?: string) => {
+    if (deviceKey) {
+      unhideDeviceEvent(deviceKey);
       showToast({ label: 'Back in your calendar' });
       return;
     }
@@ -124,7 +141,7 @@ export function HiddenEventsScreen() {
                       <AppText style={styles.sub} numberOfLines={1}>{r.when}</AppText>
                       {r.from ? <AppText style={[styles.sub, { color: text(0.38) }]} numberOfLines={1}>{r.from}</AppText> : null}
                     </View>
-                    <Pressable onPress={() => unhide(r.item, r.device)} accessibilityRole="button" accessibilityLabel={'Unhide ' + r.title} style={styles.unhide}>
+                    <Pressable onPress={() => unhide(r.item, r.deviceKey)} accessibilityRole="button" accessibilityLabel={'Unhide ' + r.title} style={styles.unhide}>
                       <AppText style={{ fontSize: 13 }}>Unhide</AppText>
                     </Pressable>
                   </View>

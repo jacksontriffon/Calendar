@@ -7,7 +7,8 @@
  *     published to which phone calendar, with a status. Every column is checked by `assertTargetWrite`
  *     before it is sent: ids are uuids / opaque keys / hashes, `status` and `error` come from fixed
  *     sets, so no title, time or note can ride along.
- *  2. `hidden_items` rows whose `external_key` is an opaque hash (`assertHiddenKey`).
+ *  2. `hidden_items` rows whose `external_key` is an opaque hash (`assertHiddenKey`), plus a bare day
+ *     for "this and following events".
  *  3. Reads of the user's connected Google calendars (names and account emails), to hide duplicates.
  *
  * `deviceInvariants.test.ts` fails if any other bridge file imports supabase, and runs the whole
@@ -39,9 +40,12 @@ export function assertTargetWrite(w: TargetWrite): TargetWrite {
   return w;
 }
 
-/** Throws unless `k` is an opaque hidden-item key (a hex digest). */
+/**
+ * Throws unless `k` is an opaque hidden-item key: a hex digest, optionally followed by `@YYYY-MM-DD`
+ * ("this and following events", see `followingKey`). The day is the only readable part.
+ */
 export function assertHiddenKey(k: string): string {
-  if (!/^[0-9a-f]{40}$/.test(k)) throw new Error('device bridge: hidden key must be an opaque digest');
+  if (!/^[0-9a-f]{40}(@\d{4}-\d{2}-\d{2})?$/.test(k)) throw new Error('device bridge: hidden key must be an opaque digest');
   return k;
 }
 

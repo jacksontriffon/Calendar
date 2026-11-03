@@ -7,9 +7,11 @@ import * as WebBrowser from 'expo-web-browser';
 import { Platform } from 'react-native';
 
 import { showToast } from '@/components/toast';
+import { hiddenToastLabel, type HideScope } from '@/lib/hideScope';
 import { supabase } from '@/lib/supabase';
 import { runConnect, type ConnectDeps, type ConnectOutcome } from './connect';
 import { getCalendarsStore } from './data';
+import { googleHideKey } from './hidden';
 
 export function realConnectDeps(): ConnectDeps {
   const web = Platform.OS === 'web';
@@ -33,28 +35,29 @@ export async function connectGoogle(opts: { accountId?: string; loginHint?: stri
 
 /**
  * Remove someone else's event from every view (EV 05): insert the `hidden_items` row, with an Undo toast
- * that deletes it. Hiding is optimistic, so the event is gone from the views straight away.
+ * that deletes it. Hiding is optimistic, so the event is gone from the views straight away. `scope` says
+ * how much of a repeating event goes (this one, this and the following ones, all of them).
  */
-export async function removeSomeoneElsesEvent(ev: Pick<ProtoEvent, 'id' | 'title'>): Promise<boolean> {
+export async function removeSomeoneElsesEvent(ev: Pick<ProtoEvent, 'id' | 'title' | 'day'>, scope: HideScope = 'this'): Promise<boolean> {
   const store = getCalendarsStore();
-  let key = store.getState().meta[ev.id]?.googleEventId ?? null;
-  if (!key) {
+  let googleId = store.getState().meta[ev.id]?.googleEventId ?? null;
+  if (!googleId) {
     // not loaded yet (or an event that arrived a moment ago): ask the server
     try {
       const { data } = await supabase.from('events').select('google_event_id').eq('id', ev.id).maybeSingle();
-      key = data?.google_event_id ?? null;
+      googleId = data?.google_event_id ?? null;
     } catch {
-      key = null;
+      googleId = null;
     }
   }
-  if (!key) {
+  if (!googleId) {
     showToast({ label: 'Couldn’t hide this event. Try again in a moment.' });
     return false;
   }
   try {
-    const row = await store.hide('google', key);
+    const row = await store.hide('google', googleHideKey(scope, googleId, ev.day));
     showToast({
-      label: 'Hidden from your calendar',
+      label: hiddenToastLabel(ev.title, scope),
       action: {
         label: 'Undo',
         run: () => {

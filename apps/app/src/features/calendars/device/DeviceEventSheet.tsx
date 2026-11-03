@@ -7,9 +7,11 @@ import { AppText } from '@/components/AppText';
 import { Icon } from '@/components/Icon';
 import { Sheet, useSheetClose } from '@/components/Sheet';
 import { showToast } from '@/components/toast';
+import { hiddenToastLabel, type HideScope } from '@/lib/hideScope';
 import { getStore } from '@/store';
 import { hueOfColor, toProtoEvent } from '@/sync/deviceMap';
 import { copyToMyCalendar } from '../../event-sheet/EventSheet';
+import { RemoveScopeChooser } from '../RemoveScope';
 import { hideDeviceEvent, unhideDeviceEvent, useDeviceEvent } from './index';
 
 /** A phone-calendar event opened from the calendar view (`/event/dev_…`): read-only, with Copy to my calendar and a quiet Remove. */
@@ -50,13 +52,13 @@ function Body({ id }: { id: string }) {
     copyToMyCalendar({ ...toProtoEvent(ev), cat: cats[0] ?? null });
     close();
   };
-  const remove = () => {
-    const hidden = hideDeviceEvent(ev.id);
+  const remove = (scope: HideScope) => {
+    const hidden = hideDeviceEvent(ev.id, scope);
     close();
     if (!hidden) return;
     showToast({
-      label: 'Removed · ' + hidden.title,
-      action: { label: 'Undo', run: () => unhideDeviceEvent(hidden.hiddenKey) },
+      label: hiddenToastLabel(hidden.title, scope),
+      action: { label: 'Undo', run: () => unhideDeviceEvent(hidden.key) },
     });
   };
   return (
@@ -81,9 +83,15 @@ function Body({ id }: { id: string }) {
         <Icon name="copy" size={14} color={P.ink} />
         <AppText style={{ fontSize: 14, fontWeight: '600', color: P.ink }}>Copy to my calendar</AppText>
       </Pressable>
-      <Pressable onPress={remove} accessibilityRole="button" style={{ alignSelf: 'center', padding: 14 }}>
-        <AppText style={{ fontSize: 12.5, color: text(0.45) }}>Remove</AppText>
-      </Pressable>
+      <RemoveScopeChooser
+        repeating={ev.recurring}
+        onRemove={remove}
+        renderTrigger={(press) => (
+          <Pressable onPress={press} accessibilityRole="button" accessibilityLabel="Remove" style={{ alignSelf: 'center', padding: 14 }}>
+            <AppText style={{ fontSize: 12.5, color: text(0.45) }}>Remove</AppText>
+          </Pressable>
+        )}
+      />
       <AppText style={styles.note}>Phone events stay on this phone. Remove hides it here only; Undo or Hidden events brings it back.</AppText>
     </View>
   );
