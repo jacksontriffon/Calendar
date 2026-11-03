@@ -5,14 +5,13 @@
 //  - no coloured text: ink is the system's white or black at fixed opacities;
 //    hues appear only on event bars and goal rings, and both are
 //    `widgetAccentable()` so tinted and clear modes flatten them to the tint;
-//  - Large and Medium (WG 1g to 1i, 2i): no check buttons (a done event is struck
-//    through and dimmed), no "+" and no "n left" counts; the message field along the
-//    bottom is the one way to add, and opens the composer;
+//  - no check buttons anywhere: a done event is struck through and dimmed. Large and
+//    Medium (WG 1g to 1i, 2i) also have no "+" and no "n left" counts; the message field
+//    along the bottom is the one way to add, and opens the composer;
 //  - a widget cannot swipe, so the day carousel and the goal pages move on a tap:
 //    Button(intent:) runs an App Intent (CarouselIntents.swift) that stores the page
 //    and reloads the timeline, with no animation;
-//  - iPad keeps its layout, including the check (the one Button(intent:) that
-//    marks done); Link for every tap that opens the app.
+//  - iPad keeps its layout minus the check; Link for every tap that opens the app.
 //
 // NOTE: this file has not been compiled (no Xcode in the build environment).
 
@@ -169,34 +168,6 @@ struct HeaderView: View {
             }
         }
         .frame(height: plus + 4)
-    }
-}
-
-/// The check, iPad only now: an empty ring runs the intent (no app launch); a done row shows a filled check.
-struct CheckView: View {
-    let row: Row
-    let pal: Pal
-
-    var body: some View {
-        if row.check {
-            if row.done {
-                Image(systemName: "checkmark")
-                    .font(.system(size: 9, weight: .heavy))
-                    .foregroundStyle(pal.bg)
-                    .frame(width: 20, height: 20)
-                    .background(Circle().fill(pal.ink()))
-                    .frame(width: 32, height: 28)
-            } else {
-                Button(intent: MarkDoneIntent(eventID: row.id)) {
-                    Circle()
-                        .strokeBorder(pal.ink(pal.p.checkRing), lineWidth: 1.5)
-                        .frame(width: 20, height: 20)
-                        .frame(width: 32, height: 28)
-                        .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-            }
-        }
     }
 }
 
@@ -1005,13 +976,12 @@ struct DayColumnView: View {
                         HStack(spacing: 8) {
                             RoundedRectangle(cornerRadius: 2).fill(pal.hue(r.hue)).frame(width: 3, height: 30).widgetAccentable()
                             VStack(alignment: .leading, spacing: 0) {
-                                Text(r.title).font(.system(size: 13.5, weight: .semibold)).foregroundStyle(pal.ink()).lineLimit(1)
+                                Text(r.title).font(.system(size: 13.5, weight: .semibold)).strikethrough(r.done).foregroundStyle(pal.ink()).lineLimit(1)
                                 Text(r.range).font(.system(size: 10.5)).foregroundStyle(pal.secondary).lineLimit(1)
                             }
                             Spacer(minLength: 0)
                         }
                     }
-                    CheckView(row: r, pal: pal)
                 }
                 .frame(height: 36)
                 .opacity(r.done ? 0.5 : 1)

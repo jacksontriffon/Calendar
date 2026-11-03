@@ -15,7 +15,7 @@ import { composeUrl } from '../src/features/widget/links';
 import type { GoalModel, Item, RowModel, WidgetModel } from '../src/features/widget/model';
 import { ink } from '../src/features/widget/tokens';
 import type { Palette, WidgetTokens } from '../src/features/widget/types';
-import { calendarSvg, checkSvg, cloudOffSvg, globeSvg, lockSvg, plusSvg, ringSvg } from './svg';
+import { calendarSvg, cloudOffSvg, globeSvg, lockSvg, plusSvg, ringSvg } from './svg';
 
 /** The launcher sets the real radius on Android 12+; 28dp is the spec's value and the fallback. */
 export const SYSTEM_RADIUS_DP = 28;
@@ -73,26 +73,11 @@ function Header({ m, c, plusSize = 30 }: { m: WidgetModel; c: Ctx; plusSize?: nu
 
 /* ---------- rows ---------- */
 
-function Check({ row, c }: { row: RowModel; c: Ctx }) {
-  // Rendered only for rows that have a check (the library needs every component to return an element, never null).
-  // A 40dp tap target around the 20dp circle. A done row has no action left.
-  const circle = row.done ? (
-    <FlexWidget style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: ink(c.p, 1), alignItems: 'center', justifyContent: 'center' }}>
-      <SvgWidget svg={checkSvg(c.p.bg, 11)} style={{ width: 11, height: 11 }} />
-    </FlexWidget>
-  ) : (
-    <FlexWidget style={{ width: 20, height: 20, borderRadius: 10, borderWidth: 1.5, borderColor: ink(c.p, c.p.checkRing) }} />
-  );
-  return (
-    <FlexWidget
-      style={{ width: 40, height: 25, alignItems: 'center', justifyContent: 'center' }}
-      {...(row.done ? {} : { clickAction: 'MARK_DONE', clickActionData: { id: row.id } })}
-      accessibilityLabel={row.done ? 'Done' : 'Mark done'}
-    >
-      {circle}
-    </FlexWidget>
-  );
-}
+/**
+ * A done title, struck through. The library's TextWidget has no strikethrough style, so each
+ * character gets a combining long stroke overlay (U+0336), which Android's text renderer draws through the glyph.
+ */
+const struck = (text: string): string => Array.from(text, (ch) => (ch === ' ' ? ch : `${ch}\u0336`)).join('');
 
 function EventRow({ row, c, h = 25 }: { row: RowModel; c: Ctx; h?: number }) {
   return (
@@ -105,7 +90,7 @@ function EventRow({ row, c, h = 25 }: { row: RowModel; c: Ctx; h?: number }) {
         <FlexWidget style={{ width: 52, paddingLeft: 8 }}>
           <T c={c} text={row.time} size={10.5} alpha={row.done ? c.p.secondary * 0.5 : c.p.secondary} />
         </FlexWidget>
-        <T c={c} text={row.title} size={13} weight="600" flex={1} alpha={row.done ? 0.5 : 1} />
+        <T c={c} text={row.done ? struck(row.title) : row.title} size={13} weight="600" flex={1} alpha={row.done ? 0.5 : 1} />
       {row.owner ? (
         <FlexWidget style={{ width: 16, height: 16, borderRadius: 8, backgroundColor: ink(c.p, c.p.button), alignItems: 'center', justifyContent: 'center', marginLeft: 4 }}>
           <TextWidget text={row.owner} style={{ fontSize: 8, fontWeight: '600', color: ink(c.p, 1) }} />
@@ -116,7 +101,6 @@ function EventRow({ row, c, h = 25 }: { row: RowModel; c: Ctx; h?: number }) {
       ) : null}
       {row.vis === 'public' ? <SvgWidget svg={globeSvg(c.p.ink, 11, c.p.tertiary)} style={{ width: 11, height: 11, marginLeft: 4 }} /> : null}
       </FlexWidget>
-      {row.check ? <Check row={row} c={c} /> : null}
     </FlexWidget>
   );
 }
@@ -154,8 +138,7 @@ function Card({ item, c }: { item: Extract<Item, { kind: 'card' }>; c: Ctx }) {
         <FlexWidget style={{ width: 3, height: 19, borderRadius: 2, backgroundColor: swatch(c, row.hue), marginRight: 6 }} />
         <T c={c} text={row.time} size={10.5} alpha={c.p.secondary} width={48} />
         <T c={c} text={row.title} size={13} weight="600" flex={1} />
-        {row.check ? <Check row={row} c={c} /> : null}
-      </FlexWidget>
+        </FlexWidget>
       <FlexWidget style={{ width: 'match_parent', flexDirection: 'row', alignItems: 'center', paddingRight: 8 }}>
         <Progress value={item.progress} c={c} />
         <FlexWidget style={{ width: 8 }} />

@@ -55,15 +55,24 @@ describe('Android widget layouts', () => {
     }
   });
 
-  it('4x4: row links, MARK_DONE on goal sessions, goal links, the one "+", and the day link', () => {
+  it('4x4: row links, goal links, the one "+", the day link, and no check buttons', () => {
     const { actions, texts } = collect(tree('large'));
     const uris = actions.filter((a) => a.action === 'OPEN_URI').map((a) => a.data.uri);
     expect(uris).toContain('aicalendar://event/e3');
     expect(uris).toContain('aicalendar://goal/g2');
     expect(uris).toContain('aicalendar://day/2026-10-30');
     expect(uris.filter((u) => u === 'aicalendar://compose')).toHaveLength(1);
-    expect(actions.filter((a) => a.action === 'MARK_DONE').map((a) => a.data.id).sort()).toEqual(['e4', 'e7', 'e8']);
+    expect(actions.some((a) => a.action === 'MARK_DONE')).toBe(false);
     expect(texts).toContain('Fri 30 Oct');
+  });
+
+  it('4x4: a done event is struck through, an open one is not', () => {
+    const { texts } = collect(tree('large'));
+    // e1 ("Sync layer, part two") is done in the fixtures: every letter carries the strike overlay.
+    expect(texts).toContain(Array.from('Sync layer, part two', (ch) => (ch === ' ' ? ch : `${ch}\u0336`)).join(''));
+    expect(texts).not.toContain('Sync layer, part two');
+    // An open event keeps its plain title.
+    expect(texts).toContain('Lunch');
   });
 
   it('empty day: "Add a note" replaces the "+", still one compose target', () => {

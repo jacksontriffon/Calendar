@@ -37,7 +37,7 @@ Nothing below could run in the build environment (no Docker, no Xcode, no device
 
 - Q1 AI allowance: 200 notes per UTC month (`AI_MONTHLY_LIMIT`), 6 per minute; failed calls are refunded.
 - Q4 Imported Google events: no category, painted in their Google calendar's colour.
-- Q5 Widget checks: goal sessions only (`showsCheck()` in `apps/app/src/features/widget/snapshot.ts`), and only on iPad and Android. iPhone Large and Medium have no check buttons (WG 1g–2i); the mark-done path is kept for the layouts that still use it.
+- Q5 Widget checks: none. No widget draws a check circle any more (iPhone Large and Medium never did; iPad and Android lost theirs): a done event is struck through and dimmed. Android's `TextWidget` has no strikethrough style, so it overlays U+0336 on each letter (`struck()` in `apps/app/widgets/views.tsx`, not seen on a device). Goal sessions still count toward Large's "2 of 3 done" (`showsCheck()` in `snapshot.ts`).
 - Q6 Widget clock: follows the device's 12/24h setting.
 - Q7 Widget accent: neutral, except the now line and send button on iPhone Large and Medium, which use the accent as in WG 1g and 2i.
 - Q8 Android widget sizes: fixed 2×2 / 4×2 / 4×4.
@@ -47,7 +47,7 @@ Nothing below could run in the build environment (no Docker, no Xcode, no device
 Decided while building iPhone Large and Medium (details in `expo-plan.md`, Widgets):
 
 - The message field is a deep link to the composer; the carousels move on a tap through App Intents (iOS 17); the tap state resets to Today and the first goal after 5 minutes and at midnight (`apps/app/src/features/widget/carousel.ts`, `CarouselIntents.swift`).
-- Not removed: `MarkDoneIntent`, the queue and Android's `MARK_DONE`, because iPad and Android still draw checks.
+- Now unused, not yet removed: `MarkDoneIntent`, the done-op queue (`queue.ts`, `Store.appendDone`) and Android's `MARK_DONE` handler, since no layout draws a check. Safe to delete in a follow-up.
 - The 5-minute reset, the "2 of 3 done" count (goal sessions only) and the goals-block tap (next page, or the goal itself when there is one page) are my choices, not in the frames.
 
 Still open (no frames, so these use defaults): in progress (a card in place of the now line), empty day ("Nothing scheduled" and the next event as text), signed out and stale (the old cards; stale shows the cloud-off mark by the month and "Open Calendar to refresh" in the message field), tinted and clear (the field's solid fill cannot survive them), the second page of goals (the sample has three goals), dark-mode default, and Android (4×4 and 4×2). The Design Spec text still describes the old Large (one "+", "Add a note", WG 5's tap map and check interaction).
