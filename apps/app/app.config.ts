@@ -46,10 +46,14 @@ const config: ExpoConfig = {
   backgroundColor: '#171615',
   ios: {
     bundleIdentifier: APP_ID,
+    appleTeamId: 'DG37S9689W',
     supportsTablet: true,
     usesAppleSignIn: true,
     // The widget extension mirrors this group (@bacons/apple-targets).
     entitlements: { 'com.apple.security.application-groups': [APP_GROUP] },
+    infoPlist: {
+      ITSAppUsesNonExemptEncryption: false,
+    },
   },
   android: {
     package: APP_ID,
@@ -106,8 +110,12 @@ const config: ExpoConfig = {
   experiments: {
     typedRoutes: true,
   },
-  // EAS: no `extra.eas.projectId` / `owner` yet. Run `eas init` (manual step,
-  // see README.md) to create the project and write the id here.
+  extra: {
+    eas: {
+      projectId: '9a3b247a-33e4-4fd8-9a12-a5b88f340cfc',
+    },
+  },
+  owner: 'sjcoded',
 };
 
 export default config;
