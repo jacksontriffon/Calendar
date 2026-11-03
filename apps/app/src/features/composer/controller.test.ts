@@ -197,6 +197,44 @@ describe('imported events', () => {
   });
 });
 
+describe('changing an imported event', () => {
+  const imported = (): CalendarData => {
+    const d = seed();
+    d.events.push({ id: 'g1', day: '2026-10-30', cat: null, title: 'Dentist', start: 600, end: 660, source: 'google', isMine: false });
+    return d;
+  };
+  const explain: AiSuccess = {
+    ops: [askOp('Dentist comes from Google, so I can\u2019t change it here. What would you like to do?', 'Add my own version', 'Replace it with my own', 'I\'ll change it myself')],
+    usage: usage(3), model: 'claude-haiku-5-5',
+  };
+
+  it('"I\'ll change it myself" closes the conversation without another model call', async () => {
+    const r = rig({ data: imported(), replies: [explain] });
+    r.c.setDraft('rename the dentist');
+    r.c.send();
+    await until(() => r.c.getState().phase === 'asking');
+    r.c.answerAsk('I\'ll change it myself');
+    await idle(r);
+    expect(r.call).toHaveBeenCalledTimes(1);
+    expect(r.applied).toHaveLength(0);
+    expect(r.toasts.at(-1)?.label).toBe('Imported events can only be changed in the calendar they come from');
+    expect(r.c.getState().ask).toBeNull();
+  });
+
+  it('the other answers go back to the model with the note', async () => {
+    const copy: AiSuccess = { ops: [{ op: 'create', title: 'Dentist with Dr Lee', cat: 'Health', start: 600, end: 660, dayOffset: 0 }], usage: usage(4), model: 'claude-haiku-5-5' };
+    const r = rig({ data: imported(), replies: [explain, copy] });
+    r.c.setDraft('rename the dentist');
+    r.c.send();
+    await until(() => r.c.getState().phase === 'asking');
+    r.c.answerAsk('Add my own version');
+    await idle(r);
+    expect(r.call).toHaveBeenCalledTimes(2);
+    expect(r.call.mock.calls[1][0].note).toContain('\u2192 Add my own version');
+    expect(r.applied[0].message).toBe('1 event added');
+  });
+});
+
 describe('errors', () => {
   it('falls back to the offline parser when the call fails, and says so', async () => {
     const r = rig({ replies: [new AiError('offline')] });

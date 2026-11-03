@@ -9,7 +9,7 @@
  * ones.
  */
 import {
-  adjustNote, applyResolved, interpretReply, isEmptyResolved, isReadOnlyEvent, key, normCheckIn, parseNote,
+  adjustNote, applyResolved, interpretReply, isEmptyResolved, isReadOnlyEvent, isSelfEditAnswer, key, normCheckIn, parseNote,
   type AdjustMode, type ApplyResult, type ApplySource, type CalendarData, type CheckInQuestion, type OpsCtx,
   type Prefs, type ProtoEvent, type Resolved,
 } from '@calendar/core';
@@ -270,8 +270,14 @@ export function createComposer(deps: ComposerDeps): Composer {
     if (!s) return;
     await deps.sleep(ASK_EXIT_MS);
     if (!state.ask || !state.ask.closing) return;
-    const note = followUpNote(s);
     set({ ask: null });
+    if (s.qs.length === 1 && isSelfEditAnswer(s.ans[0])) {
+      // "I'll change it myself" (an imported event): nothing for the model to do
+      deps.toast({ label: 'Imported events can only be changed in the calendar they come from' });
+      set({ phase: 'idle' });
+      return;
+    }
+    const note = followUpNote(s);
     think(base);
     await run(note, { noAsk: round >= MAX_ASK_ROUNDS, goal, base });
   };

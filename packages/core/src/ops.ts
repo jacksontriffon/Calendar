@@ -93,6 +93,17 @@ export interface Ask { q: string; options: Array<{ label: string; note: string }
 /** Text appended to the note when the model must not ask questions. */
 export const NOASK = '\n\nDo not ask any questions this time — make your best assumption and return the operations.';
 
+/**
+ * The option the skills offer when the user asks to change an imported, read-only event
+ * (skills/calendar-scheduler/references/asking.md). Picking it ends the conversation in the
+ * app without another model call: there is nothing for the model to do.
+ */
+export const SELF_EDIT_ANSWER = "I'll change it myself";
+
+/** True for that answer (a typed one too; curly apostrophes and case don't matter). */
+export const isSelfEditAnswer = (a: string | null | undefined): boolean =>
+  !!a && a.trim().replace(/\u2019/g, "'").toLowerCase() === SELF_EDIT_ANSWER.toLowerCase();
+
 /** Pull the first JSON array out of a model reply (code fences tolerated). Throws `no JSON` / `empty`. */
 export const parseArr = (raw: unknown): unknown[] => {
   const m = String(raw).replace(/```json|```/g, '').match(/\[[\s\S]*\]/);

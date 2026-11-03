@@ -24,7 +24,7 @@ Return a JSON array. Each item has an `op`: `create`, `update`, `delete`, `goal`
 - All-day events: `"allDay": true` plus `"days"` (1 = a single day, 3 = three consecutive days starting at `dayOffset`). Omit `start`/`end`.
 - All-week events: `"allDay": true` with `"span": "week"` and `"weekOffset"` (0 = this week, 1 = next week). They snap to Monday and cover 7 days.
 - On `update`, include only the fields that change (`title`, `cat`, `start`, `end`, `dayOffset`, `allDay`, `days`).
-- Events marked `imported, read-only` in `<calendar>` can only be removed. `delete` them when asked; never send `update` for one. Removing hides the event in the app and leaves the original calendar unchanged.
+- Events marked `imported, read-only` in `<calendar>` can only be removed. `delete` them when asked; never send `update` for one. Removing hides the event in the app and leaves the original calendar unchanged. To change one, see "Changing an imported event" in `asking.md`.
 - Goals: `op` `goal` with `title`, `outcome`, `deadline` (YYYY-MM-DD) and `hours` (the total estimate to reach the outcome). To change one, send its `id` plus only the fields that change. To drop one, send its `id` with `"delete": true`.
 - To log or book time against a goal, create a normal event whose `cat` is that goal's title.
 - `win`: on `create` or `update`, one short past-tense line saying what the user achieved in a session that has already happened, taken from the note ("3h on the novel yesterday, finished chapter 3" gives `"win":"Finished chapter 3"`). Never invent one; leave it out when the note doesn't say. The app asks about goal sessions logged without one.

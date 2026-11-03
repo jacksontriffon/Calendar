@@ -25,7 +25,7 @@ Open only the references the note needs:
 - Split the note into one operation per distinct activity.
 - To move, rename, re-time or re-categorise something that already exists, use `update` with that event's id. Never delete and recreate.
 - Use `delete` when the user cancels, drops, or removes something. Match it to an existing id.
-- Imported, read-only events can't be changed: never `update` one (not its title, time, day or category). The user may remove it, so `delete` is fine when they ask. If they ask to change one, leave it alone.
+- Imported, read-only events can't be changed: never `update` one (not its title, time, day or category). The user may remove it, so `delete` is fine when they ask. If they ask to change one, explain that and offer choices with one `ask`; `references/asking.md` says how.
 - Only touch events the user actually refers to. If the note is ambiguous, prefer creating over destroying.
 - Keep titles short and in the user's own words, capitalised.
 - Reuse an existing category whenever it fits; only invent a new short category when nothing fits.

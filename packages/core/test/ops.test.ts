@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  applyOps, applyResolved, checkCi, checkOps, fromModel, interpretReply, isAskOp, isEmptyResolved, normAsks, parseArr, parseVerdict, verdictFix,
+  applyOps, applyResolved, checkCi, checkOps, fromModel, interpretReply, isAskOp, isEmptyResolved, isSelfEditAnswer, SELF_EDIT_ANSWER, normAsks, parseArr, parseVerdict, verdictFix,
   NOASK, dataSnap, makeIdGen, restoreEntry, pushHistory,
 } from '../src/index.ts';
 import type { CalendarData, RawOp } from '../src/index.ts';
@@ -564,5 +564,13 @@ describe('imported (read-only) events', () => {
     const r = fromModel([{ op: 'update', id: 'g1', title: 'Renamed' }, { op: 'update', id: 'e1', title: 'Renamed' }, { op: 'delete', id: 'g2' }], data, opsCtx(data));
     expect(r.updates.map((u) => u.id)).toEqual(['e1']);
     expect(r.deletes).toEqual(['g2']);
+  });
+});
+
+describe('the "change it myself" answer', () => {
+  it('matches the label the skill offers, however it is typed', () => {
+    expect(SELF_EDIT_ANSWER).toBe("I'll change it myself");
+    ['I\u2019ll change it myself', "  i'll CHANGE it myself "].forEach((a) => expect(isSelfEditAnswer(a)).toBe(true));
+    ['Add my own version', 'you decide', '', null, undefined].forEach((a) => expect(isSelfEditAnswer(a)).toBe(false));
   });
 });

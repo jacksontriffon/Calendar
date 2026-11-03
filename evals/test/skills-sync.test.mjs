@@ -35,3 +35,10 @@ function diskSkills() {
 test('SKILL_FILES in index.html matches skills/', () => {
   assert.deepEqual(embeddedSkills(), diskSkills());
 });
+
+// The app closes the ask flow when this exact option is picked (SELF_EDIT_ANSWER in packages/core/src/ops.ts).
+test('asking.md offers the exact "change it myself" label the app recognises', async () => {
+  const { SELF_EDIT_ANSWER } = await import(path.join(ROOT, 'packages/core/src/ops.ts'));
+  const md = fs.readFileSync(path.join(ROOT, 'skills/calendar-scheduler/references/asking.md'), 'utf8');
+  assert.ok(md.includes('"label":"' + SELF_EDIT_ANSWER + '"'), 'asking.md example must use the label');
+});
