@@ -9,6 +9,8 @@ import { APP_SCHEME } from '@/lib/deepLinks';
 const enc = (s: string) => encodeURIComponent(s);
 
 export const eventUrl = (id: string): string => `${APP_SCHEME}://event/${enc(id)}`;
+/** The goals sheet on its overview: the progress graph and the goal grid. */
+export const goalsUrl = (): string => `${APP_SCHEME}://goals`;
 export const goalUrl = (id: string): string => `${APP_SCHEME}://goal/${enc(id)}`;
 /** `date` is `YYYY-MM-DD`. */
 export const dayUrl = (date: string): string => `${APP_SCHEME}://day/${date}`;

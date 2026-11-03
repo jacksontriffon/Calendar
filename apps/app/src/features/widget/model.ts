@@ -25,7 +25,7 @@
 import { fmtDur } from '@calendar/core';
 
 import { resolveCarousel, type CarouselState, type DayOffset } from './carousel';
-import { composeUrl, dayUrl, eventUrl, goalUrl, signinUrl } from './links';
+import { composeUrl, dayUrl, eventUrl, goalsUrl, signinUrl } from './links';
 import {
   ageShort,
   dayKey,
@@ -492,7 +492,7 @@ export function buildModel(
     isDone: !goalsDim && doneToday(g.todayNeed, g.todayDone),
     total: totalLeftLabel(g),
     deadline: lim.deadline ? deadlineLabel(g, today) : null,
-    url: goalUrl(g.id),
+    url: goalsUrl(),
   });
   let goals: GoalModel[];
   let goalPages: WidgetModel['goalPages'] = null;

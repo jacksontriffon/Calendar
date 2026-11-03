@@ -115,6 +115,7 @@ function Gate({ fontsReady }: { fontsReady: boolean }) {
         {/* TODO(phase 3): the event sheet may become a bottom sheet instead of a modal route. */}
         <Stack.Screen name="event/[id]" options={{ presentation: 'modal' }} />
         <Stack.Screen name="goal/[id]" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="goals" options={{ presentation: 'modal' }} />
         <Stack.Screen name="settings/index" />
         <Stack.Screen name="settings/account" />
         <Stack.Screen name="settings/account-delete" />

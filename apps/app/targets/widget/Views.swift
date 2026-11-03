@@ -535,8 +535,8 @@ struct PageDots: View {
     }
 }
 
-/// The goals on show and the dots for the other pages. With more than one page the whole block is
-/// one tap that shows the next page (widgets cannot swipe); with one page each goal opens itself.
+/// The goals on show and the dots for the other pages. A tap on a goal opens the goals graph in the
+/// app; with more than one page, a tap on the dots shows the next page (widgets cannot swipe).
 struct GoalsPager: View {
     let m: Model
     let pal: Pal
@@ -560,16 +560,19 @@ struct GoalsPager: View {
         if !m.goals.isEmpty {
             let pages = m.goalPages ?? GoalPages(index: 0, count: 1)
             if pages.count > 1 {
-                Button(intent: ShowGoalPageIntent(layout: layoutName, page: (pages.index + 1) % pages.count)) {
-                    VStack(spacing: rowSpacing) {
-                        HStack(spacing: spacing) {
-                            ForEach(m.goals) { g in cell(g) }
+                VStack(spacing: rowSpacing) {
+                    HStack(spacing: spacing) {
+                        ForEach(m.goals) { g in
+                            Link(destination: g.url) { cell(g) }
                         }
-                        PageDots(pages: pages, pal: pal)
                     }
-                    .contentShape(Rectangle())
+                    Button(intent: ShowGoalPageIntent(layout: layoutName, page: (pages.index + 1) % pages.count)) {
+                        PageDots(pages: pages, pal: pal)
+                            .frame(maxWidth: .infinity, minHeight: 16)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
             } else {
                 HStack(spacing: spacing) {
                     ForEach(m.goals) { g in

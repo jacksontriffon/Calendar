@@ -59,7 +59,7 @@ describe('Android widget layouts', () => {
     const { actions, texts } = collect(tree('large'));
     const uris = actions.filter((a) => a.action === 'OPEN_URI').map((a) => a.data.uri);
     expect(uris).toContain('aicalendar://event/e3');
-    expect(uris).toContain('aicalendar://goal/g2');
+    expect(uris).toContain('aicalendar://goals');
     expect(uris).toContain('aicalendar://day/2026-10-30');
     expect(uris.filter((u) => u === 'aicalendar://compose')).toHaveLength(1);
     expect(actions.some((a) => a.action === 'MARK_DONE')).toBe(false);

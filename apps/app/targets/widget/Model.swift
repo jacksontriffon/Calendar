@@ -349,7 +349,7 @@ struct Model {
                 isDone: !goalsDim && Labels.isDoneToday(need: g.todayNeed, done: g.todayDone),
                 total: Labels.totalLeft(g),
                 deadline: lim.deadline ? d.label : nil,
-                url: Links.goal(g.id)
+                url: Links.goals
             )
         }
         if lim.perPage > 0 {

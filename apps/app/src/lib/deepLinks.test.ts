@@ -14,6 +14,7 @@ describe('parseDeepLink', () => {
       kind: 'event',
       id: '0b6f1c2e-1111-4222-8333-944455556666',
     });
+    expect(parseDeepLink('aicalendar://goals')).toEqual({ kind: 'goals' });
     expect(parseDeepLink('aicalendar://goal/g2')).toEqual({ kind: 'goal', id: 'g2' });
     expect(parseDeepLink('aicalendar://day/2026-10-30')).toEqual({ kind: 'day', date: '2026-10-30' });
     expect(parseDeepLink('aicalendar://compose')).toEqual({ kind: 'compose' });
@@ -56,6 +57,7 @@ describe('isIsoDate', () => {
 describe('systemPathToAppPath', () => {
   it('maps links to routes', () => {
     expect(systemPathToAppPath('aicalendar://event/e3')).toBe('/event/e3');
+    expect(systemPathToAppPath('aicalendar://goals')).toBe('/goals');
     expect(systemPathToAppPath('aicalendar://goal/g2')).toBe('/goal/g2');
     expect(systemPathToAppPath('aicalendar://day/2026-10-30')).toBe('/?day=2026-10-30');
     expect(systemPathToAppPath('aicalendar://compose')).toBe('/?compose=1');

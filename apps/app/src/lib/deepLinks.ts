@@ -2,7 +2,8 @@
  * Deep links (Design Spec, Deep links (L)). One scheme, `aicalendar://`.
  *
  *   aicalendar://event/{id}        event sheet over the week view
- *   aicalendar://goal/{id}         goal sheet
+ *   aicalendar://goals             goals sheet: the progress graph and the goal grid
+ *   aicalendar://goal/{id}         goals sheet drilled into that goal
  *   aicalendar://day/{yyyy-mm-dd}  week view on that day
  *   aicalendar://compose           week view, composer focused
  *   aicalendar://signin            Welcome (the signed-out widget card)
@@ -15,6 +16,7 @@
 
 export type DeepLink =
   | { kind: 'event'; id: string }
+  | { kind: 'goals' }
   | { kind: 'goal'; id: string }
   | { kind: 'day'; date: string }
   | { kind: 'compose' }
@@ -93,6 +95,8 @@ export function parseDeepLink(input: string): DeepLink {
   switch (head) {
     case 'event':
       return arg && ID_RE.test(arg) ? { kind: 'event', id: arg } : { kind: 'unknown' };
+    case 'goals':
+      return { kind: 'goals' };
     case 'goal':
       return arg && ID_RE.test(arg) ? { kind: 'goal', id: arg } : { kind: 'unknown' };
     case 'day':
@@ -120,6 +124,8 @@ export function deepLinkToPath(link: DeepLink): string {
   switch (link.kind) {
     case 'event':
       return `/event/${encodeURIComponent(link.id)}`;
+    case 'goals':
+      return '/goals';
     case 'goal':
       return `/goal/${encodeURIComponent(link.id)}`;
     case 'day':

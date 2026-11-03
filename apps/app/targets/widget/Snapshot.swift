@@ -32,6 +32,8 @@ enum Links {
     }
     static func event(_ id: String) -> URL { make("event/" + enc(id)) }
     static func goal(_ id: String) -> URL { make("goal/" + enc(id)) }
+    /// The goals sheet on its overview: the progress graph and the goal grid.
+    static let goals = make("goals")
     static func day(_ date: String) -> URL { make("day/" + date) }
     static let compose = make("compose")
     static let signin = make("signin")

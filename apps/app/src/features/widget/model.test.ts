@@ -1,4 +1,4 @@
-import { composeUrl, dayUrl, eventUrl, goalUrl, signinUrl } from './links';
+import { composeUrl, dayUrl, eventUrl, goalUrl, goalsUrl, signinUrl } from './links';
 import { fmtClock, fmtRange, parseLocal, staleLabel, staleLevel } from './labels';
 import { tapCarousel } from './carousel';
 import { buildModel, type Item } from './model';
@@ -75,7 +75,7 @@ describe('Large, Today (WG 1g)', () => {
     for (const g of m.goals) {
       expect(g.ring).toBeGreaterThanOrEqual(0);
       expect(g.left).toMatch(/^(\d+h)?( ?\d+m)?$/);
-      expect(g.url).toBe(goalUrl(g.id));
+      expect(g.url).toBe(goalsUrl());
     }
     const second = buildModel(snap, NOW.getTime(), 'large', { carousel: tapped({ large: 1 }) });
     expect(second.goals).toHaveLength(1);
@@ -89,11 +89,11 @@ describe('Large, Today (WG 1g)', () => {
   });
 
   it('tap targets are the spec’s deep links, and they parse in the app', () => {
-    const urls = [eventUrl('e3'), goalUrl('g2'), dayUrl('2026-10-30'), composeUrl(), signinUrl()];
+    const urls = [eventUrl('e3'), goalUrl('g2'), goalsUrl(), dayUrl('2026-10-30'), composeUrl(), signinUrl()];
     expect(urls).toEqual([
-      'aicalendar://event/e3', 'aicalendar://goal/g2', 'aicalendar://day/2026-10-30', 'aicalendar://compose', 'aicalendar://signin',
+      'aicalendar://event/e3', 'aicalendar://goal/g2', 'aicalendar://goals', 'aicalendar://day/2026-10-30', 'aicalendar://compose', 'aicalendar://signin',
     ]);
-    expect(urls.map((u) => parseDeepLink(u).kind)).toEqual(['event', 'goal', 'day', 'compose', 'signin']);
+    expect(urls.map((u) => parseDeepLink(u).kind)).toEqual(['event', 'goal', 'goals', 'day', 'compose', 'signin']);
     const row = m.items.find((i) => i.kind === 'row' && i.row.id === 'e3');
     expect(row && row.kind === 'row' && row.row.url).toBe('aicalendar://event/e3');
   });
