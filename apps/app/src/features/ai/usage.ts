@@ -64,7 +64,7 @@ export function currentUsage(u: Usage | null, today: string): Usage | null {
   return u.resetsOn <= today ? { used: 0, limit: u.limit, resetsOn: nextReset(today) } : u;
 }
 
-/** `claude-haiku-4-5` (or with a date suffix) -> `Haiku 4.5`. Unknown ids are tidied up. */
+/** `claude-haiku-5-5` (or with a date suffix) -> `Haiku 5.5`. Unknown ids are tidied up. */
 export function modelLabel(id: string | null | undefined): string {
   if (!id) return MODELS[0].short;
   const hit = MODELS.find((m) => m.id && id.startsWith(m.id));

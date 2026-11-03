@@ -69,7 +69,7 @@ const idle = (r: Rig) => until(() => r.c.getState().phase === 'idle');
 
 const gym: AiSuccess = {
   ops: [{ op: 'create', title: 'Gym', cat: 'Health', start: 420, end: 480, dayOffset: 0 }],
-  usage: usage(7), model: 'claude-haiku-4-5',
+  usage: usage(7), model: 'claude-haiku-5-5',
 };
 const askOp = (q: string, ...opts: string[]) => ({ op: 'ask', question: q, options: opts });
 
@@ -164,7 +164,7 @@ describe('imported events', () => {
     d.events.push({ id: 'g1', day: '2026-10-30', cat: null, title: 'Dentist', start: 600, end: 660, source: 'google', isMine: false });
     return d;
   };
-  const reply = (...ops: object[]): AiSuccess => ({ ops, usage: usage(7), model: 'claude-haiku-4-5' });
+  const reply = (...ops: object[]): AiSuccess => ({ ops, usage: usage(7), model: 'claude-haiku-5-5' });
 
   it('a delete hides the event instead of deleting it, and the rest of the reply still applies', async () => {
     const r = rig({ data: imported(), replies: [reply({ op: 'delete', id: 'g1' }, { op: 'update', id: 'e1', title: 'Standup 2' })] });
@@ -283,7 +283,7 @@ describe('the ask flow', () => {
       askOp('Which day for the gym?', 'Today', 'Tomorrow', 'Monday'),
       askOp('How long?', '30 min', '1 hour'),
     ],
-    usage: usage(3), model: 'claude-haiku-4-5',
+    usage: usage(3), model: 'claude-haiku-5-5',
   };
 
   it('applies the rest straight away and shows the questions one at a time', async () => {
@@ -377,7 +377,7 @@ describe('the ask flow', () => {
 describe('goal adjustments', () => {
   const adjust: AiSuccess = {
     ops: [askOp('What should give way?', 'Push the deadline', 'Cut hours')],
-    usage: usage(4), model: 'claude-haiku-4-5',
+    usage: usage(4), model: 'claude-haiku-5-5',
   };
 
   it('sends mode adjust with the goal and the adjustment note', async () => {
@@ -451,7 +451,7 @@ describe('check-ins', () => {
     const r = rig({
       replies: [{
         ops: [{ field: 'goal', id: 'g1', q: 'Deep work is behind — how much today?', chips: ['1h', '2h', 'Not today', 'extra'] }, { field: 'log', question: 'Lunch?', options: ['Skipped it'] }, 'junk'],
-        usage: usage(9), model: 'claude-haiku-4-5',
+        usage: usage(9), model: 'claude-haiku-5-5',
       }],
     });
     const qs = await fetchCheckInQuestions(r.deps, 1234);

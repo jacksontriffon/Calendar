@@ -45,7 +45,7 @@ if (opt.only) {
   cases = cases.filter((c) => keep.has(c.id) || keep.has(c.category));
 }
 const trials = Number(opt.trials);
-let modelLabel = viaFunction ? 'ai-schedule' : opt.model || 'claude-haiku-4-5';
+let modelLabel = viaFunction ? 'ai-schedule' : opt.model || 'claude-haiku-5-5';
 let transportLabel = viaFunction ? 'ai-schedule' : opt.transport;
 
 const usage = (calls) => calls.reduce((u, c) => {

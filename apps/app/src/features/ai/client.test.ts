@@ -71,13 +71,13 @@ describe('mapInvokeError', () => {
 describe('callAi', () => {
   it('returns ops, usage and model from a good reply', async () => {
     const invoke: AiInvoker = jest.fn(async () => ({
-      data: { ok: true, mode: 'note', ops: [{ op: 'create', title: 'Gym' }], model: 'claude-haiku-4-5', usage: { used: 38, limit: 200, resetsOn: '2026-11-01' } },
+      data: { ok: true, mode: 'note', ops: [{ op: 'create', title: 'Gym' }], model: 'claude-haiku-5-5', usage: { used: 38, limit: 200, resetsOn: '2026-11-01' } },
       error: null,
     }));
     const r = await callAi(base, { invoke });
     expect(r.ops).toHaveLength(1);
     expect(r.usage).toEqual({ used: 38, limit: 200, resetsOn: '2026-11-01' });
-    expect(r.model).toBe('claude-haiku-4-5');
+    expect(r.model).toBe('claude-haiku-5-5');
     expect(invoke).toHaveBeenCalledWith('ai-schedule', expect.objectContaining({ body: expect.objectContaining({ mode: 'note', note: 'gym at 7', tz: 'Europe/London' }) }));
   });
 

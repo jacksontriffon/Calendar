@@ -40,7 +40,7 @@ export interface AiSuccess {
   /** scheduler / goal-adjust operations (may contain `ask` ops) or check-in questions */
   ops: unknown[];
   usage: Usage | null;
-  /** model id as reported by the server, e.g. `claude-haiku-4-5` */
+  /** model id as reported by the server, e.g. `claude-haiku-5-5` */
   model: string | null;
 }
 

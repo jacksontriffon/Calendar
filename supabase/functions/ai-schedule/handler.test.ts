@@ -63,7 +63,7 @@ Deno.test('note: two passes (scheduler then verifier ok) and the ops come back u
   assertEquals(body.ops, CREATE);
   assertEquals(body.verified, 'approved');
   assertEquals(body.issues, []);
-  assertEquals(body.model, 'claude-haiku-4-5');
+  assertEquals(body.model, 'claude-haiku-5-5');
   assertEquals(body.transport, 'inline');
   assertEquals(body.usage, { used: 1, limit: 200, resetsOn: '2026-10-01' });
 
@@ -72,7 +72,7 @@ Deno.test('note: two passes (scheduler then verifier ok) and the ops come back u
   assertEquals(p1.url, 'https://api.anthropic.com/v1/messages');
   assertEquals(p1.headers['x-api-key'], 'sk-test');
   assertEquals(p1.headers['anthropic-version'], '2023-06-01');
-  assertEquals(p1.body.model, 'claude-haiku-4-5');
+  assertEquals(p1.body.model, 'claude-haiku-5-5');
   assertEquals(p1.body.max_tokens, 4096);
   assertStringIncludes(p1.body.system, '<file path="/skills/calendar-scheduler/SKILL.md">');
   assert(!p1.body.system.includes('/skills/calendar-verifier/'), 'pass 1 only carries the scheduler skill');

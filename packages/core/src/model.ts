@@ -135,7 +135,7 @@ export type ModelKey = 'haiku' | 'sonnet' | 'offline';
 
 export interface ModelInfo { k: ModelKey; id: string; name: string; short: string; desc: string }
 export const MODELS: readonly ModelInfo[] = [
-  { k: 'haiku', id: 'claude-haiku-4-5', name: 'Haiku 4.5', short: 'Haiku 4.5', desc: 'Fastest for quick notes' },
+  { k: 'haiku', id: 'claude-haiku-5-5', name: 'Haiku 5.5', short: 'Haiku 5.5', desc: 'Fastest for quick notes' },
   { k: 'sonnet', id: 'claude-sonnet-4-5', name: 'Sonnet 4.5', short: 'Sonnet 4.5', desc: 'For long or messy notes' },
   { k: 'offline', id: '', name: 'Offline parser', short: 'Offline', desc: 'On device, no network needed' },
 ];

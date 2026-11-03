@@ -16,7 +16,7 @@ What gets graded is what the app would apply, both after the verifier (**Final**
 cd evals
 npm install
 npm test                                        # grader + skills-sync checks, no API calls
-ANTHROPIC_API_KEY=sk-... npm run eval           # 20 cases × 3 trials on the app default (Haiku 4.5)
+ANTHROPIC_API_KEY=sk-... npm run eval           # 20 cases × 3 trials on the app default (Haiku 5.5)
 ANTHROPIC_API_KEY=sk-... npm run eval -- --model claude-sonnet-5 --trials 5
 ANTHROPIC_API_KEY=sk-... npm run eval -- --only ask,update-rename    # case ids or categories
 ```

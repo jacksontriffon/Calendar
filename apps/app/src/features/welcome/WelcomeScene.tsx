@@ -190,7 +190,7 @@ export function Composer({ t }: { t: SharedValue<number> }) {
         </View>
         <View style={styles.composerRow}>
           <View style={styles.modelPill}>
-            <Text style={styles.modelText}>Haiku 4.5</Text>
+            <Text style={styles.modelText}>Haiku 5.5</Text>
           </View>
           <View style={{ flex: 1 }} />
           <Animated.View style={[styles.send, sendScale]}>

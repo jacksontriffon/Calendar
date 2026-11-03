@@ -16,8 +16,8 @@ import type { SkillName } from './skill-names.ts';
 export { SKILL_ENV, SKILL_NAMES } from './skill-names.ts';
 export type { SkillName } from './skill-names.ts';
 
-/** The prototype's default (`AI_MODEL` in logic.js). */
-export const DEFAULT_MODEL = 'claude-haiku-4-5';
+/** The app's default model (Haiku 5.5); `AI_MODEL` overrides it. */
+export const DEFAULT_MODEL = 'claude-haiku-5-5';
 export const ANTHROPIC_VERSION = '2023-06-01';
 /** Code execution + skills betas, for the `skills` transport. */
 export const DEFAULT_BETAS = 'code-execution-2025-08-25,skills-2025-10-02';

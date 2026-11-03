@@ -40,24 +40,24 @@ describe('usage formatting', () => {
   });
 
   it('turns model ids into labels', () => {
-    expect(modelLabel('claude-haiku-4-5')).toBe('Haiku 4.5');
-    expect(modelLabel('claude-haiku-4-5-20251001')).toBe('Haiku 4.5');
+    expect(modelLabel('claude-haiku-5-5')).toBe('Haiku 5.5');
+    expect(modelLabel('claude-haiku-5-5-20260301')).toBe('Haiku 5.5');
     expect(modelLabel('claude-sonnet-4-5')).toBe('Sonnet 4.5');
     expect(modelLabel('claude-opus-5-1')).toBe('Opus 5.1');
     expect(modelLabel('something-else')).toBe('something-else');
-    expect(modelLabel(null)).toBe('Haiku 4.5');
+    expect(modelLabel(null)).toBe('Haiku 5.5');
   });
 });
 
 describe('describeUsage', () => {
   it('shows the connected state with the count', () => {
-    const v = describeUsage({ on: true, online: true, usage: u(38), model: 'claude-haiku-4-5' });
+    const v = describeUsage({ on: true, online: true, usage: u(38), model: 'claude-haiku-5-5' });
     expect(v).toMatchObject({ status: 'ok', count: '38', detail: 'of 200 · resets Nov 1', percent: 19 });
-    expect(v.headline).toBe('Connected · Haiku 4.5. Included with your account.');
+    expect(v.headline).toBe('Connected · Haiku 5.5. Included with your account.');
   });
 
   it('shows the limit-reached state (OA 6.6)', () => {
-    const v = describeUsage({ on: true, online: true, usage: u(200), model: 'claude-haiku-4-5' });
+    const v = describeUsage({ on: true, online: true, usage: u(200), model: 'claude-haiku-5-5' });
     expect(v.status).toBe('limit');
     expect(v.headline).toBe('Monthly notes used · using the on-device parser until Nov 1.');
     expect(v.note).toContain('The on-device parser takes over until Nov 1.');
@@ -67,7 +67,7 @@ describe('describeUsage', () => {
   it('shows the offline state without a count (OA 6.5)', () => {
     const v = describeUsage({ on: true, online: false, usage: u(38), model: null });
     expect(v).toMatchObject({ status: 'offline', count: '—', detail: 'Updates when you’re online', percent: null });
-    expect(v.headline).toContain('Haiku 4.5 takes over when you’re back online.');
+    expect(v.headline).toContain('Haiku 5.5 takes over when you’re back online.');
   });
 
   it('shows the off state (OA 6.3/6.4)', () => {
@@ -87,9 +87,9 @@ describe('the persisted latest value', () => {
   beforeEach(() => resetUsage());
 
   it('keeps the latest usage and model, merging partial updates', () => {
-    recordUsage(u(5), 'claude-haiku-4-5');
+    recordUsage(u(5), 'claude-haiku-5-5');
     recordUsage(u(6));
-    expect(getUsageState()).toMatchObject({ usage: u(6), model: 'claude-haiku-4-5' });
+    expect(getUsageState()).toMatchObject({ usage: u(6), model: 'claude-haiku-5-5' });
     recordUsage(undefined, 'claude-sonnet-4-5');
     expect(getUsageState()).toMatchObject({ usage: u(6), model: 'claude-sonnet-4-5' });
     recordUsage(null);

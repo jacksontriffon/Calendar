@@ -144,7 +144,7 @@ Set with `supabase secrets set NAME=value` (locally: `supabase functions serve -
 | Secret | Function | Default | Purpose |
 |---|---|---|---|
 | `ANTHROPIC_API_KEY` | ai-schedule | required | Anthropic key (never in the app) |
-| `AI_MODEL` | ai-schedule | `claude-haiku-4-5` (the prototype's default) | model for both passes |
+| `AI_MODEL` | ai-schedule | `claude-haiku-5-5` | model for both passes |
 | `AI_MONTHLY_LIMIT` | ai-schedule | `200` | notes per user per UTC month (open question 1); at the limit the function answers 429 and the app falls back to the offline parser |
 | `AI_PER_MINUTE` | ai-schedule | `6` | calls per user per minute |
 | `SKILL_ID_CALENDAR_SCHEDULER`, `SKILL_ID_CALENDAR_GOAL_ADJUST`, `SKILL_ID_CALENDAR_CHECKIN`, `SKILL_ID_CALENDAR_VERIFIER` | ai-schedule | unset | uploaded skill ids; with all four set the function uses the Skills API + code execution (`skills` transport), otherwise it puts the skill files in the system prompt (`inline`) |

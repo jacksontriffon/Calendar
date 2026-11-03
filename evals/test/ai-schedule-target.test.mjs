@@ -13,7 +13,7 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 const cal = JSON.parse(fs.readFileSync(path.join(HERE, '../cases/calendar.json'), 'utf8'));
 const cases = Object.fromEntries(JSON.parse(fs.readFileSync(path.join(HERE, '../cases/scheduler.json'), 'utf8')).map((c) => [c.id, c]));
 
-const ok = (o) => ({ status: 200, body: { ok: true, model: 'claude-haiku-4-5', transport: 'inline', issues: [], usage: { used: 1, limit: 200, resetsOn: '2026-10-01' }, ...o } });
+const ok = (o) => ({ status: 200, body: { ok: true, model: 'claude-haiku-5-5', transport: 'inline', issues: [], usage: { used: 1, limit: 200, resetsOn: '2026-10-01' }, ...o } });
 const stub = (fn) => (async (url, init) => {
   const r = fn(JSON.parse(init.body), init);
   return new Response(JSON.stringify(r.body), { status: r.status });
@@ -38,7 +38,7 @@ test('sends the case calendar and note, and the ops resolve into a gradable outc
   assert.equal(out.final.creates[0].day, '2026-09-24');
   assert.equal(grade(out.final, c.expect, cal.events).pass, true);
   assert.equal(grade(out.schedOnly, c.expect, cal.events).pass, true);
-  assert.deepEqual(t.describe(), { model: 'claude-haiku-4-5', transport: 'inline' });
+  assert.deepEqual(t.describe(), { model: 'claude-haiku-5-5', transport: 'inline' });
 });
 
 test('final and scheduler-only are graded separately (the verifier fixed it)', async () => {
@@ -107,7 +107,7 @@ test('run.mjs --target ai-schedule end to end against a local server', async () 
       const body = JSON.parse(b);
       const ops = [{ op: 'create', title: 'Haircut', cat: 'Routine', dayOffset: 1, start: 900, end: 960 }];
       res.writeHead(200, { 'content-type': 'application/json' });
-      res.end(JSON.stringify({ ok: true, model: 'claude-haiku-4-5', transport: 'skills', ops, firstOps: ops, issues: [], firstIssues: [], echoed: body.note }));
+      res.end(JSON.stringify({ ok: true, model: 'claude-haiku-5-5', transport: 'skills', ops, firstOps: ops, issues: [], firstIssues: [], echoed: body.note }));
     });
   });
   await new Promise((r) => server.listen(0, '127.0.0.1', r));
@@ -121,7 +121,7 @@ test('run.mjs --target ai-schedule end to end against a local server', async () 
   try {
     const r = await run({ AI_SCHEDULE_URL: url, AI_SCHEDULE_JWT: 'jwt' });
     assert.equal(r.code, 0, r.out + r.err);
-    assert.match(r.out, /Model claude-haiku-4-5 · transport ai-schedule\/skills/);
+    assert.match(r.out, /Model claude-haiku-5-5 · transport ai-schedule\/skills/);
     assert.match(r.out, /\| create-basic \| create \| 100% \|/);
     assert.match(r.out, /Meets the standard/);
   } finally {
