@@ -1,5 +1,5 @@
 // The widget's data: the snapshot the app writes (Design Spec WG 5, written by
-// src/features/widget/snapshot.ts), the mark-done queue, and the text helpers.
+// src/features/widget/snapshot.ts), the carousel taps, and the text helpers.
 // Mirrors src/features/widget/{types,labels}.ts: change them together.
 //
 // NOTE: this file has not been compiled (no Xcode in the build environment).
@@ -13,13 +13,10 @@ enum Shared {
     /// Must match APP_GROUP in app.config.ts and src/features/widget/types.ts.
     static let group = "group.com.claudecalendar.app"
     static let snapshotKey = "widget.snapshot.v1"
-    static let opsKey = "widget.ops.v1"
-    static let ackKey = "widget.opsAck.v1"
     /// Carousel taps (src/features/widget/carousel.ts). Written here, by the App Intents.
     static let carouselKey = "widget.carousel.v1"
     /// Must match IOS_WIDGET_KIND in types.ts.
     static let widgetKind = "CalendarWidget"
-    static let opMaxAge: TimeInterval = 7 * 86400
 
     static var defaults: UserDefaults? { UserDefaults(suiteName: group) }
 }
@@ -110,14 +107,7 @@ struct Tokens: Codable {
     var amber: String
 }
 
-struct DoneOp: Codable {
-    var op: String
-    var ev: String
-    var at: String
-    var key: String { ev + "@" + at }
-}
-
-// MARK: - Reading and the queue
+// MARK: - Reading
 
 enum Store {
     static func loadSnapshot() -> Snapshot? {
@@ -127,58 +117,6 @@ enum Store {
               snap.v == 1
         else { return nil }
         return snap
-    }
-
-    static func loadOps() -> [DoneOp] {
-        guard let raw = Shared.defaults?.string(forKey: Shared.opsKey),
-              let data = raw.data(using: .utf8),
-              let ops = try? JSONDecoder().decode([DoneOp].self, from: data)
-        else { return [] }
-        return ops.filter { $0.op == "done" }
-    }
-
-    static func loadAck() -> Set<String> {
-        guard let raw = Shared.defaults?.string(forKey: Shared.ackKey),
-              let data = raw.data(using: .utf8),
-              let keys = try? JSONDecoder().decode([String].self, from: data)
-        else { return [] }
-        return Set(keys)
-    }
-
-    /// The widget is the only writer of the queue (the app only writes the ack list), so there is no
-    /// cross-process read-modify-write race. Acknowledged and week-old ops are pruned here.
-    static func appendDone(eventID: String, now: Date = Date()) {
-        let ack = loadAck()
-        var ops = loadOps().filter { op in
-            guard !ack.contains(op.key) else { return false }
-            guard let at = Time.iso(op.at) else { return false }
-            return now.timeIntervalSince(at) < Shared.opMaxAge
-        }
-        ops.append(DoneOp(op: "done", ev: eventID, at: Time.isoString(now)))
-        if let data = try? JSONEncoder().encode(ops), let s = String(data: data, encoding: .utf8) {
-            Shared.defaults?.set(s, forKey: Shared.opsKey)
-        }
-    }
-
-    /// Queued checks newer than the snapshot, drawn on top of it (WG 5, "Check taps").
-    static func applyOps(_ snap: Snapshot, _ ops: [DoneOp]) -> Snapshot {
-        guard let base = Time.iso(snap.writtenAt) else { return snap }
-        let fresh = ops.filter { (Time.iso($0.at) ?? .distantPast) > base }
-        if fresh.isEmpty { return snap }
-        var out = snap
-        for op in fresh {
-            guard let i = out.events.firstIndex(where: { $0.id == op.ev }),
-                  !out.events[i].done, out.events[i].owner == nil else { continue }
-            out.events[i].done = true
-            let ev = out.events[i]
-            if let gid = ev.goal, let gi = out.goals.firstIndex(where: { $0.id == gid }),
-               let s = Time.parseLocal(ev.s), let e = Time.parseLocal(ev.e), ev.s.prefix(10) == snap.day {
-                let hours = max(0, e.timeIntervalSince(s) / 3600)
-                out.goals[gi].todayDone += hours
-                out.goals[gi].done += hours
-            }
-        }
-        return out
     }
 }
 

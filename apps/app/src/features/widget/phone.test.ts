@@ -1,6 +1,5 @@
 import { DEFAULT_PREFS } from '@calendar/core';
 
-import { createMemoryDeviceKv } from '@/lib/deviceKvMemory';
 import { EMPTY_DEVICE_STATE, type DeviceCalendarInfo, type DeviceEvent } from '@/sync/deviceTypes';
 
 import { cats, data, goals, NOW, user } from './fixtures';
@@ -62,8 +61,8 @@ describe('refresh with phone events', () => {
   it('writes the phone events the source provides, and still writes when the phone read fails', async () => {
     const storage = createMemoryWidgetStorage();
     const writer = createSnapshotWriter({ storage, now: () => NOW });
-    const store = { getState: () => ({ data: { events: [], cats, goals }, prefs: DEFAULT_PREFS }), commit: () => ({ ignored: [] }) };
-    const base = { writer, storage, kv: createMemoryDeviceKv(), now: () => NOW, clock: () => '12h' as const, hidePrivate: () => false, headless: async () => null };
+    const store = { getState: () => ({ data: { events: [], cats, goals }, prefs: DEFAULT_PREFS }) };
+    const base = { writer, now: () => NOW, clock: () => '12h' as const, hidePrivate: () => false, headless: async () => null };
     const phone = phoneEventsOf(state([dev()]))!;
 
     await refreshWidgetSnapshot({ ...base, live: () => ({ user, store, phone: async () => phone }) });

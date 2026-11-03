@@ -1,7 +1,7 @@
 /**
  * A small synchronous key-value store for per-device settings and caches that
  * are not part of the synced calendar data (the widget's snapshot on Android,
- * which mark-done ops the app already applied, "hide private titles", ...).
+ * "hide private titles", ...).
  *
  * Metro picks `deviceKv.native.ts` (MMKV) on iOS and Android; this file is the
  * web build and the fallback for tests: `localStorage`, or memory when storage

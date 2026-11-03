@@ -53,9 +53,8 @@ import {
   totalLeftLabel,
   type StaleLevel,
 } from './labels';
-import { applyOps } from './snapshot';
 import { WIDGET_ACCENT } from './tokens';
-import type { Clock, DoneOp, SnapshotEvent, Visibility, WidgetSnapshot } from './types';
+import type { Clock, SnapshotEvent, Visibility, WidgetSnapshot } from './types';
 
 export type Layout = 'small' | 'medium' | 'large' | 'xl';
 export type Platform = 'ios' | 'android';
@@ -121,8 +120,6 @@ export interface RowModel {
   hue: number;
   /** struck through and dimmed */
   done: boolean;
-  /** shows the check button (unticked circle, or filled when done). Never on the iPhone Large and Medium: there a done event is just struck through. */
-  check: boolean;
   vis: Visibility;
   owner: string | null;
   url: string;
@@ -255,14 +252,13 @@ const timed = (events: readonly SnapshotEvent[]): Timed[] =>
     .filter((x): x is Timed => !!x.s && !!x.en)
     .sort((a, b) => a.s.getTime() - b.s.getTime());
 
-const rowOf = (x: Timed, clock: Clock, hide: boolean, check: boolean): RowModel => ({
+const rowOf = (x: Timed, clock: Clock, hide: boolean): RowModel => ({
   id: x.e.id,
   title: hide && x.e.vis === 'private' ? PRIVATE_TITLE : x.e.t,
   time: fmtTime(x.s, clock),
   range: fmtRange(x.s, x.en, clock),
   hue: x.e.hue,
   done: x.e.done,
-  check: check && x.e.check && !x.e.owner,
   vis: x.e.vis,
   owner: x.e.owner,
   url: eventUrl(x.e.id),
@@ -334,20 +330,19 @@ const DAY_NAMES = ['Yesterday', 'Today', 'Tomorrow'] as const;
 
 /**
  * Build the model for `layout` at `nowMs`. `snapshot` null means signed out.
- * `ops` are queued checks, drawn on top of the snapshot. `carousel` is the
- * stored tap state of the iPhone Large and Medium pagers (expired taps read as home).
+ * `carousel` is the stored tap state of the iPhone Large and Medium pagers (expired taps read as home).
  */
 export function buildModel(
   snapshot: WidgetSnapshot | null,
   nowMs: number,
   layout: Layout,
-  opts: { platform?: Platform; ops?: readonly DoneOp[]; carousel?: CarouselState | null } = {},
+  opts: { platform?: Platform; carousel?: CarouselState | null } = {},
 ): WidgetModel {
   if (!snapshot) return signedOutModel(layout);
   const now = new Date(nowMs);
   const lim = limits(layout, opts.platform ?? 'ios');
   const paged = lim.fit !== null;
-  const snap = opts.ops?.length ? applyOps(snapshot, opts.ops) : snapshot;
+  const snap = snapshot;
   const clock = snap.prefs.clock;
   const hide = !!snap.prefs.hidePrivate;
   const car = resolveCarousel(opts.carousel, nowMs);
@@ -360,7 +355,7 @@ export function buildModel(
   const dayAfter = dayAt(2);
   const todayKey = dayKey(today);
   const nowLabel = fmtNow(now.getHours() * 60 + now.getMinutes(), clock);
-  const row = (x: Timed): RowModel => rowOf(x, clock, hide, !paged);
+  const row = (x: Timed): RowModel => rowOf(x, clock, hide);
 
   const all = timed(snap.events);
   // A day's events: anything overlapping it (a session that started last night and runs on counts).
@@ -396,7 +391,7 @@ export function buildModel(
 
     const summaryOf = (offset: DayOffset, evs: Timed[]): string | null => {
       if (offset < 0) {
-        // Goal sessions are the events that can be done (they had the check buttons).
+        // Only goal sessions count toward "n of m done" (`check` marks them in the snapshot).
         const sessions = evs.filter((x) => x.e.check);
         return sessions.length ? doneOfLabel(sessions.filter((x) => x.e.done).length, sessions.length) : null;
       }

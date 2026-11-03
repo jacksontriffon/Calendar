@@ -17,8 +17,8 @@ export const LAYOUT_OF: Record<AndroidWidgetName, Layout> = {
 };
 
 export function renderAndroidWidget(name: AndroidWidgetName, storage: Pick<WidgetStorage, 'get'>, nowMs: number = Date.now()): WidgetRepresentation {
-  const { snapshot, ops } = loadForDraw(storage);
-  const model = buildModel(snapshot, nowMs, LAYOUT_OF[name], { platform: 'android', ops });
+  const { snapshot } = loadForDraw(storage);
+  const model = buildModel(snapshot, nowMs, LAYOUT_OF[name], { platform: 'android' });
   const tokens = snapshot?.tokens ?? widgetTokens();
   const light = snapshot?.tokens.light ?? LIGHT;
   const dark = snapshot?.tokens.dark ?? DARK;

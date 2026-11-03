@@ -2,24 +2,20 @@
  * One refresh of the widget snapshot, shared by the background task and the
  * foreground hook. React-free and dependency-injected so it is unit-tested.
  *
- * Order matters: apply checks tapped on the widget first (so they reach the
- * server in the same sync), then pull, then write the snapshot from the result.
+ * Pull from the server (pushing local writes in the same sync), then write the
+ * snapshot from the result.
  */
 import type { CalendarData, Prefs } from '@calendar/core';
 
-import type { DeviceKv } from '@/lib/deviceKv';
-
-import { drainDoneOps, type DrainResult, type DrainStore } from './queue';
 import type { PhoneEvents } from './snapshot';
+import type { Clock } from './types';
 import type { SnapshotWriter } from './writer';
-import type { Clock, WidgetStorage } from './types';
 
 /** Where a refresh gets its data. */
 export interface Source {
   user: { id: string; name: string | null };
   store: {
     getState(): { data: CalendarData; prefs: Prefs };
-    commit: DrainStore['commit'];
   };
   /** Pull from the server (and push local writes) before the snapshot is written. */
   sync?: () => Promise<void>;
@@ -31,8 +27,6 @@ export interface Source {
 
 export interface RefreshDeps {
   writer: SnapshotWriter;
-  storage: WidgetStorage;
-  kv: DeviceKv;
   clock: () => Clock;
   hidePrivate: () => boolean;
   /** The live store, when the app UI is running in this JS runtime. */
@@ -42,7 +36,7 @@ export interface RefreshDeps {
   now?: () => Date;
 }
 
-export type RefreshOutcome = { via: 'live' | 'headless'; wrote: boolean; drained: DrainResult } | { via: 'signedOut' };
+export type RefreshOutcome = { via: 'live' | 'headless'; wrote: boolean } | { via: 'signedOut' };
 
 export async function refreshWidgetSnapshot(deps: RefreshDeps): Promise<RefreshOutcome> {
   const now = deps.now ?? (() => new Date());
@@ -53,7 +47,6 @@ export async function refreshWidgetSnapshot(deps: RefreshDeps): Promise<RefreshO
     return { via: 'signedOut' };
   }
   try {
-    const drained = drainDoneOps({ storage: deps.storage, kv: deps.kv, store: src.store, now: now() });
     try {
       await src.sync?.();
     } catch {
@@ -68,7 +61,7 @@ export async function refreshWidgetSnapshot(deps: RefreshDeps): Promise<RefreshO
     const { data, prefs } = src.store.getState();
     // Forced: a refresh is what moves `writtenAt`, which the stale state counts from.
     const wrote = deps.writer.writeNow({ data, prefs, user: src.user, clock: deps.clock(), hidePrivate: deps.hidePrivate(), phone }, true);
-    return { via: live ? 'live' : 'headless', wrote, drained };
+    return { via: live ? 'live' : 'headless', wrote };
   } finally {
     await src.finish?.();
   }

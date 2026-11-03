@@ -64,14 +64,6 @@ describe('Large, Today (WG 1g)', () => {
     expect(m.pager!.dots).toEqual([-1, 0, 1]);
   });
 
-  it('no check buttons anywhere: a done event is only struck through', () => {
-    const rows = [...m.items, ...[m.pager!.before, m.pager!.after].map((p) => (p!.row ? ({ kind: 'row', row: p!.row } as Item) : null))].flatMap((i) =>
-      i && i.kind === 'row' ? [i.row] : [],
-    );
-    expect(rows.length).toBeGreaterThan(5);
-    expect(rows.every((r) => r.check === false)).toBe(true);
-  });
-
   it('message field: a placeholder that opens the composer, with the accent for the send button', () => {
     expect(m.compose).toEqual({ placeholder: 'Add or change an event…', url: 'aicalendar://compose' });
     expect(m.accent).toBe('#cf7b58');
@@ -106,10 +98,9 @@ describe('Large, Today (WG 1g)', () => {
     expect(row && row.kind === 'row' && row.row.url).toBe('aicalendar://event/e3');
   });
 
-  it('initials chip on someone else’s event, never a check', () => {
+  it('initials chip on someone else’s event', () => {
     const dinner = buildModel(snapshotAt(new Date(2026, 9, 30, 18, 50), { data: dataWithDinner }), at(18, 50), 'large').items.flatMap((i) => (i.kind === 'row' ? [i.row] : []));
     const d = dinner.find((r) => r.title.startsWith('Dinner'))!;
-    expect(d.check).toBe(false);
     expect(d.owner).toBeTruthy();
   });
 });
@@ -254,7 +245,6 @@ describe('Medium (WG 2i)', () => {
   it('list: the finished session, the now line, the next three and "+ 3 more today"', () => {
     expect(names(m.items)).toEqual(['Sync layer, part two', 'now 11:48', 'Lunch', 'Review offline queue PR', 'Order dog food']);
     expect(m.more).toBe('+ 3 more today');
-    expect(m.items.every((i) => i.kind !== 'row' || i.row.check === false)).toBe(true);
   });
 
   it('goals: one at a time, three dots, a tap to reach the others', () => {
@@ -287,13 +277,6 @@ describe('Android and Small keep their layouts', () => {
     expect(big.goals.every((g) => /(weeks|days|day) left$/.test(g.deadline ?? ''))).toBe(true);
     expect(big.header).toMatchObject({ title: 'Fri 30 Oct', sub: 'Now 11:48', showPlus: true });
     expect(big.pager).toBeNull();
-  });
-  it('Android keeps the check on goal sessions only, never on someone else’s event', () => {
-    const rows = buildModel(snapshotAt(), NOW.getTime(), 'large', { platform: 'android' }).items.flatMap((i) => (i.kind === 'row' ? [i.row] : []));
-    expect(rows.find((r) => r.title === 'Review offline queue PR')!.check).toBe(true);
-    expect(rows.find((r) => r.title === 'Lunch')!.check).toBe(false);
-    const dinner = buildModel(snapshotAt(new Date(2026, 9, 30, 18, 50), { data: dataWithDinner }), at(18, 50), 'large', { platform: 'android' }).items.flatMap((i) => (i.kind === 'row' ? [i.row] : []));
-    expect(dinner.find((r) => r.title.startsWith('Dinner'))!.check).toBe(false);
   });
   it('Small: what is next, and when', () => {
     const s = buildModel(snapshotAt(), NOW.getTime(), 'small').small;

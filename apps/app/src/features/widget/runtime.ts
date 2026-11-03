@@ -2,7 +2,7 @@
  * The app-side wiring of the widget feature: one writer on the platform's
  * shared storage, the live-store registry, and the headless source the
  * background task uses when the app UI is not running. Everything with logic
- * lives in the pure modules (snapshot, queue, writer, refresh); this file only
+ * lives in the pure modules (snapshot, writer, refresh); this file only
  * connects them to the store, Supabase and the device.
  */
 import type { ProtoEvent } from '@calendar/core';
@@ -54,7 +54,7 @@ export function setLiveSource(fn: (() => Source | null) | null): void {
 /**
  * The app is not running (iOS BGTask / Android WorkManager started a bare JS
  * runtime): open the signed-in user's on-device cache with a short-lived sync
- * engine, so the refresh can apply queued checks, pull, and rebuild the snapshot.
+ * engine, so the refresh can pull and rebuild the snapshot.
  * Null when there is no session (signed out).
  */
 export async function headlessSource(): Promise<Source | null> {
@@ -80,7 +80,6 @@ export async function headlessSource(): Promise<Source | null> {
     user: { id: userId, name },
     store: {
       getState: () => ({ data: engine.getData(), prefs: engine.getPrefs() }),
-      commit: (next) => engine.applyData(next),
     },
     sync: () => engine.refresh(),
     phone: () => headlessPhoneEvents(userId, () => engine.getData()),
@@ -117,12 +116,10 @@ async function headlessPhoneEvents(userId: string, data: () => { events: readonl
 
 /* ---------- refresh ---------- */
 
-/** Apply queued checks, pull, and write the snapshot. Used by the background task, the foreground hook and the Android Retry button. */
+/** Pull, and write the snapshot. Used by the background task, the foreground hook and the Android Retry button. */
 export function refreshNow(): Promise<RefreshOutcome> {
   return refreshWidgetSnapshot({
     writer,
-    storage: widgetStorage,
-    kv: getDeviceKv(),
     clock: deviceClock,
     hidePrivate: hidePrivateTitles,
     live: () => (live ? live() : null),

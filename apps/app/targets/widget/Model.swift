@@ -21,8 +21,6 @@ struct Row: Identifiable {
     var hue: Int
     /// Struck through and dimmed.
     var done: Bool
-    /// Shows the check button. Only iPad: on Large and Medium a done event is just struck through.
-    var check: Bool
     var vis: String
     var owner: String?
     var url: URL
@@ -183,7 +181,7 @@ struct Model {
             out.signedOut = true
             return out
         }
-        let snap = Store.applyOps(raw, Store.loadOps())
+        let snap = raw
         let lim = limits(layout)
         let fit = lim.fit
         let paged = fit != nil
@@ -213,7 +211,6 @@ struct Model {
                 range: Time.range(x.s, x.en, h24: h24),
                 hue: x.e.hue,
                 done: x.e.done,
-                check: !paged && x.e.check && x.e.owner == nil,
                 vis: x.e.vis,
                 owner: x.e.owner,
                 url: Links.event(x.e.id),
@@ -263,7 +260,7 @@ struct Model {
             // iPhone Large (the pager) and Medium (today only): fitted by height.
             func summaryOf(_ offset: Int, _ evs: [Timed]) -> String? {
                 if offset < 0 {
-                    // Goal sessions are the events that can be done (they had the check buttons).
+                    // Only goal sessions count toward "n of m done" (`check` marks them in the snapshot).
                     let sessions = evs.filter { $0.e.check }
                     return sessions.isEmpty ? nil : Labels.doneOf(sessions.filter { $0.e.done }.count, sessions.count)
                 }

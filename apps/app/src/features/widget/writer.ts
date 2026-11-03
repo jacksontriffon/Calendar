@@ -30,7 +30,7 @@ export interface SnapshotWriter {
   schedule(input: WriteInput): void;
   /** Write now. `force` re-writes even if nothing changed. Returns true when a snapshot was written. */
   writeNow(input: WriteInput, force?: boolean): boolean;
-  /** Sign-out: remove the snapshot and the queue so the widget shows the sign-in card. */
+  /** Sign-out: remove the snapshot so the widget shows the sign-in card. */
   clear(): void;
   /** Write a pending debounced input now. */
   flush(): void;
@@ -82,8 +82,6 @@ export function createSnapshotWriter(opts: WriterOptions): SnapshotWriter {
     lastFingerprint = '';
     lastWriteMs = 0;
     storage.remove(KEYS.snapshot);
-    storage.remove(KEYS.ops);
-    storage.remove(KEYS.ack);
     storage.remove(KEYS.carousel);
     void storage.reload();
   };

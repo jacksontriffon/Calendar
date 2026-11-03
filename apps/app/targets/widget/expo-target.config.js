@@ -4,8 +4,8 @@
  * folder is part of the target. The App Group is mirrored from
  * `ios.entitlements` in app.config.ts.
  *
- * iOS 17 is the floor: interactive widgets (the check button runs an App
- * Intent) and `containerBackground` need it.
+ * iOS 17 is the floor: interactive widgets (the carousel taps run App
+ * Intents) and `containerBackground` need it.
  *
  * @type {import('@bacons/apple-targets/app.plugin').ConfigFunction}
  */

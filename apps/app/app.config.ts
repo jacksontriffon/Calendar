@@ -19,7 +19,7 @@ const GOOGLE_IOS_URL_SCHEME = process.env.GOOGLE_IOS_URL_SCHEME || 'com.googleus
 
 /**
  * App Group shared by the app and the iOS widget extension (the snapshot and the
- * mark-done queue live in its UserDefaults). It must be registered on the Apple
+ * carousel taps live in its UserDefaults). It must be registered on the Apple
  * Developer account for both App IDs. Keep in sync with `APP_GROUP` in
  * src/features/widget/types.ts and `Shared.group` in targets/widget/Snapshot.swift.
  */
@@ -32,7 +32,7 @@ const APP_GROUP = `group.${APP_ID}`;
 const ANDROID_WIDGETS = [
   { name: 'CalendarSmall', label: 'Calendar · Next', description: 'What is next, and when.', minWidth: '110dp', minHeight: '110dp', targetCellWidth: 2, targetCellHeight: 2, resizeMode: 'none', updatePeriodMillis: 1800000 },
   { name: 'CalendarMedium', label: 'Calendar · Agenda', description: 'Your next events and goals.', minWidth: '250dp', minHeight: '110dp', targetCellWidth: 4, targetCellHeight: 2, resizeMode: 'none', updatePeriodMillis: 1800000 },
-  { name: 'CalendarLarge', label: 'Calendar · Day', description: 'Your day, with goals and a check for each session.', minWidth: '250dp', minHeight: '250dp', targetCellWidth: 4, targetCellHeight: 4, resizeMode: 'none', updatePeriodMillis: 1800000 },
+  { name: 'CalendarLarge', label: 'Calendar · Day', description: 'Your day, with goals.', minWidth: '250dp', minHeight: '250dp', targetCellWidth: 4, targetCellHeight: 4, resizeMode: 'none', updatePeriodMillis: 1800000 },
 ] as const;
 
 const config: ExpoConfig = {

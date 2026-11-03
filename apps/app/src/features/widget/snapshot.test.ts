@@ -1,7 +1,7 @@
 import { DEFAULT_PREFS, goalToday, goalsToday, minutesOfDay, goalStats, RING, ringDash, SWATCH } from '@calendar/core';
 
 import { cats, data, dataWithDinner, events, goals, NOW, snapshotAt, user } from './fixtures';
-import { applyOps, buildSnapshot, fingerprint, MAX_EVENTS } from './snapshot';
+import { buildSnapshot, fingerprint, MAX_EVENTS } from './snapshot';
 import { DARK, LIGHT } from './tokens';
 import { ringOf, leftTodayLabel } from './labels';
 import { parseSnapshot } from './read';
@@ -20,7 +20,6 @@ describe('buildSnapshot', () => {
     expect(snap.session).toEqual({ userId: 'u_8f3c', name: 'Sam' });
     expect(snap.prefs).toMatchObject({ font: 'serif', clock: '12h', weekStart: 1, hidePrivate: false });
     expect(snap.cats).toMatchObject({ 'Deep work': 240, Reading: 290 });
-    expect(snap.ops).toEqual([]);
   });
 
   it('covers yesterday to 7 days ahead, without all-day events', () => {
@@ -146,28 +145,5 @@ describe('empty day', () => {
     const s = snapshotAt(sunday, { data: { events: [{ id: 'm1', day: '2026-11-02', cat: 'Deep work', title: 'Sync layer, part three', start: 540, end: 600 }], cats, goals } });
     expect(s.day).toBe('2026-11-01');
     expect(s.events.map((e) => e.id)).toEqual(['m1']);
-  });
-});
-
-describe('applyOps', () => {
-  const snap = snapshotAt();
-  const after = new Date(NOW.getTime() + 90000).toISOString();
-
-  it('dims the row and moves the goal ring', () => {
-    const out = applyOps(snap, [{ op: 'done', ev: 'e4', at: after }]);
-    expect(out.events.find((e) => e.id === 'e4')!.done).toBe(true);
-    const before = snap.goals.find((g) => g.id === 'g1')!;
-    const next = out.goals.find((g) => g.id === 'g1')!;
-    expect(next.todayDone).toBeCloseTo(before.todayDone + 0.5, 3);
-    expect(next.done).toBeCloseTo(before.done + 0.5, 3);
-    expect(snap.events.find((e) => e.id === 'e4')!.done).toBe(false);
-  });
-
-  it('ignores ops older than the snapshot, unknown events and someone else’s events', () => {
-    const before = new Date(NOW.getTime() - 1000).toISOString();
-    expect(applyOps(snap, [{ op: 'done', ev: 'e4', at: before }])).toBe(snap);
-    expect(applyOps(snap, [{ op: 'done', ev: 'nope', at: after }]).events).toEqual(snap.events);
-    const others = snapshotAt(NOW, { data: dataWithDinner });
-    expect(applyOps(others, [{ op: 'done', ev: 'e9', at: after }]).events.find((e) => e.id === 'e9')!.done).toBe(false);
   });
 });

@@ -14,7 +14,7 @@
  *    code does not hard-code them. Which scheme is used is still read from the
  *    system when the widget draws.
  *  - events carry `hue` (the resolved swatch hue) and `goal` (the goal id the
- *    session counts toward) so a queued check can move the right ring at once.
+ *    session counts toward).
  *  - `prefs.hidePrivate` is the spec's "Hide private titles" widget setting.
  */
 
@@ -27,17 +27,12 @@ export const APP_GROUP = 'group.com.claudecalendar.app';
 export const KEYS = {
   /** JSON {@link WidgetSnapshot}. Written by the app only. Absent means signed out. */
   snapshot: 'widget.snapshot.v1',
-  /** JSON {@link DoneOp}[]. Written by the widget only. */
-  ops: 'widget.ops.v1',
-  /** JSON string[] of {@link opKey}s the app has applied. Written by the app only. */
-  ack: 'widget.opsAck.v1',
   /** JSON {@link CarouselState}. Written by the widget only (iOS App Intents). Absent means every carousel is home. */
   carousel: 'widget.carousel.v1',
 } as const;
 
 /** Device-KV keys that are only for the app side. */
 export const APP_KEYS = {
-  applied: 'widget.applied.v1',
   hidePrivate: 'widget.hidePrivate.v1',
 } as const;
 
@@ -47,9 +42,6 @@ export const IOS_WIDGET_KIND = 'CalendarWidget';
 /** Android widget provider names (must match the plugin entries in app.config.ts). */
 export const ANDROID_WIDGETS = ['CalendarSmall', 'CalendarMedium', 'CalendarLarge'] as const;
 export type AndroidWidgetName = (typeof ANDROID_WIDGETS)[number];
-
-/** Queued checks older than this are dropped without being applied. */
-export const OP_MAX_AGE_MS = 7 * 86400000;
 
 export type Clock = '12h' | '24h';
 export type Visibility = 'private' | 'public';
@@ -66,7 +58,7 @@ export interface SnapshotEvent {
   s: string;
   /** floating local end, `YYYY-MM-DDTHH:mm` */
   e: string;
-  /** shows a check button (goal sessions only, and never on someone else's event) */
+  /** a goal session (never someone else's event): the events the "n of m done" summary counts */
   check: boolean;
   done: boolean;
   vis: Visibility;
@@ -124,14 +116,6 @@ export interface WidgetTokens {
   amber: string;
 }
 
-export interface DoneOp {
-  op: 'done';
-  /** event id */
-  ev: string;
-  /** ISO UTC time of the tap */
-  at: string;
-}
-
 export interface WidgetSnapshot {
   v: typeof SNAPSHOT_VERSION;
   /** ISO UTC time the snapshot was written; the stale state counts from here */
@@ -144,15 +128,9 @@ export interface WidgetSnapshot {
   events: SnapshotEvent[];
   goals: SnapshotGoal[];
   tokens: WidgetTokens;
-  /**
-   * Checks queued by the widget. The app never fills this (the widget keeps
-   * its own queue under `KEYS.ops`); it is kept so the format matches WG 5, and
-   * a widget applies queued ops on top of it when it draws.
-   */
-  ops: DoneOp[];
 }
 
-/** Storage the snapshot and the op queue live in. iOS: App Group. Android: MMKV. */
+/** Storage the snapshot lives in. iOS: App Group. Android: MMKV. */
 export interface WidgetStorage {
   get(key: string): string | null;
   set(key: string, value: string): void;

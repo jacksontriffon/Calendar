@@ -4,9 +4,8 @@
  *
  * `defineTask` must run when the JS bundle loads, not inside a component, so
  * `apps/app/index.ts` imports this file. The task:
- *   1. applies checks tapped on the widget (queued while the app was closed),
- *   2. pulls the latest events and goals, pushing local writes in the same sync,
- *   3. writes a fresh snapshot, which also moves `writtenAt` so the widget does
+ *   1. pulls the latest events and goals, pushing local writes in the same sync,
+ *   2. writes a fresh snapshot, which also moves `writtenAt` so the widget does
  *      not read as stale just because the app was not opened.
  * The system decides when it runs (iOS usually overnight, 15 min minimum on
  * Android), so the timeline entries and the "Updated 3h ago" state in the

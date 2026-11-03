@@ -170,11 +170,11 @@ Built to the Design Spec Widgets section (WG 1–6).
 - **iOS:** a SwiftUI WidgetKit extension in `apps/app/targets/widget`, added with `@bacons/apple-targets`.
   - Families: `systemSmall`, `systemMedium`, `systemLarge` and `systemExtraLarge` (iPad).
   - Timeline entries at each event start and end, at midnight, at the stale thresholds, and 5 minutes after each carousel tap.
-  - App Intents (iOS 17): `ShowDayIntent` and `ShowGoalPageIntent` move the carousels; `MarkDoneIntent` marks done and queues the change for the app to sync (iPad only now).
+  - App Intents (iOS 17): `ShowDayIntent` and `ShowGoalPageIntent` move the carousels; there is no mark-done intent: no widget has a check button.
   - `containerBackground` plus tinted and clear rendering modes.
   - Check `expo-widgets` at kickoff and use it instead if it's stable by then.
-- **Android:** `react-native-android-widget` with the same three layouts at 2×2, 4×2 and 4×4. Deferred for the new Large and Medium designs: it keeps the old layouts, including `MARK_DONE`, until it follows.
-  - A `MARK_DONE` click handler in the headless task.
+- **Android:** `react-native-android-widget` with the same three layouts at 2×2, 4×2 and 4×4. Deferred for the new Large and Medium designs: it keeps the old layouts until it follows.
+  - A `REFRESH` click handler in the headless task (the offline banner's Retry).
   - `OPEN_URI` deep links.
   - The system corner radius.
 - **iPhone Large and Medium (issue 5):** the model (`model.ts`, mirrored in `Model.swift`) fits each list by height rather than by row count, so "+ n more today" shows only when something does not fit.
@@ -182,7 +182,7 @@ Built to the Design Spec Widgets section (WG 1–6).
   - *Carousel state* is stored in the shared storage under `widget.carousel.v1` (`carousel.ts`): the Large day (−1, 0, +1) and the goal page for Large and Medium, each with the time of its last tap. Each goes back to Today and the first goal 5 minutes after its last tap, and at midnight.
   - *Goals* are all active goals up to `MAX_GOALS`, in pages: two on Large, one on Medium. With more than one page the whole goals block is one tap that shows the next page; with one page each goal opens itself.
   - *Summaries* are computed at draw time: Yesterday "2 of 3 done" counts goal sessions (the events that used to have a check), Tomorrow "4h 55m planned" sums the day's events.
-  - *No check buttons.* A done event is struck through and dimmed. The mark-done path (queue, `MarkDoneIntent`, `MARK_DONE`) stays for the iPad layout and Android until Android follows.
+  - *No check buttons, on any widget.* A done event is struck through and dimmed (on Android as a combining stroke on each letter, since its text widget has no strikethrough). The mark-done path (queue, `MarkDoneIntent`, `MARK_DONE`) is deleted; goal sessions still count toward Yesterday's "2 of 3 done".
   - *Not designed yet* (sensible defaults used, see `docs/status.md`): running event, empty day, signed out, stale, tinted and clear.
 - **Shared rules:** goal rings copy the app's ring geometry (18-unit viewBox, r 7.5, stroke 2.5, starting at the top). There is no coloured text. One add control is visible at a time: the message field on iPhone Large and Medium, the "+" in the header on iPad and Android, which is hidden whenever the empty-day "Add a note" call to action is showing. No layout shows an "n left" count.
 
@@ -205,7 +205,7 @@ Each phase ends with the app runnable on iOS, Android and web, CI green, and the
 | 4 | AI | `ai-schedule` (skills, verifier, usage, limits), the composer and ask flow, goal-adjust, check-in. `evals` gain an `ai-schedule` target. | The eval suite passes at the current bar; the usage indicator works. |
 | 5 | Visibility & Google | `google-connect`, `google-sync` (import and publish, RRULE series), `google-webhook`, queue consumer, cron. Visibility row and picker, target statuses, Connect Google flow, Choose calendars, someone-else's events, Remove/Hidden events, category default visibility. | Multi-account import and publish round-trip with Google in both directions, including deletes; private events never reach Google. |
 | 6 | Phone calendars | `expo-calendar` bridge (read, publish, permissions, duplicate hiding), "On this phone" targets and statuses. | Publish to iCloud and Android device calendars; phone events never reach Supabase (verified by test). |
-| 7 | Widgets | iOS extension (all families, light/dark, tinted/clear, App Intents for the carousels and mark done) and Android widget (3 sizes, MARK_DONE; the new Large and Medium designs follow later); snapshot writer; background refresh. | WG frames match on device; the Large and Medium carousels move on a tap; mark done from the iPad widget and Android syncs. |
+| 7 | Widgets | iOS extension (all families, light/dark, tinted/clear, App Intents for the carousels) and Android widget (3 sizes; the new Large and Medium designs follow later); snapshot writer; background refresh. | WG frames match on device; the Large and Medium carousels move on a tap; the widgets show done events struck through. |
 | 8 | Web cutover | Expo web deployed to Vercel in place of `index.html`; legacy web app retired; `legacy_calendar_blobs` dropped after the import window. | claude-calendar.com serves the Expo build; legacy users are imported. |
 | 9 | Store release | Bundle ids, icons and splash from `assets/`, iOS privacy manifest, App Privacy and Play Data safety forms, App Review notes with a demo account, TestFlight / internal testing, EAS Submit. | Both apps are approved. |
 
@@ -236,7 +236,7 @@ These carry over from the Design Spec. Decide them before the phase that needs t
 2. **Repeating events:** whether deleting one asks "this event or the series". Today trash deletes this and all future occurrences. (Phase 3)
 3. **"Family" naming:** it is both a category and a Google calendar name, in different colours. Should the sample data or the UI disambiguate? (Phase 3)
 4. **Imported Google events:** which category they get. Options are a per-calendar default, "Google", or AI-assigned. (Phase 5)
-5. **Widget check buttons:** shown only on goal sessions and tasks, or on every event? (Phase 7) Answered for the iPhone: neither, there are none on Large and Medium (WG 1g–2i). Still open for iPad and Android, which keep them for now (goal sessions only).
+5. **Widget check buttons:** shown only on goal sessions and tasks, or on every event? (Phase 7) Answered: neither, there are no check buttons on any widget; a done event is struck through.
 6. **Widget clock:** should it follow a 12h/24h preference? The app has none yet. (Phase 7)
 7. **Widget accent:** should the "+", now line and pin markers go neutral like the text? (Phase 7) Answered for iPhone Large and Medium: the now line and the send button use the accent (WG 1g, 2i); the rest stays neutral.
 8. **Android widget sizes:** are fixed sizes (2×2 / 4×2 / 4×4) enough, or should it resize continuously? (Phase 7)

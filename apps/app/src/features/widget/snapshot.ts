@@ -31,7 +31,6 @@ import { widgetTokens, WIDGET_ACCENT } from './tokens';
 import {
   SNAPSHOT_VERSION,
   type Clock,
-  type DoneOp,
   type SnapshotEvent,
   type SnapshotGoal,
   type WidgetSnapshot,
@@ -57,7 +56,7 @@ export interface BuildInput {
   /**
    * The phone's own calendars ("On this phone"). Those events live in the device bridge's memory and
    * never enter the store, so the caller passes them here. They only add rows: they never count toward
-   * a goal and never get a check button. The snapshot is written to on-device storage, so this does not
+   * a goal. The snapshot is written to on-device storage, so this does not
    * break the rule that phone events are never uploaded.
    */
   phone?: PhoneEvents | null;
@@ -73,13 +72,9 @@ export interface PhoneEvents {
 export const isOthers = (e: Pick<ProtoEvent, 'source' | 'isMine'>): boolean => e.isMine === false || e.source === 'google';
 
 /**
- * Whether a row gets a check button (open question 5). Only goal sessions, and
- * never someone else's event ("marking done is the owner's call"). The data has
- * no separate "task" kind, so the answer to "tasks or every event?" is goal
- * sessions only; change it here if that is decided differently. Only the iPad and
- * Android layouts draw the button now; the iPhone Large and Medium have none
- * (issue 5), and a done session there is just struck through. The Large
- * "2 of 3 done" summary counts these sessions.
+ * Whether an event is a goal session the widget counts: only goal sessions, and
+ * never someone else's event. No widget draws a check button any more (a done
+ * event is struck through), so this only feeds the Large "2 of 3 done" summary.
  */
 export const showsCheck = (e: ProtoEvent, goal: ProtoGoal | null): boolean => !!goal && !isOthers(e) && !e.allDay;
 
@@ -185,39 +180,8 @@ export function buildSnapshot(input: BuildInput): WidgetSnapshot | null {
     events: buildEvents(input, today),
     goals: buildGoals(input, ctx),
     tokens: widgetTokens(),
-    ops: [],
   };
 }
 
 /** The snapshot as written, without the write time: equal fingerprints mean nothing the widget shows has changed. */
 export const fingerprint = (s: WidgetSnapshot): string => JSON.stringify({ ...s, writtenAt: '' });
-
-export const opKey = (o: Pick<DoneOp, 'ev' | 'at'>): string => `${o.ev}@${o.at}`;
-
-/**
- * Queued checks drawn on top of a snapshot: the row dims and the goal ring
- * moves at once. An op counts only if it is newer than the snapshot (the app
- * writes a fresh snapshot after it applies the queue, so older ops are already
- * in it), and never on someone else's event or one already done.
- */
-export function applyOps(snap: WidgetSnapshot, ops: readonly DoneOp[]): WidgetSnapshot {
-  const base = Date.parse(snap.writtenAt);
-  const fresh = ops.filter((o) => o.op === 'done' && Date.parse(o.at) > base);
-  if (!fresh.length) return snap;
-  const events = snap.events.map((e) => ({ ...e }));
-  const goals = snap.goals.map((g) => ({ ...g }));
-  for (const o of fresh) {
-    const ev = events.find((e) => e.id === o.ev);
-    if (!ev || ev.done || ev.owner) continue;
-    ev.done = true;
-    const s = parseLocal(ev.s);
-    const e = parseLocal(ev.e);
-    const g = ev.goal ? goals.find((x) => x.id === ev.goal) : undefined;
-    if (g && s && e && ev.s.slice(0, 10) === snap.day) {
-      const hours = Math.max(0, (e.getTime() - s.getTime()) / 3600000);
-      g.todayDone = r3(g.todayDone + hours);
-      g.done = r3(g.done + hours);
-    }
-  }
-  return { ...snap, events, goals };
-}
