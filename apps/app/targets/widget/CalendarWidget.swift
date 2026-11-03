@@ -67,6 +67,14 @@ struct CalendarProvider: TimelineProvider {
         // WidgetKit allows a limited number of entries; keep the nearest ones.
         let ordered = dates.sorted().prefix(60)
         let entries = ordered.map { CalendarEntry(date: $0, snapshot: snap, carousel: carousel) }
+        // Signed out (no snapshot): the only entry is `now`, so `.atEnd` would ask for a new timeline at
+        // once, again and again. That redraws the widget in a loop (it flashes) until WidgetKit's reload
+        // budget runs out and it stops drawing it (it goes black). Sleep instead; the app reloads the
+        // timeline itself when the user signs in and a snapshot is written.
+        if snap == nil {
+            completion(Timeline(entries: entries, policy: .after(now.addingTimeInterval(60 * 60))))
+            return
+        }
         // Ask for a new timeline after the last entry. The app also reloads on every snapshot write.
         completion(Timeline(entries: entries, policy: .atEnd))
     }
