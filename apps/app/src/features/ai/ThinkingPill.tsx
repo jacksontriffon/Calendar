@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import Animated, {
   Easing, FadeIn, cancelAnimation, useAnimatedStyle, useSharedValue, withDelay, withRepeat, withSequence, withTiming,
 } from 'react-native-reanimated';
-import { ACCENT, text, white } from '@calendar/core';
+import { ACCENT, text } from '@calendar/core';
 
 import { AppText } from '@/components/AppText';
 
@@ -22,7 +22,7 @@ function Dot({ delay }: { delay: number }) {
 }
 
 /**
- * "Tetris-ing your day…" with three bouncing dots, centred above the composer while a note is
+ * "Tetris-ing your day…" with three bouncing dots, centred above the goal chips while a note is
  * being scheduled (also used while a check-in reads the week).
  */
 export function ThinkingPill({ phrase, testID = 'thinking-pill' }: { phrase: string; testID?: string }) {
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
   wrap: { alignItems: 'center', paddingBottom: 9 },
   pill: {
     flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 8, paddingHorizontal: 14, borderRadius: 999,
-    backgroundColor: white(0.05), borderWidth: 1, borderColor: white(0.08),
+    backgroundColor: '#242220', borderWidth: 1, borderColor: '#322f2c',
   },
   dots: { flexDirection: 'row', gap: 4 },
   dot: { width: 5, height: 5, borderRadius: 3, backgroundColor: ACCENT },

@@ -18,7 +18,10 @@ import { getStore, useCalendarData, usePrefs, useSyncStatus } from '@/store';
 import { useVisibleData } from '../calendars/overlay';
 import { stampSeen } from '../checkin/state';
 import { useCalendarWithDevice } from '../calendars/device';
+import { ThinkingPill } from '../ai/ThinkingPill';
+import { pickPhrase } from '../ai/phrases';
 import { CheckInHost } from '../checkin/CheckInHost';
+import { useComposer } from '../composer/instance';
 import { GoalChips } from '../goals/GoalChips';
 import { GoalsSheet } from '../goals/GoalsSheet';
 import { commitQuiet, commitUndoable } from '../history/commit';
@@ -169,6 +172,7 @@ export function CalendarScreen() {
 
   const bottomPad = insets.bottom + 190;
   const hasTimerPill = !!timer.tm && !timer.tm.open;
+  const thinking = useComposer();
 
   return (
     <View style={styles.page}>
@@ -268,6 +272,7 @@ export function CalendarScreen() {
               </Pressable>
             </View>
           ) : null}
+          {thinking.phase === 'thinking' ? <ThinkingPill phrase={pickPhrase(thinking.query, thinking.seq)} /> : null}
           <View style={styles.chipsRow} pointerEvents="box-none">
             {goalsOpen ? <View style={{ flex: 1 }} /> : (
               <GoalChips data={data} now={now} timerCtx={timer} onPress={() => setGoalsOpen(true)} />
