@@ -52,6 +52,8 @@ Decided while building iPhone Large and Medium (details in `expo-plan.md`, Widge
 
 Still open (no frames, so these use defaults): in progress (a card in place of the now line), empty day ("Nothing scheduled" and the next event as text), signed out and stale (the old cards; stale shows the cloud-off mark by the month and "Open Calendar to refresh" in the message field), tinted and clear (the field's solid fill cannot survive them), the second page of goals (the sample has three goals), dark-mode default, and Android (4×4 and 4×2). The Design Spec text still describes the old Large (one "+", "Add a note", WG 5's tap map and check interaction).
 
+Tap latency: a Yesterday/Tomorrow tap still goes intent → `reloadTimelines` → `getTimeline` → a render of every entry (WidgetKit's loop, not ours to skip). All three days are already in the snapshot, so nothing is fetched. Our share of the wait was `Time` building a new `DateFormatter` per call while `Model.build` parsed every event for each of up to 60 entries; the formatters are now built once (`Snapshot.swift`, `Time`). Not measured on a device. If it still feels slow, next steps: parse the events once per timeline instead of per entry, and cap the entries while a tap is live (only the next few minutes matter).
+
 Not verified: none of the Swift has been compiled, and the carousel taps have never run on a device. The `aicalendar://compose` link focuses the composer only when the `compose` param changes (`Composer.tsx`), so a second tap on the field while the app is already open at `/?compose=1` may not raise the keyboard.
 
 ## Known follow-ups

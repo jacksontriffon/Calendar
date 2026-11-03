@@ -265,33 +265,43 @@ enum Time {
     static let mon = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
     static var cal: Calendar { Calendar.current }
 
+    // Formatters are built once. Creating a DateFormatter costs far more than using one, and a carousel
+    // tap rebuilds the timeline: `Model.build` runs per entry (up to 60) and parses every event's start
+    // and end, so a formatter per call meant thousands of allocations before the widget could redraw.
+    // `autoupdatingCurrent` keeps a long-lived extension process right if the time zone changes.
     private static func formatter(_ f: String) -> DateFormatter {
         let d = DateFormatter()
         d.locale = Locale(identifier: "en_US_POSIX")
-        d.timeZone = TimeZone.current
+        d.timeZone = TimeZone.autoupdatingCurrent
         d.dateFormat = f
         return d
     }
 
-    /// `YYYY-MM-DDTHH:mm`, floating local.
-    static func parseLocal(_ s: String) -> Date? { formatter("yyyy-MM-dd'T'HH:mm").date(from: String(s.prefix(16))) }
-    /// `YYYY-MM-DD` -> local midnight.
-    static func parseDay(_ s: String) -> Date? { formatter("yyyy-MM-dd").date(from: String(s.prefix(10))) }
-    static func dayKey(_ d: Date) -> String { formatter("yyyy-MM-dd").string(from: d) }
-
-    static func iso(_ s: String) -> Date? {
+    private static let localFormatter = formatter("yyyy-MM-dd'T'HH:mm")
+    private static let dayFormatter = formatter("yyyy-MM-dd")
+    private static let isoFractional: ISO8601DateFormatter = {
         let a = ISO8601DateFormatter()
         a.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        if let d = a.date(from: s) { return d }
+        return a
+    }()
+    private static let isoPlain: ISO8601DateFormatter = {
         let b = ISO8601DateFormatter()
         b.formatOptions = [.withInternetDateTime]
-        return b.date(from: s)
+        return b
+    }()
+
+    /// `YYYY-MM-DDTHH:mm`, floating local.
+    static func parseLocal(_ s: String) -> Date? { localFormatter.date(from: String(s.prefix(16))) }
+    /// `YYYY-MM-DD` -> local midnight.
+    static func parseDay(_ s: String) -> Date? { dayFormatter.date(from: String(s.prefix(10))) }
+    static func dayKey(_ d: Date) -> String { dayFormatter.string(from: d) }
+
+    static func iso(_ s: String) -> Date? {
+        isoFractional.date(from: s) ?? isoPlain.date(from: s)
     }
 
     static func isoString(_ d: Date) -> String {
-        let a = ISO8601DateFormatter()
-        a.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        return a.string(from: d)
+        isoFractional.string(from: d)
     }
 
     static func minutes(_ d: Date) -> Int {
