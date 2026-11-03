@@ -43,12 +43,16 @@ export const data: CalendarData = { events, cats, goals };
 /**
  * The extra days the Large carousel shows (WG 1h, 1i): Thu 29 with three goal sessions, two of them
  * done ("2 of 3 done"), and Sat 31 filled out to 4h 55m. Invented, like the sample days in the spec.
+ * Wed 28 feeds the goals chart only.
  */
 export const extraDays: ProtoEvent[] = [
   ev('y1', '2026-10-29', 'Deep work', 'Sync layer, part one', 540, 690, { done: true }),
   ev('y2', '2026-10-29', 'Food', 'Lunch', 750, 795),
   ev('y3', '2026-10-29', 'Marathon training', 'Easy 5k', 1110, 1170, { done: true }),
   ev('y4', '2026-10-29', 'Reading', 'Reading', 1260, 1305),
+  // Wed 28, the day before yesterday: the oldest bar of the Large goals chart. Outside the snapshot's event window, so no row shows it.
+  ev('w1', '2026-10-28', 'Deep work', 'Sync layer, part zero', 540, 600),
+  ev('w2', '2026-10-28', 'Marathon training', 'Easy 5k', 1110, 1155),
   ev('t3', '2026-10-31', 'Pets', 'Dog walk', 1050, 1090),
   ev('t4', '2026-10-31', 'Reading', 'Reading', 1260, 1305),
 ];

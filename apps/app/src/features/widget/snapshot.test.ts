@@ -1,6 +1,6 @@
 import { DEFAULT_PREFS, goalToday, goalsToday, minutesOfDay, goalStats, RING, ringDash, SWATCH } from '@calendar/core';
 
-import { cats, data, dataWithDinner, events, goals, NOW, snapshotAt, user } from './fixtures';
+import { cats, data, dataWide, dataWithDinner, events, goals, NOW, snapshotAt, user } from './fixtures';
 import { buildSnapshot, fingerprint, MAX_EVENTS } from './snapshot';
 import { DARK, LIGHT } from './tokens';
 import { ringOf, leftTodayLabel } from './labels';
@@ -126,6 +126,21 @@ describe('goals match core', () => {
   it('orders furthest behind first, then nearest deadline', () => {
     const deltas = snap.goals.map((g) => goalStats(goals.find((x) => x.id === g.id)!, events, ctx).delta);
     expect([...deltas].sort((a, b) => a - b)).toEqual(deltas);
+  });
+
+  it('writes the hours done on the two days before today, for the Large goals chart', () => {
+    // Wed 28: Deep work 1 h and Marathon 45 min; Thu 29: Deep work 2.5 h, Marathon 1 h, Reading 45 min (all ended, so done)
+    const s = snapshotAt(NOW, { data: dataWide });
+    const prev = Object.fromEntries(s.goals.map((g) => [g.id, g.prev]));
+    expect(prev).toEqual({ g1: [1, 2.5], g2: [0.75, 1], g3: [0, 0.75] });
+    // the sample data has no such days
+    expect(snap.goals.every((g) => g.prev!.every((h) => h === 0))).toBe(true);
+  });
+
+  it('counts only days inside the goal: a goal that starts today has no earlier bars', () => {
+    const fresh = { ...goals[0], id: 'fresh', start: '2026-10-30', deadline: '2026-11-30' };
+    const s = snapshotAt(NOW, { data: { events: dataWide.events, cats, goals: [fresh] } });
+    expect(s.goals[0].prev).toEqual([0, 0]);
   });
 
   it('drops goals that are not active today', () => {

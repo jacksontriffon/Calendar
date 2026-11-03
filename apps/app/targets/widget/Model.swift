@@ -3,7 +3,8 @@
 // (which the jest tests pin to the Design Spec frames): change them together.
 //
 // Large (WG 1g to 1i) is a vertical carousel of Yesterday, Today and Tomorrow with
-// goals in the header two a page; Medium (WG 2i) is today only with one goal at a
+// goals in the header two a page, drawn as one small bar chart (the last two days, then Today
+// with the hours still required hatched); Medium (WG 2i) is today only with one goal at a
 // time. Both end in a message field that opens the composer. The lists are fitted
 // by height (`Fit`), so "+ n more today" shows only when something does not fit.
 //
@@ -53,6 +54,13 @@ struct GoalVM: Identifiable {
     var isDone: Bool
     var total: String
     var deadline: String?
+    /// The goal's bars in the Large header chart (`chart` in model.ts): hours done on the two days before
+    /// today, the hours a day it needs, done so far today and still required today. All zeros while the
+    /// numbers are old.
+    var prev: [Double]
+    var need: Double
+    var doneToday: Double
+    var leftHours: Double
     var url: URL
 }
 
@@ -107,7 +115,8 @@ struct Fit {
     var avail: Double
     var peek: Double
 
-    static let large = Fit(row: 20, now: 14, card: 44, more: 14, avail: 222, peek: 37)
+    /// 354 - 28 padding - 68 header (the goals chart) - 6 gap - 40 field = 212, less the 18 heading.
+    static let large = Fit(row: 20, now: 14, card: 44, more: 14, avail: 194, peek: 37)
     static let medium = Fit(row: 16, now: 11, card: 36, more: 12, avail: 88, peek: 0)
 }
 
@@ -131,6 +140,10 @@ struct Model {
     var more: String?
     var goals: [GoalVM] = []
     var goalPages: GoalPages?
+    /// The Large goals chart's column labels: "Wed", "Thu", "Today".
+    var chartDays: [String] = ["", "", "Today"]
+    /// The chart's scale in hours: the tallest bar or dotted line on show, with 18% headroom.
+    var chartMax = 0.0
     var small: SmallVM?
     var today: DayColumn?
     var tomorrow: DayColumn?
@@ -349,6 +362,10 @@ struct Model {
                 isDone: !goalsDim && Labels.isDoneToday(need: g.todayNeed, done: g.todayDone),
                 total: Labels.totalLeft(g),
                 deadline: lim.deadline ? d.label : nil,
+                prev: goalsDim ? [0, 0] : [g.prev?.first ?? 0, (g.prev?.count ?? 0) > 1 ? g.prev![1] : 0],
+                need: goalsDim ? 0 : g.todayNeed,
+                doneToday: goalsDim ? 0 : g.todayDone,
+                leftHours: goalsDim ? 0 : max(0, g.todayNeed - g.todayDone),
                 url: Links.goals
             )
         }
@@ -360,6 +377,11 @@ struct Model {
             if !active.isEmpty { m.goalPages = GoalPages(index: index, count: count) }
         } else {
             m.goals = Array(active.prefix(lim.goals))
+        }
+        m.chartDays = [-2, -1].map { Time.dow[Time.cal.component(.weekday, from: Time.addDays(today, $0)) - 1] } + ["Today"]
+        if !m.goals.isEmpty {
+            let tallest = m.goals.flatMap { [$0.need, $0.doneToday + $0.leftHours, $0.prev[0], $0.prev[1]] }.max() ?? 0
+            m.chartMax = max(tallest, 0.25) * 1.18
         }
 
         // Empty day (the one in view): today's next event as a line of text.

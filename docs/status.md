@@ -13,7 +13,7 @@ Where the Expo + Supabase rebuild stands against `expo-plan.md` §7. Update this
 | 4 AI | Done in code. `ai-schedule` (two-pass with verifier, usage limits), composer, ask flow, goal-adjust, AI check-ins, `evals --target ai-schedule`. |
 | 5 Visibility & Google | Done in code. `google-connect/sync/webhook`, queue consumer, visibility picker, Connect Google, Choose calendars, Remove/Hidden events, category default visibility. |
 | 6 Phone calendars | Done in code. `expo-calendar` bridge (read, publish, duplicate hiding); a test enforces that phone events never reach Supabase. |
-| 7 Widgets | Done in code. iOS WidgetKit extension (`@bacons/apple-targets`), Android widget, snapshot. iPhone Large (three-day carousel) and Medium (today, one goal at a time) follow WG 1g–1i and 2i; Android and the missing states are still on the old designs (see below). |
+| 7 Widgets | Done in code. iOS WidgetKit extension (`@bacons/apple-targets`), Android widget, snapshot. iPhone Large (three-day carousel; goals as one chart of the last two days and Today, hours still required hatched) and Medium (today, one goal at a time) follow WG 1g–1i and 2i; Android and the missing states are still on the old designs (see below). |
 | 8 Web cutover | Not started: needs a decision (it replaces the live site). |
 | 9 Store release | Not started: needs Apple/Google accounts. |
 
@@ -48,6 +48,7 @@ Nothing below could run in the build environment (no Docker, no Xcode, no device
 Decided while building iPhone Large and Medium (details in `expo-plan.md`, Widgets):
 
 - The message field is a deep link to the composer; the carousels move on a tap through App Intents (iOS 17); the tap state resets to Today and the first goal after 5 minutes and at midnight (`apps/app/src/features/widget/carousel.ts`, `CarouselIntents.swift`).
+- Large's goals chart (WG 1g) reads `prev` on each snapshot goal: hours done on the two days before today, written by the app (`buildGoals` in `snapshot.ts`; an older snapshot lacks it and draws zeros). Bars are hours done a day, the dotted line is `todayNeed`, and Today's hatched bar is `todayNeed - todayDone`. The Swift chart (`GoalsChartView` in `Views.swift`) and its model fields are not compiled or seen on a device. Android Large, Medium, iPad and Small still draw rings.
 - The 5-minute reset, the "2 of 3 done" count (goal sessions only) and the goals tap are my choices, not in the frames. Tapping a goal on any widget opens `aicalendar://goals`, the goals sheet on its overview (progress graph and goal grid); on iPhone Large and Medium the page dots are the separate tap that shows the next page.
 
 Still open (no frames, so these use defaults): in progress (a card in place of the now line), empty day ("Nothing scheduled" and the next event as text), signed out and stale (the old cards; stale shows the cloud-off mark by the month and "Open Calendar to refresh" in the message field), tinted and clear (the field's solid fill cannot survive them), the second page of goals (the sample has three goals), dark-mode default, and Android (4×4 and 4×2). The Design Spec text still describes the old Large (one "+", "Add a note", WG 5's tap map and check interaction).

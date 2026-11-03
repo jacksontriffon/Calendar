@@ -13,7 +13,9 @@ import {
   addDays,
   isDone,
   withAutoDone,
+  goalHours,
   goalOf,
+  goalSpan,
   goalStats,
   goalsToday,
   key,
@@ -143,6 +145,15 @@ export function buildEvents(input: BuildInput, today: Date): SnapshotEvent[] {
  */
 export function buildGoals(input: BuildInput, ctx: NowCtx): SnapshotGoal[] {
   const data = withAutoDone(input.data, ctx.nowMs ?? Date.now()); // an event that has ended counts as done
+  /** Hours done on `offset` days from today (-1 yesterday), within the goal's span. */
+  const hoursOn = (g: ProtoGoal, offset: number): number => {
+    const sp = goalSpan(g, ctx.today);
+    const a = addDays(ctx.today, offset);
+    const b = addDays(ctx.today, offset + 1);
+    const lo = a.getTime() < sp.s0.getTime() ? sp.s0 : a;
+    const hi = b.getTime() > sp.s1.getTime() ? sp.s1 : b;
+    return hi.getTime() > lo.getTime() ? r3(goalHours(g, lo, hi, data.events, true, ctx.timer)) : 0;
+  };
   const today = goalsToday(data.goals, data.events, ctx);
   const byId = new Map(today.map((g) => [g.id, g]));
   return data.goals
@@ -160,6 +171,7 @@ export function buildGoals(input: BuildInput, ctx: NowCtx): SnapshotGoal[] {
         done: r3(st.done),
         todayNeed: r3(t.todayNeed),
         todayDone: r3(t.todayDone),
+        prev: [hoursOn(g, -2), hoursOn(g, -1)],
         start: g.start,
         deadline: g.deadline,
       };

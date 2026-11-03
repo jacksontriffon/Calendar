@@ -80,6 +80,8 @@ struct SnapshotGoal: Codable {
     var done: Double
     var todayNeed: Double
     var todayDone: Double
+    /// Hours done on the two days before today, oldest first (the Large goals chart). Absent in older snapshots.
+    var prev: [Double]?
     var start: String
     var deadline: String
 }

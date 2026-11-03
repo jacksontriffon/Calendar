@@ -80,6 +80,11 @@ export interface SnapshotGoal {
   /** hours needed today / done today (core `goalToday`) */
   todayNeed: number;
   todayDone: number;
+  /**
+   * Hours done on the two days before today, oldest first (the Large widget's goals chart: Wed, Thu, then
+   * Today). Added after the first snapshots, so an older snapshot lacks it and the chart reads zeros.
+   */
+  prev?: [number, number];
   /** `YYYY-MM-DD` */
   start: string;
   /** `YYYY-MM-DD`, inclusive */

@@ -3,8 +3,8 @@
 //
 // Rules the spec sets:
 //  - no coloured text: ink is the system's white or black at fixed opacities;
-//    hues appear only on event bars and goal rings, and both are
-//    `widgetAccentable()` so tinted and clear modes flatten them to the tint;
+//    hues appear only on event bars, goal rings and the Large goals chart, and all
+//    are `widgetAccentable()` so tinted and clear modes flatten them to the tint;
 //  - no check buttons anywhere: a done event is struck through and dimmed. Large and
 //    Medium (WG 1g to 1i, 2i) also have no "+" and no "n left" counts; the message field
 //    along the bottom is the one way to add, and opens the composer;
@@ -729,20 +729,170 @@ struct DayDots: View {
 
 // MARK: - Sizes
 
-/// The Large header (WG 1g): the date with the month under it, and the goals two at a time.
+// MARK: - Goals chart (Large header, WG 1g)
+
+/// A bar with rounded top corners and a square foot, like the Goals graph's bars.
+private func topRounded(_ x: CGFloat, _ y: CGFloat, _ w: CGFloat, _ h: CGFloat, _ radius: CGFloat) -> Path {
+    let r = min(radius, w / 2, h)
+    var p = Path()
+    p.move(to: CGPoint(x: x, y: y + h))
+    p.addLine(to: CGPoint(x: x, y: y + r))
+    p.addQuadCurve(to: CGPoint(x: x + r, y: y), control: CGPoint(x: x, y: y))
+    p.addLine(to: CGPoint(x: x + w - r, y: y))
+    p.addQuadCurve(to: CGPoint(x: x + w, y: y + r), control: CGPoint(x: x + w, y: y))
+    p.addLine(to: CGPoint(x: x + w, y: y + h))
+    p.closeSubpath()
+    return p
+}
+
+/// One chart for the two goals on show: Wed, Thu and Today, one bar per goal in each. The bars are hours
+/// done that day; today's bar is what is done so far with the hours still required hatched on top (a bar
+/// that is all hatch when nothing is done yet). A dotted line across the chart marks the hours a day each
+/// goal needs. Marks follow the Goals graph: swatch bars, the line at 38%, a soft column behind today.
+/// 118 x 64 pt: 3 columns over 53 pt of plot and an 11 pt label row (the frame in WG 1g).
+struct GoalsChartView: View {
+    let goals: [GoalVM]
+    let days: [String]
+    let yMax: Double
+    let pal: Pal
+
+    static let width: CGFloat = 118
+    static let height: CGFloat = 64
+    private let labelH: CGFloat = 11
+    private let padT: CGFloat = 3
+    private let gap: CGFloat = 2
+
+    private var base: CGFloat { Self.height - labelH }
+    private var slot: CGFloat { Self.width / 3 }
+    private var bw: CGFloat { min(12, (slot * 0.74 - CGFloat(max(0, goals.count - 1)) * gap) / CGFloat(max(1, goals.count))) }
+
+    private func y(_ v: Double) -> CGFloat {
+        base - CGFloat(v / max(yMax, 0.0001)) * (base - padT)
+    }
+    private func barX(_ column: Int, _ goal: Int) -> CGFloat {
+        let off = (CGFloat(goal) - CGFloat(goals.count - 1) / 2) * (bw + gap)
+        return (CGFloat(column) + 0.5) * slot + off - bw / 2
+    }
+
+    var body: some View {
+        ZStack(alignment: .topLeading) {
+            // Neutral: the column behind today and the baseline.
+            Canvas { ctx, _ in
+                ctx.fill(topRounded(2 * slot, padT, slot, base - padT, 6), with: .color(pal.ink(0.045)))
+                var line = Path()
+                line.move(to: CGPoint(x: 0, y: base + 0.5))
+                line.addLine(to: CGPoint(x: Self.width, y: base + 0.5))
+                ctx.stroke(line, with: .color(pal.ink(0.08)), lineWidth: 1)
+            }
+            // The goals' colours: bars, hatched bars and the dotted lines.
+            Canvas { ctx, _ in
+                for (gi, g) in goals.enumerated() {
+                    let color = pal.hue(g.hue)
+                    let values = [g.prev[0], g.prev[1], g.doneToday]
+                    for column in 0..<3 {
+                        let x = barX(column, gi)
+                        let v = values[column]
+                        let h: CGFloat = v > 0 ? max(3, base - y(v)) : 0
+                        let req = column == 2 ? g.leftHours : 0
+                        let gh: CGFloat = req > 0 ? max(3, base - y(req)) : 0
+                        if gh > 0 {
+                            // Hours still required today. On a solid bar the stripes are the Goals graph's neutral
+                            // ones; a bar that is all hatch takes its goal's colour so it can be told apart.
+                            let capTop = base - h - gh
+                            let path = topRounded(x, capTop, bw, gh, 3)
+                            ctx.fill(path, with: .color(pal.ink(0.1)))
+                            var clipped = ctx
+                            clipped.clip(to: path)
+                            let stripe: Color = h > 0 ? pal.ink(0.16) : color.opacity(0.62)
+                            var sx = x - gh
+                            while sx < x + bw {
+                                var s = Path()
+                                s.move(to: CGPoint(x: sx, y: capTop + gh))
+                                s.addLine(to: CGPoint(x: sx + gh, y: capTop))
+                                clipped.stroke(s, with: .color(stripe), style: StrokeStyle(lineWidth: 3))
+                                sx += 8.5
+                            }
+                        }
+                        if h > 0 {
+                            ctx.fill(topRounded(x, base - h, bw, h, gh > 0 ? 0 : 3), with: .color(color))
+                        }
+                    }
+                }
+                for g in goals where g.need > 0 {
+                    var line = Path()
+                    line.move(to: CGPoint(x: 0, y: y(g.need)))
+                    line.addLine(to: CGPoint(x: Self.width, y: y(g.need)))
+                    ctx.stroke(line, with: .color(pal.hue(g.hue).opacity(0.38)), style: StrokeStyle(lineWidth: 2, lineCap: .round, dash: [0.1, 4.6]))
+                }
+            }
+            .widgetAccentable()
+            HStack(spacing: 0) {
+                ForEach(0..<3, id: \.self) { i in
+                    Text(i < days.count ? days[i] : "")
+                        .font(.system(size: 9, weight: i == 2 ? .semibold : .regular))
+                        .foregroundStyle(i == 2 ? pal.ink(0.85) : pal.ink(0.34))
+                        .frame(width: slot)
+                }
+            }
+            .frame(height: labelH)
+            .offset(y: base)
+        }
+        .frame(width: Self.width, height: Self.height)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(goals.map { g in
+            "\(g.title): \(g.today.isEmpty ? "numbers are old" : g.today)"
+        }.joined(separator: ". "))
+    }
+}
+
+/// The two goals' names beside the chart, each with the time left today; the swatch says which bars are whose.
+struct GoalsLegend: View {
+    let goals: [GoalVM]
+    let pal: Pal
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 7) {
+            ForEach(goals) { g in
+                HStack(alignment: .top, spacing: 5) {
+                    RoundedRectangle(cornerRadius: 1.5)
+                        .fill(pal.hue(g.hue))
+                        .frame(width: 6, height: 6)
+                        .frame(height: 12)
+                        .widgetAccentable()
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text(g.title)
+                            .font(.system(size: 10.5, weight: .semibold))
+                            .tracking(-0.1)
+                            .foregroundStyle(pal.ink())
+                            .lineLimit(1)
+                        Text(g.today)
+                            .font(.system(size: 10))
+                            .foregroundStyle(pal.secondary)
+                            .lineLimit(1)
+                    }
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+    }
+}
+
+/// The Large header (WG 1g): the date with the month under it and the goal page dots below, then one chart
+/// for the goals on show (the last two days and Today) with their names and time left today beside it.
 /// The date follows the day in view. A stale widget gets the cloud-off mark before the month.
 struct PagedHeaderView: View {
     let m: Model
     let pal: Pal
 
     var body: some View {
-        HStack(alignment: .center, spacing: 12) {
-            VStack(alignment: .leading, spacing: 1) {
+        HStack(alignment: .top, spacing: 12) {
+            VStack(alignment: .leading, spacing: 0) {
                 Text(m.title)
                     .font(.system(size: 19, weight: .semibold))
                     .tracking(-0.5)
                     .foregroundStyle(pal.ink())
                     .lineLimit(1)
+                    .padding(.top, 2)
                 HStack(spacing: 4) {
                     if m.stale {
                         // The one amber mark: the cloud-off glyph. The text stays ink.
@@ -755,13 +905,34 @@ struct PagedHeaderView: View {
                         .foregroundStyle(pal.secondary)
                         .lineLimit(1)
                 }
+                .padding(.top, 1)
+                Spacer(minLength: 0)
+                if let pages = m.goalPages, pages.count > 1 {
+                    // Widgets cannot swipe: a tap on the dots shows the next goal page.
+                    Button(intent: ShowGoalPageIntent(layout: "large", page: (pages.index + 1) % pages.count)) {
+                        PageDots(pages: pages, pal: pal)
+                            .frame(minWidth: 44, minHeight: 16, alignment: .leading)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                }
             }
-            .fixedSize()
-            Spacer(minLength: 0)
-            GoalsPager(m: m, pal: pal, layoutName: "large")
-                .frame(maxWidth: 214)
+            .fixedSize(horizontal: true, vertical: false)
+            .frame(minWidth: 56, maxHeight: .infinity, alignment: .topLeading)
+            if !m.goals.isEmpty {
+                // A tap on the chart or the names opens the goals graph in the app.
+                Link(destination: m.goals[0].url) {
+                    HStack(alignment: .top, spacing: 12) {
+                        GoalsChartView(goals: m.goals, days: m.chartDays, yMax: m.chartMax, pal: pal)
+                        GoalsLegend(goals: m.goals, pal: pal)
+                            .frame(height: GoalsChartView.height)
+                    }
+                }
+            } else {
+                Spacer(minLength: 0)
+            }
         }
-        .frame(height: 40)
+        .frame(height: 68)
     }
 }
 

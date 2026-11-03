@@ -7,7 +7,9 @@
  * Rules (Design Spec WG, "Both platforms" and WG 6):
  *  - iPhone Large (WG 1g to 1i): Yesterday, Today and Tomorrow as a vertical
  *    carousel of three pages. The page in view lists that day; the neighbours
- *    peek above and below. Goals sit in the header, two a page. A message field
+ *    peek above and below. Goals sit in the header, two a page, as one small
+ *    bar chart (`chart` on each goal, `chartDays`, `chartMax`): the last two
+ *    days, then Today with the hours still required hatched. A message field
  *    runs along the bottom. No check buttons, no "+", no counts.
  *  - iPhone Medium (WG 2i): today only, one goal at a time in a left rail, the
  *    same message field. No other days.
@@ -22,7 +24,7 @@
  *    goal numbers dim and a strip says "Open Calendar to refresh" (on iPhone
  *    Large and Medium it takes the message field's placeholder).
  */
-import { fmtDur } from '@calendar/core';
+import { DOW, fmtDur } from '@calendar/core';
 
 import { resolveCarousel, type CarouselState, type DayOffset } from './carousel';
 import { composeUrl, dayUrl, eventUrl, goalsUrl, signinUrl } from './links';
@@ -62,8 +64,8 @@ export type Platform = 'ios' | 'android';
 /**
  * Heights (pt) an iPhone list is fitted into, from the frames. `avail` is the
  * room under a page's heading with no peeks; each peek takes `peek` off it.
- *  - Large (WG 1g, 354 tall): 354 - 28 padding - 40 header - 6 gap - 40 field = 240, less the 18 heading = 222.
- *    Today has two peeks (222 - 74 = 148), Yesterday and Tomorrow one (185).
+ *  - Large (WG 1g, 354 tall): 354 - 28 padding - 68 header (the goals chart) - 6 gap - 40 field = 212, less the 18 heading = 194.
+ *    Today has two peeks (194 - 74 = 120), Yesterday and Tomorrow one (157).
  *  - Medium (WG 2i, 158 tall): 158 - 24 padding - 32 field = 102, less the 14 heading = 88. No peeks.
  */
 export interface Fit {
@@ -75,7 +77,7 @@ export interface Fit {
   peek: number;
 }
 
-export const LARGE_FIT: Fit = { row: 20, now: 14, card: 44, more: 14, avail: 222, peek: 37 };
+export const LARGE_FIT: Fit = { row: 20, now: 14, card: 44, more: 14, avail: 194, peek: 37 };
 export const MEDIUM_FIT: Fit = { row: 16, now: 11, card: 36, more: 12, avail: 88, peek: 0 };
 
 export interface Limits {
@@ -130,6 +132,22 @@ export type Item =
   | { kind: 'now'; time: string }
   | { kind: 'card'; row: RowModel; progress: number; endsIn: string };
 
+/**
+ * One goal's bars in the Large header chart (WG 1g): hours done on each of the last two days, what is done
+ * so far today and what is still required today (drawn hatched), and the hours a day the goal needs (the
+ * dotted line). All zeros while the numbers are old.
+ */
+export interface GoalChartModel {
+  /** hours done on the two days before today, oldest first */
+  prev: [number, number];
+  /** hours a day the goal needs (core `goalToday().todayNeed`) */
+  need: number;
+  /** hours done so far today */
+  done: number;
+  /** hours still required today: `max(0, need - done)` */
+  left: number;
+}
+
 export interface GoalModel {
   id: string;
   title: string;
@@ -145,6 +163,8 @@ export interface GoalModel {
   total: string;
   /** "9 weeks left", only where it fits */
   deadline: string | null;
+  /** the goal's bars in the Large header chart */
+  chart: GoalChartModel;
   url: string;
 }
 
@@ -227,6 +247,10 @@ export interface WidgetModel {
   goals: GoalModel[];
   /** which goal page that is, and how many there are (iPhone Large and Medium; null elsewhere or with no goals) */
   goalPages: { index: number; count: number } | null;
+  /** the Large goals chart's three column labels: "Wed", "Thu", "Today" */
+  chartDays: [string, string, string];
+  /** the tallest bar or dotted line on show, with 18% headroom: the chart's scale in hours (0 with no goals) */
+  chartMax: number;
   small: SmallModel | null;
   xl: { today: DayColumn; tomorrow: DayColumn } | null;
   /** the day carousel (iPhone Large only) */
@@ -321,6 +345,8 @@ const signedOutModel = (layout: Layout): WidgetModel => ({
   more: null,
   goals: [],
   goalPages: null,
+  chartDays: ['', '', 'Today'],
+  chartMax: 0,
   small: null,
   xl: null,
   pager: null,
@@ -495,6 +521,9 @@ export function buildModel(
     isDone: !goalsDim && doneToday(g.todayNeed, g.todayDone),
     total: totalLeftLabel(g),
     deadline: lim.deadline ? deadlineLabel(g, today) : null,
+    chart: goalsDim
+      ? { prev: [0, 0], need: 0, done: 0, left: 0 }
+      : { prev: g.prev ?? [0, 0], need: g.todayNeed, done: g.todayDone, left: Math.max(0, g.todayNeed - g.todayDone) },
     url: goalsUrl(),
   });
   let goals: GoalModel[];
@@ -508,6 +537,9 @@ export function buildModel(
   } else {
     goals = active.slice(0, lim.goals).map(goalOf);
   }
+  const chartMax = goals.length
+    ? Math.max(...goals.flatMap((g) => [g.chart.need, g.chart.done + g.chart.left, ...g.chart.prev]), 0.25) * 1.18
+    : 0;
 
   // Empty day (the one in view): today's next event as a line of text.
   let empty: WidgetModel['empty'] = null;
@@ -585,6 +617,8 @@ export function buildModel(
     more,
     goals,
     goalPages,
+    chartDays: [DOW[dayAt(-2).getDay()], DOW[dayAt(-1).getDay()], 'Today'],
+    chartMax,
     small,
     xl,
     pager,

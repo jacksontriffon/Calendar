@@ -48,10 +48,11 @@ describe('Large, Today (WG 1g)', () => {
     expect(m.url).toBe('aicalendar://day/2026-10-30');
   });
 
-  it('Today page: the finished session, the now line, what fits, and "+ 1 more today"', () => {
+  it('Today page: the finished session, the now line, what fits, and "+ 3 more today"', () => {
     expect(m.pager).toMatchObject({ day: 0, heading: 'Today', summary: null });
-    expect(names(m.items)).toEqual(['Sync layer, part two', 'now 11:48', 'Lunch', 'Review offline queue PR', 'Order dog food', 'Dog walk', 'Easy 6k']);
-    expect(m.more).toBe('+ 1 more today');
+    // 120 pt under the heading and the two peeks: 34 for the session and the now line, three 20 pt rows, 14 for "+ 3 more today"
+    expect(names(m.items)).toEqual(['Sync layer, part two', 'now 11:48', 'Lunch', 'Review offline queue PR', 'Order dog food']);
+    expect(m.more).toBe('+ 3 more today');
     const first = m.items[0];
     expect(first.kind === 'row' && first.row.done).toBe(true);
   });
@@ -69,12 +70,11 @@ describe('Large, Today (WG 1g)', () => {
     expect(m.accent).toBe('#cf7b58');
   });
 
-  it('goals: two a page with the time left inside the ring, and page dots for the rest', () => {
+  it('goals: two a page, each with its time left today, and page dots for the rest', () => {
     expect(m.goals).toHaveLength(2);
     expect(m.goalPages).toEqual({ index: 0, count: 2 });
     for (const g of m.goals) {
-      expect(g.ring).toBeGreaterThanOrEqual(0);
-      expect(g.left).toMatch(/^(\d+h)?( ?\d+m)?$/);
+      expect(g.today).toMatch(/^(Done today|(\d+h)?( ?\d+m)? left today)$/);
       expect(g.url).toBe(goalsUrl());
     }
     const second = buildModel(snap, NOW.getTime(), 'large', { carousel: tapped({ large: 1 }) });
@@ -102,6 +102,53 @@ describe('Large, Today (WG 1g)', () => {
     const dinner = buildModel(snapshotAt(new Date(2026, 9, 30, 18, 50), { data: dataWithDinner }), at(18, 50), 'large').items.flatMap((i) => (i.kind === 'row' ? [i.row] : []));
     const d = dinner.find((r) => r.title.startsWith('Dinner'))!;
     expect(d.owner).toBeTruthy();
+  });
+});
+
+describe('Large goals chart (WG 1g)', () => {
+  const snap = snapshotAt(NOW, { data: dataWide });
+  const m = buildModel(snap, NOW.getTime(), 'large');
+  const goal = (title: string) => buildModel(snap, NOW.getTime(), 'large', { carousel: tapped({ large: 0 }) }).goals.concat(buildModel(snap, NOW.getTime(), 'large', { carousel: tapped({ large: 1 }) }).goals).find((g) => g.title === title)!;
+
+  it('three columns: the last two days, then Today', () => {
+    expect(m.chartDays).toEqual(['Wed', 'Thu', 'Today']);
+  });
+
+  it('each goal carries hours done on the two days before today, oldest first', () => {
+    expect(goal('Deep work').chart.prev).toEqual([1, 2.5]);
+    expect(goal('Marathon training').chart.prev).toEqual([0.75, 1]);
+    expect(goal('Reading').chart.prev).toEqual([0, 0.75]);
+  });
+
+  it('Today: what is done so far and what is still required, matching the "left today" line', () => {
+    const deep = goal('Deep work');
+    // 2.5 h of Deep work are done by 11:48 (the 9am session): done is counted, not the plan
+    expect(deep.chart.done).toBeCloseTo(2.5, 2);
+    for (const g of [deep, goal('Marathon training'), goal('Reading')]) {
+      expect(g.chart.left).toBeCloseTo(Math.max(0, g.chart.need - g.chart.done), 5);
+      expect(g.today).toBe(g.chart.left < 1 / 60 ? 'Done today' : `${g.today.replace(' left today', '')} left today`);
+    }
+    const marathon = goal('Marathon training');
+    expect(marathon.chart.done).toBe(0);
+    expect(marathon.chart.left).toBeCloseTo(marathon.chart.need, 5);
+  });
+
+  it('the scale is the tallest bar or line on show, with 18% headroom', () => {
+    const tallest = Math.max(...m.goals.flatMap((g) => [g.chart.need, g.chart.done + g.chart.left, ...g.chart.prev]));
+    expect(m.chartMax).toBeCloseTo(tallest * 1.18, 5);
+    const second = buildModel(snap, NOW.getTime(), 'large', { carousel: tapped({ large: 1 }) });
+    const tall2 = Math.max(...second.goals.flatMap((g) => [g.chart.need, g.chart.done + g.chart.left, ...g.chart.prev]));
+    expect(second.chartMax).toBeCloseTo(tall2 * 1.18, 5);
+  });
+
+  it('an old snapshot without `prev` reads as zeros', () => {
+    const old = { ...snap, goals: snap.goals.map(({ prev: _prev, ...g }) => g) };
+    expect(buildModel(old, NOW.getTime(), 'large').goals.every((g) => g.chart.prev[0] === 0 && g.chart.prev[1] === 0)).toBe(true);
+  });
+
+  it('over 24 h the chart is empty, like the dimmed numbers', () => {
+    const dim = buildModel(snap, NOW.getTime() + 26 * 3600000, 'large');
+    expect(dim.goals.every((g) => g.chart.prev[0] === 0 && g.chart.prev[1] === 0 && g.chart.need === 0 && g.chart.done === 0 && g.chart.left === 0)).toBe(true);
   });
 });
 
@@ -146,9 +193,9 @@ describe('Large, Yesterday and Tomorrow (WG 1h, 1i)', () => {
     const many = Array.from({ length: 14 }, (_, i) => ({ id: 'z' + i, day: '2026-10-31', cat: 'Food', title: 'Z' + i, start: 360 + i * 60, end: 400 + i * 60 }));
     const m = buildModel(snapshotAt(NOW, { data: { events: many, cats, goals } }), NOW.getTime(), 'large', { carousel: tapped({ day: 1 }) });
     const rows = m.items.filter((i) => i.kind === 'row').length;
-    // 185 pt: nine 20 pt rows fit, but the "+ n more" line (14 pt) needs room too, so eight
-    expect(rows).toBe(8);
-    expect(m.more).toBe('+ 6 more');
+    // 157 pt: eight 20 pt rows fit, but the "+ n more" line (14 pt) needs room too, so seven
+    expect(rows).toBe(7);
+    expect(m.more).toBe('+ 7 more');
   });
 });
 
@@ -185,9 +232,9 @@ describe('Large, event in progress', () => {
     expect(m.items.some((i) => i.kind === 'now')).toBe(false);
     expect(m.header.sub).toBe('Now 11:05');
   });
-  it('the card costs 44 pt, so fewer rows fit: 44 + 4 x 20 + 14 for "+ 2 more today" = 138 of 148', () => {
-    expect(m.items.filter((i) => i.kind === 'row')).toHaveLength(4);
-    expect(m.more).toBe('+ 2 more today');
+  it('the card costs 44 pt, so fewer rows fit: 44 + 3 x 20 + 14 for "+ 3 more today" = 118 of 120', () => {
+    expect(m.items.filter((i) => i.kind === 'row')).toHaveLength(3);
+    expect(m.more).toBe('+ 3 more today');
   });
 });
 
