@@ -213,18 +213,6 @@ function EditBody({ ev, view, patch, catOp, onTargets, onDelete, onTimer }: Edit
         </Pressable>
       </View>
 
-      {ev.allDay ? null : (
-        <Pressable
-          onPress={() => patch({ done: !ev.done })}
-          accessibilityRole="checkbox"
-          accessibilityState={{ checked: !!ev.done }}
-          style={[styles.doneRow, ev.done && { borderColor: P.line, backgroundColor: P.fill }]}
-        >
-          <Icon name="check" size={13} color={ev.done ? P.ink : text(0.4)} strokeWidth={2.2} />
-          <AppText style={[styles.doneTxt, ev.done && { color: P.ink }]}>{ev.done ? 'Done' : 'Mark done'}</AppText>
-        </Pressable>
-      )}
-
       <View style={styles.chips}>
         {names.map((n) => {
           const CP = paint(hueFor(view.cats, n));
@@ -421,11 +409,6 @@ const styles = StyleSheet.create({
     width: 38, height: 38, borderRadius: 9, alignItems: 'center', justifyContent: 'center',
     backgroundColor: 'rgba(232,116,95,0.11)', borderWidth: 1, borderColor: 'rgba(232,116,95,0.24)',
   },
-  doneRow: {
-    alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 12, paddingVertical: 6, paddingHorizontal: 10,
-    borderRadius: 9, borderWidth: 1, borderColor: 'transparent', backgroundColor: white(0.05),
-  },
-  doneTxt: { fontSize: 11.5, color: text(0.55) },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 15 },
   chip: { paddingVertical: 6, paddingHorizontal: 10, borderRadius: 9, borderWidth: 1, borderColor: 'transparent', backgroundColor: white(0.05) },
   chipTxt: { fontSize: 11.5, color: text(0.55) },

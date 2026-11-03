@@ -9,13 +9,12 @@ import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 import { scheduleOnRN } from 'react-native-worklets';
 import * as Haptics from 'expo-haptics';
 import {
-  ACCENT, SURFACE, fmt, hueFor, isPending, key, paint, stepFor, text, white, workedMins, timerInfo, livePauses, minsIn,
+  ACCENT, SURFACE, fmt, hueFor, key, paint, stepFor, text, white, workedMins, timerInfo, livePauses, minsIn,
   type CatMap, type ProtoEvent, type TimerState,
 } from '@calendar/core';
 
 import { AppText } from '@/components/AppText';
 import { useStoreState } from '@/store';
-import { getLastSeen } from '../checkin/state';
 import { EventBlock, type BlockTimer } from './EventBlock';
 import { GridContext, type GridCtx } from './ctx';
 import {
@@ -46,7 +45,6 @@ interface Props {
   navOp: SharedValue<number>;
   swipeX: SharedValue<number>;
   onOpen: (id: string) => void;
-  onToggleDone: (id: string) => void;
   /** a drag/resize finished: the new times and column */
   onCommitDrag: (id: string, mode: DragMode, start: number, end: number, dayIdx: number) => void;
   onZoom: (z: number) => void;
@@ -152,7 +150,6 @@ function CalendarGridImpl(p: Props) {
       lastOpen.current = t;
       cbRef.current.onOpen(id);
     },
-    onToggleDone: (id) => cbRef.current.onToggleDone(id),
     onDragStart: (id, mode) => {
       for (const l of layoutsRef.current) {
         const it = l.laid.find((x) => x.ev.id === id && x.ev.part !== 'second');
@@ -263,8 +260,6 @@ function CalendarGridImpl(p: Props) {
     };
   };
 
-  const lastSeen = getLastSeen();
-
   return (
     <GridContext.Provider value={ctx}>
       <View style={styles.scroll}>
@@ -322,7 +317,6 @@ function CalendarGridImpl(p: Props) {
                     nowMin={nowMin}
                     dk={l.dk}
                     todayKey={todayKey}
-                    pending={isPending(ev, nowMs, lastSeen)}
                     step={step}
                     timer={blockTimer(ev)}
                     initials={undefined}

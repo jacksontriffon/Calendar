@@ -252,13 +252,16 @@ const timed = (events: readonly SnapshotEvent[]): Timed[] =>
     .filter((x): x is Timed => !!x.s && !!x.en)
     .sort((a, b) => a.s.getTime() - b.s.getTime());
 
-const rowOf = (x: Timed, clock: Clock, hide: boolean): RowModel => ({
+/** Done: finished with the timer, or simply over (every event before now counts as done; nobody ticks them off). */
+const isDoneAt = (x: Timed, nowMs: number): boolean => x.e.done || x.en.getTime() <= nowMs;
+
+const rowOf = (x: Timed, clock: Clock, hide: boolean, nowMs: number): RowModel => ({
   id: x.e.id,
   title: hide && x.e.vis === 'private' ? PRIVATE_TITLE : x.e.t,
   time: fmtTime(x.s, clock),
   range: fmtRange(x.s, x.en, clock),
   hue: x.e.hue,
-  done: x.e.done,
+  done: isDoneAt(x, nowMs),
   vis: x.e.vis,
   owner: x.e.owner,
   url: eventUrl(x.e.id),
@@ -355,7 +358,7 @@ export function buildModel(
   const dayAfter = dayAt(2);
   const todayKey = dayKey(today);
   const nowLabel = fmtNow(now.getHours() * 60 + now.getMinutes(), clock);
-  const row = (x: Timed): RowModel => rowOf(x, clock, hide);
+  const row = (x: Timed): RowModel => rowOf(x, clock, hide, nowMs);
 
   const all = timed(snap.events);
   // A day's events: anything overlapping it (a session that started last night and runs on counts).
@@ -393,7 +396,7 @@ export function buildModel(
       if (offset < 0) {
         // Only goal sessions count toward "n of m done" (`check` marks them in the snapshot).
         const sessions = evs.filter((x) => x.e.check);
-        return sessions.length ? doneOfLabel(sessions.filter((x) => x.e.done).length, sessions.length) : null;
+        return sessions.length ? doneOfLabel(sessions.filter((x) => isDoneAt(x, nowMs)).length, sessions.length) : null;
       }
       if (offset > 0) {
         const mins = evs.reduce((a, x) => a + (x.en.getTime() - x.s.getTime()) / MIN, 0);

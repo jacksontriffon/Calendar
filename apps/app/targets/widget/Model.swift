@@ -210,7 +210,7 @@ struct Model {
                 time: Time.time(x.s, h24: h24),
                 range: Time.range(x.s, x.en, h24: h24),
                 hue: x.e.hue,
-                done: x.e.done,
+                done: x.e.done || x.en <= now,
                 vis: x.e.vis,
                 owner: x.e.owner,
                 url: Links.event(x.e.id),
@@ -262,7 +262,7 @@ struct Model {
                 if offset < 0 {
                     // Only goal sessions count toward "n of m done" (`check` marks them in the snapshot).
                     let sessions = evs.filter { $0.e.check }
-                    return sessions.isEmpty ? nil : Labels.doneOf(sessions.filter { $0.e.done }.count, sessions.count)
+                    return sessions.isEmpty ? nil : Labels.doneOf(sessions.filter { $0.e.done || $0.en <= now }.count, sessions.count)
                 }
                 if offset > 0 {
                     let mins = evs.reduce(0.0) { $0 + $1.en.timeIntervalSince($1.s) / 60 }

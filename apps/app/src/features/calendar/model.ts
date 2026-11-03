@@ -228,8 +228,6 @@ export interface BlockFlags {
   week: boolean;
   dense: boolean;
   part: Seg['part'];
-  /** event ended and is still unconfirmed, scheduled ahead of time */
-  needsConfirm: boolean;
   hasWin: boolean;
   isPublic: boolean;
   month?: boolean;
@@ -240,7 +238,6 @@ export interface BlockMetrics {
   canResize: boolean;
   canTop: boolean;
   canBottom: boolean;
-  showCheck: boolean;
   showMeta: boolean;
   showGrip: boolean;
   /** public globe: bottom right, blocks of 40px or more, never in month view */
@@ -252,7 +249,7 @@ export interface BlockMetrics {
 
 export const minBlockH = (week: boolean, dense: boolean): number => (week ? 15 : dense ? 13 : 22);
 
-/** Everything a block decides from its size: handles, tick, meta line, glyph, title lines. */
+/** Everything a block decides from its size: handles, meta line, glyph, title lines. */
 export function blockMetrics(f: BlockFlags): BlockMetrics {
   const { h, w, week, dense } = f;
   const small = week || dense;
@@ -264,7 +261,6 @@ export function blockMetrics(f: BlockFlags): BlockMetrics {
     canResize,
     canTop: canResize && f.part !== 'second',
     canBottom: canResize && f.part !== 'first',
-    showCheck: f.needsConfirm && h >= 17 && w >= 42 && f.part !== 'first',
     showMeta: !week && h >= 40,
     showGrip: h >= 34 && !week,
     showPublicGlyph: f.isPublic && !f.month && h >= 40,

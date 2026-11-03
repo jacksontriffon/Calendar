@@ -5,7 +5,7 @@ import Animated, { Easing, useSharedValue, withTiming, type AnimatedStyle } from
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 import {
-  ACCENT, dnum, editEvent, key, toggleDone, white,
+  ACCENT, dnum, editEvent, key, white, withAutoDone,
   type ProtoEvent,
 } from '@calendar/core';
 
@@ -124,13 +124,6 @@ export function CalendarScreen() {
     router.push({ pathname: '/event/[id]', params: { id } });
   }, []);
 
-  const doneToggle = useCallback((id: string) => {
-    const d = getStore().getState().data;
-    const ev = d.events.find((e) => e.id === id);
-    if (!ev) return;
-    commitQuiet(toggleDone(d, id), (ev.done ? 'Unchecked · ' : 'Done · ') + ev.title, 'edit');
-  }, []);
-
   const commitDrag = useCallback((id: string, mode2: DragMode, start: number, end: number, dayIdx: number) => {
     const d = getStore().getState().data;
     const ev = d.events.find((e) => e.id === id);
@@ -143,7 +136,9 @@ export function CalendarScreen() {
   const setZoom = useCallback((z: number) => getStore().setPrefs({ zoom: z }), []);
 
   const nowCtx = useMemo(() => ({ today: now.today, nowMin: now.nowMin, nowMs: now.nowMs }), [now.today, now.nowMin, now.nowMs]);
-  const summary = useMemo(() => goalSummary(data.goals, data.events, nowCtx), [data.goals, data.events, nowCtx]);
+  /* goal progress reads the calendar as of now: an event that has ended counts as done */
+  const goalData = useMemo(() => withAutoDone(data, now.nowMs), [data, now.nowMs]);
+  const summary = useMemo(() => goalSummary(goalData.goals, goalData.events, nowCtx), [goalData, nowCtx]);
 
   const title = mode === 'month' ? monthTitle(focus, now.today) : titleFor(days, now.today);
   /* phone calendars: read-only events next to ours (never in the store, never uploaded) */
@@ -244,7 +239,6 @@ export function CalendarScreen() {
             navOp={navOp}
             swipeX={swipeX}
             onOpen={openEvent}
-            onToggleDone={doneToggle}
             onCommitDrag={commitDrag}
             onZoom={setZoom}
             onSwipeNav={go}
@@ -275,7 +269,7 @@ export function CalendarScreen() {
           {thinking.phase === 'thinking' ? <ThinkingPill phrase={pickPhrase(thinking.query, thinking.seq)} /> : null}
           <View style={styles.chipsRow} pointerEvents="box-none">
             {goalsOpen ? <View style={{ flex: 1 }} /> : (
-              <GoalChips data={data} now={now} timerCtx={timer} onPress={() => setGoalsOpen(true)} />
+              <GoalChips data={goalData} now={now} timerCtx={timer} onPress={() => setGoalsOpen(true)} />
             )}
             {hasTimerPill ? <TimerPill onPress={openTimer} /> : null}
           </View>

@@ -111,20 +111,13 @@ describe('sun shading', () => {
 });
 
 describe('block metrics', () => {
-  const base = { h: 60, w: 100, week: false, dense: false, part: 'solo' as const, needsConfirm: false, hasWin: false, isPublic: true };
+  const base = { h: 60, w: 100, week: false, dense: false, part: 'solo' as const, hasWin: false, isPublic: true };
 
   it('shows the public glyph only on blocks of 40px or more, never in month view', () => {
     expect(blockMetrics(base).showPublicGlyph).toBe(true);
     expect(blockMetrics({ ...base, h: 39 }).showPublicGlyph).toBe(false);
     expect(blockMetrics({ ...base, month: true }).showPublicGlyph).toBe(false);
     expect(blockMetrics({ ...base, isPublic: false }).showPublicGlyph).toBe(false);
-  });
-
-  it('only offers the tick on elapsed, wide and tall enough blocks', () => {
-    expect(blockMetrics({ ...base, needsConfirm: true }).showCheck).toBe(true);
-    expect(blockMetrics({ ...base, needsConfirm: true, w: 40 }).showCheck).toBe(false);
-    expect(blockMetrics({ ...base, needsConfirm: true, h: 16 }).showCheck).toBe(false);
-    expect(blockMetrics({ ...base, needsConfirm: true, part: 'first' }).showCheck).toBe(false);
   });
 
   it('handles resize only on blocks of 26px or more, and not across a midnight split', () => {

@@ -27,6 +27,26 @@ export interface CheckInQuestion {
 export const evEndMs = (ev: Pick<ProtoEvent, 'day' | 'allDay' | 'end'>): number =>
   dnum(ev.day).getTime() + (ev.allDay ? 1440 : ev.end) * 60000;
 
+/** An event is done once it has ended (or was finished with the timer); only upcoming and running events are not. Nobody ticks events off. */
+export const isDone = (ev: Pick<ProtoEvent, 'day' | 'allDay' | 'end' | 'done'>, nowMs: number): boolean => !!ev.done || evEndMs(ev) <= nowMs;
+
+/** The events with every one that has ended marked done. Returns the same array when nothing changes. */
+export const autoDone = <E extends Pick<ProtoEvent, 'day' | 'allDay' | 'end' | 'done'>>(events: ReadonlyArray<E>, nowMs: number): ReadonlyArray<E> => {
+  let out: E[] | null = null;
+  events.forEach((e, i) => {
+    if (e.done || evEndMs(e) > nowMs) return;
+    if (!out) out = events.slice();
+    out[i] = Object.assign({}, e, { done: true });
+  });
+  return out ?? events;
+};
+
+/** `data` with every ended event marked done: what goal maths, check-ins and the widget read. Same object when nothing changes. */
+export const withAutoDone = (data: CalendarData, nowMs: number): CalendarData => {
+  const events = autoDone(data.events, nowMs);
+  return events === data.events ? data : { ...data, events: events as ProtoEvent[] };
+};
+
 /** Window start: the last session, but always at least the last 12 hours. */
 export const sinceMs = (lastSeen: number | null | undefined, nowMs: number): number => {
   const floor = nowMs - 12 * 3600000;

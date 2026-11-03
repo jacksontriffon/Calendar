@@ -4,7 +4,7 @@ import { GestureDetector, usePanGesture, useSimultaneousGestures, useTapGesture 
 import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 import {
-  SURFACE, evEndMs, fmtShort, mixOklab, paint, text, type LaidOut, type Pause,
+  SURFACE, fmtShort, mixOklab, paint, text, type LaidOut, type Pause,
 } from '@calendar/core';
 
 import { AppText } from '@/components/AppText';
@@ -38,8 +38,6 @@ export interface BlockProps {
   nowMin: number;
   dk: string;
   todayKey: string;
-  /** ended since the user last looked and still unconfirmed */
-  pending: boolean;
   /** drag snap step in minutes (core stepFor(zoom)) */
   step: number;
   timer: BlockTimer | null;
@@ -51,7 +49,7 @@ const SLOP = 3;
 
 function EventBlockImpl(p: BlockProps) {
   const ctx = useGridCtx();
-  const { item, dayIdx, nCols, colW, week, dense, hhTarget, hue, nowMs, nowMin, dk, todayKey, pending, step, timer } = p;
+  const { item, dayIdx, nCols, colW, week, dense, hhTarget, hue, nowMs, nowMin, dk, todayKey, step, timer } = p;
   const seg = item.ev;
   const ev = seg.ev;
   const id = seg.id;
@@ -64,11 +62,8 @@ function EventBlockImpl(p: BlockProps) {
   const width = laneW - 1.5;
   const minH = week ? 15 : dense ? 13 : 22;
   const hT = Math.max(((seg.end - seg.start) / 60) * hhTarget, minH);
-  const elapsed = evEndMs(ev) <= nowMs;
-  const scheduledAhead = !ev.at || ev.at < evEndMs(ev);
-  const needsConfirm = elapsed && !ev.done && scheduledAhead && mine && ev.source !== 'device';
   const m = blockMetrics({
-    h: hT, w: laneW, week, dense, part: seg.part, needsConfirm,
+    h: hT, w: laneW, week, dense, part: seg.part,
     hasWin: !!ev.win, isPublic: ev.visibility === 'public',
   });
   const isFuture = dk > todayKey || (dk === todayKey && seg.fullStart > nowMin);
@@ -77,7 +72,7 @@ function EventBlockImpl(p: BlockProps) {
   const winMark = !!winText && laneW >= 26 && !tmHere;
   const showWinTxt = !!winText && !week && !dense && hT >= 64 && laneW >= 60;
   const winLines = showWinTxt ? Math.max(1, Math.min(3, Math.floor((hT - 44) / 12))) : 0;
-  const fill = needsConfirm ? 'transparent' : isFuture ? mixOklab(P.fill, 55, SURFACE.bg) : P.fill;
+  const fill = isFuture ? mixOklab(P.fill, 55, SURFACE.bg) : P.fill;
   const radius = seg.part === 'first' ? [6, 6, 2, 2] : seg.part === 'second' ? [2, 2, 6, 6] : [6, 6, 6, 6];
   const small = week || dense;
   const showOnOther = ev.source === 'google' || ev.source === 'device';
@@ -98,10 +93,8 @@ function EventBlockImpl(p: BlockProps) {
   const botHandleStyle = useAnimatedStyle(() => ({
     top: (endMin / 60) * ctx.hh.value - Math.min(22, Math.max(12, hT * 0.42)) + 6,
   }));
-  const checkStyle = useAnimatedStyle(() => ({ top: (startMin / 60) * ctx.hh.value + 1 }));
 
   const open = useCallback(() => ctx.onOpen(id), [ctx, id]);
-  const toggle = useCallback(() => ctx.onToggleDone(id), [ctx, id]);
 
   const tap = useTapGesture({
     maxDuration: 500,
@@ -155,14 +148,8 @@ function EventBlockImpl(p: BlockProps) {
   const topPan = usePanGesture(makePan('top'));
   const botPan = usePanGesture(makePan('bottom'));
   const bodyGesture = useSimultaneousGestures(tap, movePan);
-  const checkTap = useTapGesture({
-    onActivate: () => {
-      'worklet';
-      scheduleOnRN(toggle);
-    },
-  });
 
-  const titleRight = m.showCheck ? 16 : tmHere && timer ? timer.txt.length * 6 + 6 : winMark ? 9 : 0;
+  const titleRight = tmHere && timer ? timer.txt.length * 6 + 6 : winMark ? 9 : 0;
 
   return (
     <>
@@ -176,7 +163,7 @@ function EventBlockImpl(p: BlockProps) {
               left,
               width,
               backgroundColor: fill,
-              borderColor: !mine ? text(0.42) : isFuture || needsConfirm ? P.line : 'transparent',
+              borderColor: !mine ? text(0.42) : isFuture ? P.line : 'transparent',
               borderStyle: isFuture && mine ? 'dashed' : 'solid',
               borderWidth: 1,
               borderLeftWidth: mine ? 2 : 1,
@@ -278,17 +265,6 @@ function EventBlockImpl(p: BlockProps) {
           />
         </GestureDetector>
       ) : null}
-      {m.showCheck ? (
-        <GestureDetector gesture={checkTap}>
-          <Animated.View
-            accessibilityRole="button"
-            accessibilityLabel={'Confirm ' + ev.title + ' happened'}
-            style={[styles.check, { left: left + width - 18, opacity: pending ? 0.95 : 0.6 }, checkStyle]}
-          >
-            <Icon name="check" size={10} color={P.edge} strokeWidth={2.4} />
-          </Animated.View>
-        </GestureDetector>
-      ) : null}
     </>
   );
 }
@@ -300,7 +276,6 @@ const styles = StyleSheet.create({
   block: { position: 'absolute', overflow: 'hidden', zIndex: 5 },
   pause: { position: 'absolute', left: 0, right: 0, zIndex: -1 },
   handle: { position: 'absolute', zIndex: 8 },
-  check: { position: 'absolute', width: 17, height: 17, alignItems: 'center', justifyContent: 'center', borderRadius: 5, zIndex: 9 },
   grip: { position: 'absolute', bottom: 3, left: '50%', marginLeft: -7, width: 14, height: 2, borderRadius: 2, opacity: 0.5 },
   winMark: { position: 'absolute', right: 5, width: 5, height: 5, borderRadius: 1, transform: [{ rotate: '45deg' }] },
   timerTxt: { position: 'absolute', right: 5, letterSpacing: 0.2, fontVariant: ['tabular-nums'] },

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
 import Animated, { FadeInDown, useReducedMotion } from 'react-native-reanimated';
 import {
-  goalChartModel, paint, paceOf, removeGoal, sortGoals, text, white, type ChartUnit, type NowCtx, type ProtoGoal,
+  goalChartModel, paint, paceOf, removeGoal, sortGoals, text, white, type ChartUnit, type NowCtx, type ProtoEvent, type ProtoGoal, withAutoDone,
 } from '@calendar/core';
 
 import { AppText } from '@/components/AppText';
@@ -75,6 +75,8 @@ function Body({ initialGoalId }: { initialGoalId: string | null }) {
     [now.today, now.nowMin, now.nowMs, timer],
   );
   const goals = useMemo(() => sortGoals(data.goals), [data.goals]);
+  /* progress reads the calendar as of now: an event that has ended counts as done */
+  const events = useMemo(() => withAutoDone(data, now.nowMs).events, [data, now.nowMs]);
 
   /** Save the draft as one undoable History entry (nothing when nothing changed). */
   const flush = useCallback(() => {
@@ -119,7 +121,7 @@ function Body({ initialGoalId }: { initialGoalId: string | null }) {
     [stored, draft],
   );
   const shown = useMemo(() => (view ? [view] : goals), [view, goals]);
-  const model = useMemo(() => goalChartModel(shown, data.events, ctx, unit), [shown, data.events, ctx, unit]);
+  const model = useMemo(() => goalChartModel(shown, events, ctx, unit), [shown, events, ctx, unit]);
 
   const adjust = (mode: 'reduce' | 'stretch') => {
     if (!focusId) return;
@@ -184,7 +186,7 @@ function Body({ initialGoalId }: { initialGoalId: string | null }) {
           </Animated.View>
         ) : has ? (
           <Animated.View entering={enter(300)}>
-            <GoalGrid goals={goals} width={width} ctx={ctx} onOpen={focus} onAdd={add} />
+            <GoalGrid goals={goals} events={events} width={width} ctx={ctx} onOpen={focus} onAdd={add} />
           </Animated.View>
         ) : (
           <Pressable onPress={add} accessibilityRole="button" style={styles.addEmpty} testID="goal-add">
@@ -199,16 +201,15 @@ function Body({ initialGoalId }: { initialGoalId: string | null }) {
 const GAP = 8;
 
 /** Three goal cards a row (name, two lines of outcome, pace pill) and the dashed "New goal" tile that wraps with them. */
-function GoalGrid({ goals, width, ctx, onOpen, onAdd }: {
-  goals: ProtoGoal[]; width: number; ctx: NowCtx; onOpen: (g: ProtoGoal) => void; onAdd: () => void;
+function GoalGrid({ goals, events, width, ctx, onOpen, onAdd }: {
+  goals: ProtoGoal[]; events: readonly ProtoEvent[]; width: number; ctx: NowCtx; onOpen: (g: ProtoGoal) => void; onAdd: () => void;
 }) {
-  const data = useCalendarData();
   const cell = Math.floor((width - GAP * 2) / 3);
   return (
     <ScrollView style={styles.gridScroll} nestedScrollEnabled showsVerticalScrollIndicator={false}>
       <View style={styles.grid}>
         {goals.map((g) => {
-          const pace = paceOf(g, data.events, ctx);
+          const pace = paceOf(g, events, ctx);
           return (
             <Pressable
               key={g.id}

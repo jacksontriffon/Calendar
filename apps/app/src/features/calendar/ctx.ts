@@ -20,7 +20,6 @@ export interface GridCtx {
   /** the drag moved more than a tap's wobble */
   dragMoved: SharedValue<boolean>;
   onOpen: (id: string) => void;
-  onToggleDone: (id: string) => void;
   onDragStart: (id: string, mode: DragMode) => void;
   onDragLive: (start: number, end: number, dayIdx: number) => void;
   onDragEnd: (id: string, mode: DragMode, start: number, end: number, dayIdx: number, moved: boolean) => void;

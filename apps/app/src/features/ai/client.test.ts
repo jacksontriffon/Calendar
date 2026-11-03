@@ -137,6 +137,14 @@ describe('slimData', () => {
     expect(s.cats).toBe(data.cats);
   });
 
+  it('marks events that have ended as done, given the time', () => {
+    const noon = new Date(2026, 9, 30, 12, 0).getTime();
+    const s = slimData(data, noon); // Standup ends 09:45, Run 08:00: both over
+    expect(s.events.map((e) => e.done)).toEqual([true, true]);
+    const early = slimData(data, new Date(2026, 9, 30, 9, 0).getTime()); // Standup (09:30-09:45) has not started
+    expect(early.events.map((e) => e.done)).toEqual([undefined, true]);
+  });
+
   it('caps the number of events, newest days first', () => {
     const many = Array.from({ length: MAX_EVENTS + 5 }, (_, i) => ({
       id: 'x' + i, day: '2026-01-' + String((i % 28) + 1).padStart(2, '0'), cat: 'Work', title: 't', start: 0, end: 15,

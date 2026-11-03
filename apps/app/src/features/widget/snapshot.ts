@@ -11,6 +11,8 @@
  */
 import {
   addDays,
+  isDone,
+  withAutoDone,
   goalOf,
   goalStats,
   goalsToday,
@@ -116,7 +118,7 @@ export function buildEvents(input: BuildInput, today: Date): SnapshotEvent[] {
         s: toLocal(s),
         e: toLocal(en),
         check: showsCheck(e, goal),
-        done: !!e.done,
+        done: isDone(e, now.getTime()),
         vis: e.visibility === 'public' ? 'public' : 'private',
         owner: others ? ownerOf(e) ?? '?' : null,
         goal: goal ? goal.id : null,
@@ -140,7 +142,7 @@ export function buildEvents(input: BuildInput, today: Date): SnapshotEvent[] {
  * "Both platforms, Goals"). Only goals whose span contains today.
  */
 export function buildGoals(input: BuildInput, ctx: NowCtx): SnapshotGoal[] {
-  const { data } = input;
+  const data = withAutoDone(input.data, ctx.nowMs ?? Date.now()); // an event that has ended counts as done
   const today = goalsToday(data.goals, data.events, ctx);
   const byId = new Map(today.map((g) => [g.id, g]));
   return data.goals

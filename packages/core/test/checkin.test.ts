@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  CI_FOLLOWUP, applyCheckIn, assembleCheckIn, ciConfirmQs, ciHistory, ciLocalQs, evEndMs, isPending, makeIdGen, normCheckIn, pendingEvents,
+  CI_FOLLOWUP, applyCheckIn, autoDone, isDone, withAutoDone, assembleCheckIn, ciConfirmQs, ciHistory, ciLocalQs, evEndMs, isPending, makeIdGen, normCheckIn, pendingEvents,
   shouldCheckIn, sinceMs, winCands, winQ, winWhen,
 } from '../src/index.ts';
 import type { CalendarData, CheckInQuestion } from '../src/index.ts';
@@ -239,5 +239,36 @@ describe('applyCheckIn', () => {
     const before = JSON.stringify(data);
     run([w('w1'), c('p1')], ['x', 'no']);
     expect(JSON.stringify(data)).toBe(before);
+  });
+});
+
+describe('every event before now is done', () => {
+  const past = ev('p', TODAY_KEY, 'x', 'past', 540, 600); // ended 10:00, now is 14:20
+  const running = ev('r', TODAY_KEY, 'x', 'running', 800, 900);
+  const later = ev('l', TODAY_KEY, 'x', 'later', 1000, 1100);
+  it('isDone: ended, or already flagged; running and upcoming are not', () => {
+    expect(isDone(past, NOW_MS)).toBe(true);
+    expect(isDone(running, NOW_MS)).toBe(false);
+    expect(isDone(later, NOW_MS)).toBe(false);
+    expect(isDone({ ...later, done: true }, NOW_MS)).toBe(true);
+    expect(isDone(ev('d', dd(-5), 'x', 'old', 540, 600), NOW_MS)).toBe(true);
+    expect(isDone(ev('a', TODAY_KEY, 'x', 'all day', 0, 1440, { allDay: true }), NOW_MS)).toBe(false); // ends at the end of today
+  });
+  it('autoDone marks ended events and keeps the same array when nothing changes', () => {
+    const evs = [past, running, later];
+    expect(autoDone(evs, NOW_MS).map((e) => !!e.done)).toEqual([true, false, false]);
+    expect(evs[0].done).toBeUndefined(); // input untouched
+    const unchanged = [running, later];
+    expect(autoDone(unchanged, NOW_MS)).toBe(unchanged);
+  });
+  it('withAutoDone returns the same data when nothing ended', () => {
+    const d: CalendarData = { events: [running, later], cats: {}, goals: [] };
+    expect(withAutoDone(d, NOW_MS)).toBe(d);
+    expect(withAutoDone({ ...d, events: [past] }, NOW_MS).events[0].done).toBe(true);
+  });
+  it('so nothing is pending or asked "did that happen?"', () => {
+    const d = withAutoDone({ events: [past, running, later], cats: {}, goals: [] }, NOW_MS);
+    expect(pendingEvents(d.events, NOW_MS, lastSeen)).toEqual([]);
+    expect(assembleCheckIn([], { events: d.events, goals: [], today: TODAY, nowMs: NOW_MS, lastSeen }).some((q) => q.field === 'confirm')).toBe(false);
   });
 });

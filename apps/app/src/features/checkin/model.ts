@@ -5,7 +5,7 @@
  * the local signals (`ciLocalQs`); both feed `assembleCheckIn`.
  */
 import {
-  applyCheckIn, assembleCheckIn, ciLocalQs, shouldCheckIn, winCands,
+  applyCheckIn, assembleCheckIn, ciLocalQs, shouldCheckIn, winCands, withAutoDone,
   type CalendarData, type CheckInQuestion, type CheckInResult,
 } from '@calendar/core';
 
@@ -21,7 +21,8 @@ export interface Clock { today: Date; nowMin: number; nowMs: number }
  * Questions for a check-in right now: Claude's questions (`ai`, when it answered) or the local signals,
  * merged with wins and confirmations.
  */
-export function buildQuestions(data: CalendarData, clock: Clock, lastSeen: number, ai?: CheckInQuestion[] | null): CheckInQuestion[] {
+export function buildQuestions(raw: CalendarData, clock: Clock, lastSeen: number, ai?: CheckInQuestion[] | null): CheckInQuestion[] {
+  const data = withAutoDone(raw, clock.nowMs); // events that have ended are done, so nothing is asked "did that happen?"
   return assembleCheckIn(ai && ai.length ? ai : ciLocalQs(data, { today: clock.today, nowMin: clock.nowMin, nowMs: clock.nowMs }), {
     events: data.events, goals: data.goals, today: clock.today, nowMs: clock.nowMs, lastSeen,
   });

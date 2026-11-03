@@ -15,6 +15,14 @@ const data: CalendarData = {
   ],
 };
 
+describe('every event before now is done', () => {
+  it('asks no "did that happen?" for an event that ended without being ticked off', () => {
+    const d: CalendarData = { ...data, events: [{ id: 'p1', day: dk(0), cat: 'Work', title: 'Standup', start: 560, end: 580, at: 1 }] };
+    const qs = buildQuestions(d, clock, clock.nowMs - 20 * 3600000);
+    expect(qs.some((q) => q.field === 'confirm')).toBe(false);
+  });
+});
+
 describe('check-in questions', () => {
   it('asks the goal, the win and the confirmation, first', () => {
     const qs = buildQuestions(data, clock, 0);

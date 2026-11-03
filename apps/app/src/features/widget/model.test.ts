@@ -57,7 +57,7 @@ describe('Large, Today (WG 1g)', () => {
   });
 
   it('Yesterday and Tomorrow peek with their summary and first event; the dots show where you are', () => {
-    expect(m.pager!.before).toMatchObject({ offset: -1, label: 'Yesterday · Thu 29', summary: '2 of 3 done', empty: false });
+    expect(m.pager!.before).toMatchObject({ offset: -1, label: 'Yesterday · Thu 29', summary: '3 of 3 done', empty: false });
     expect(m.pager!.before!.row!.title).toBe('Sync layer, part one');
     expect(m.pager!.after).toMatchObject({ offset: 1, label: 'Tomorrow · Sat 31', summary: '4h 55m planned' });
     expect(m.pager!.after!.row!.title).toBe('Long run');
@@ -108,14 +108,14 @@ describe('Large, Today (WG 1g)', () => {
 describe('Large, Yesterday and Tomorrow (WG 1h, 1i)', () => {
   const snap = snapshotAt(NOW, { data: dataWide });
 
-  it('Yesterday: every event, "2 of 3 done", the header date follows, Today peeks below', () => {
+  it('Yesterday: every event, "3 of 3 done" (everything before now is done), the header date follows, Today peeks below', () => {
     const m = buildModel(snap, NOW.getTime(), 'large', { carousel: tapped({ day: -1 }) });
     expect(m.header).toMatchObject({ title: 'Thu 29', month: 'October' });
     expect(m.url).toBe('aicalendar://day/2026-10-29');
-    expect(m.pager).toMatchObject({ day: -1, heading: 'Yesterday', summary: '2 of 3 done', before: null });
+    expect(m.pager).toMatchObject({ day: -1, heading: 'Yesterday', summary: '3 of 3 done', before: null });
     expect(names(m.items)).toEqual(['Sync layer, part one', 'Lunch', 'Easy 5k', 'Reading']);
     expect(m.more).toBeNull();
-    expect(m.items.flatMap((i) => (i.kind === 'row' ? [i.row.done] : []))).toEqual([true, false, true, false]);
+    expect(m.items.flatMap((i) => (i.kind === 'row' ? [i.row.done] : []))).toEqual([true, true, true, true]);
     expect(m.pager!.after).toMatchObject({ offset: 0, label: 'Today · Fri 30', summary: null });
     expect(m.pager!.after!.row!.title).toBe('Lunch');
   });

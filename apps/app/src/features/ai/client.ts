@@ -10,7 +10,7 @@
  * switches on: `limit` and `rate_limit` have their own states, the rest fall back to the offline
  * parser.
  */
-import { isReadOnlyEvent, type AdjustMode, type CalendarData, type ProtoEvent } from '@calendar/core';
+import { dnum, isDone, isReadOnlyEvent, type AdjustMode, type CalendarData, type ProtoEvent } from '@calendar/core';
 
 import { parseUsage, type Usage } from './usage';
 
@@ -92,7 +92,7 @@ export const MAX_EVENTS = 4500;
  * visibility / series fields stay home; `source` and `isMine` go along only on read-only events, so the
  * model knows they are imported), and at most `MAX_EVENTS` events, newest days first.
  */
-export function slimData(data: CalendarData): CalendarData {
+export function slimData(data: CalendarData, nowMs?: number): CalendarData {
   const evs = data.events.length > MAX_EVENTS
     ? data.events.slice().sort((a, b) => (a.day < b.day ? 1 : a.day > b.day ? -1 : 0)).slice(0, MAX_EVENTS)
     : data.events;
@@ -103,7 +103,7 @@ export function slimData(data: CalendarData): CalendarData {
       const o: ProtoEvent = { id: e.id, day: e.day, cat: e.cat, title: e.title, start: e.start, end: e.end };
       if (e.allDay) o.allDay = true;
       if (e.days != null) o.days = e.days;
-      if (e.done) o.done = true;
+      if (e.done || (nowMs != null && isDone(e, nowMs))) o.done = true;
       if (e.pauses?.length) o.pauses = e.pauses;
       if (e.win) o.win = e.win;
       if (e.winAsked) o.winAsked = true;
@@ -121,7 +121,7 @@ export function slimData(data: CalendarData): CalendarData {
 /** The JSON body of the request, without `undefined` fields. */
 export function toBody(req: AiRequest): Record<string, unknown> {
   const body: Record<string, unknown> = {
-    mode: req.mode, today: req.today, nowMin: req.nowMin, tz: req.tz, data: slimData(req.data),
+    mode: req.mode, today: req.today, nowMin: req.nowMin, tz: req.tz, data: slimData(req.data, dnum(req.today).getTime() + req.nowMin * 60000),
   };
   if (req.mode === 'checkin') {
     body.lastSeen = req.lastSeen ?? null;

@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 import {
-  DANGER, PICKER, adjustModeFor, goalRate, goalStats, leftShortLabel, niceDate, paceOf, paint, snapHue, text, white,
+  DANGER, PICKER, adjustModeFor, goalRate, goalStats, leftShortLabel, niceDate, paceOf, paint, snapHue, text, white, withAutoDone,
   type NowCtx, type ProtoGoal,
 } from '@calendar/core';
 
@@ -30,8 +30,9 @@ export function GoalDetailPane({ view, draft, ctx, onDraft, onDelete, onAdjust }
   const [menu, setMenu] = useState(false);
 
   const P = paint(view.hue);
-  const s = goalStats(view, data.events, ctx);
-  const pace = paceOf(view, data.events, ctx);
+  const events = useMemo(() => withAutoDone(data, ctx.nowMs ?? Date.now()).events, [data, ctx.nowMs]);
+  const s = goalStats(view, events, ctx);
+  const pace = paceOf(view, events, ctx);
   const L = goalLines(view, s, ctx.today);
   const cur = snapHue(draft.hue);
   const hasTarget = !!view.hours;

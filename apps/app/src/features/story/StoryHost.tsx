@@ -2,7 +2,7 @@ import { useState, useSyncExternalStore } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ACCENT, dur, paint, text, white } from '@calendar/core';
+import { ACCENT, dur, paint, text, white, withAutoDone } from '@calendar/core';
 
 import { AppText } from '@/components/AppText';
 import { Icon } from '@/components/Icon';
@@ -33,7 +33,7 @@ export function StoryHost() {
   const open = req > seen;
   if (!open) return null;
 
-  const r = buildRecap(data, now.today, wk);
+  const r = buildRecap(withAutoDone(data, now.nowMs), now.today, wk);
   const close = () => { setSeen(req); setView('goal'); setWk(0); setIdx(0); };
   const hue = (h: number | null) => (h == null ? text(0.35) : paint(h).edge);
 

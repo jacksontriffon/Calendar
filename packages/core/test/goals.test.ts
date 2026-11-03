@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   behindGoals, changedGoalIds, daysLeftLabel, evInGoal, freeSlot, goalDue, goalLoad, goalMath, goalOf, goalPace, goalRate, goalSpan, goalStats,
-  goalToday, goalsToday, leftShortLabel, newGoalSeed, paceOf, sortGoals, toGoLabel, weeklyLoad, dayGoalStat, goalHours, key, dnum, addDays,
+  autoDone, goalToday, goalsToday, leftShortLabel, newGoalSeed, paceOf, sortGoals, toGoLabel, weeklyLoad, dayGoalStat, goalHours, key, dnum, addDays,
 } from '../src/index.ts';
 import type { ProtoEvent } from '../src/index.ts';
 import { NOW_MIN, TODAY, TODAY_KEY, dd, ev, goal, lcg, nowCtx } from './helpers.ts';
@@ -327,4 +327,15 @@ describe('freeSlot', () => {
     expect(freeSlot([], day, 2000, ctx)).toBe(360); // longer than the day: the lower clamp
   });
   it('uses NOW_MIN sanity', () => expect(NOW_MIN).toBe(860));
+});
+
+describe('goal progress with every ended event done', () => {
+  it('counts hours of ended, never-ticked sessions as done once autoDone is applied', () => {
+    const g = goal({ id: 'g', title: 'Piano', cat: 'Piano', hours: 20, start: dd(-3), deadline: dd(10) });
+    const evs = [ev('a', dd(-1), 'Piano', 'p', 540, 600), ev('b', dd(0), 'Piano', 'p', 900, 960)]; // yesterday (over) and 15:00 today (ahead)
+    const raw = goalStats(g, evs, ctx);
+    expect([raw.done, raw.booked]).toEqual([0, 2]);
+    const s = goalStats(g, autoDone(evs, ctx.nowMs as number), ctx);
+    expect([s.done, s.booked]).toEqual([1, 1]);
+  });
 });
